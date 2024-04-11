@@ -52,7 +52,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
                   _episodes(vm),
                   // if (vm.displayingEpisodes.length < (vm.podcast?.episodes.length ?? 0))
                   //   const CircularProgressIndicator(),
-                  // const SizedBox(height: BottomPlayer.playerHeight),
+                  const SizedBox(height: BottomPlayer.playerHeight),
                 ],
               ),
       ),

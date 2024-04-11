@@ -25,6 +25,7 @@ class PlayerViewmodel extends Vm {
     loading();
     if (track != null) {
       if (track.url != _playing?.url) {
+        _playing = track;
         await audioHandler?.setMediaUrl(MediaItem(
           id: track.url ?? '',
           title: track.episode?.title ?? '',
@@ -32,7 +33,6 @@ class PlayerViewmodel extends Vm {
           artUri: Uri.parse(image ?? ''),
           duration: track.episode?.duration,
         ));
-        _playing = track;
       }
     }
     audioHandler?.play();
