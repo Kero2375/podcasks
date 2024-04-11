@@ -75,13 +75,13 @@ class EpisodePage extends ConsumerWidget {
       onLinkTap: (url, attributes, element) {
         launchUrl(Uri.parse(url!));
       },
-      style: {'*': Style(margin: Margins.all(16))},
+      style: {'*': Style(margin: Margins.all(8))},
     );
   }
 
   Widget _title() {
     return Padding(
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
