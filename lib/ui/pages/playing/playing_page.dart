@@ -23,7 +23,7 @@ class PlayingPage extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _image(ep),
+            _image(vm.image),
             _title(context, ep, podcast),
             LinearProgressIndicator(value: vm.percent),
             Row(
@@ -49,7 +49,7 @@ class PlayingPage extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.replay_10),
             iconSize: 30,
-            onPressed: () => vm.forward(const Duration(seconds: -10)) ,
+            onPressed: () => vm.forward(const Duration(seconds: -10)),
           ),
           IconButton.filled(
             icon: vm.isPlaying() ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
@@ -59,7 +59,7 @@ class PlayingPage extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.forward_30),
             iconSize: 30,
-            onPressed: () => vm.forward(const Duration(seconds: 30)) ,
+            onPressed: () => vm.forward(const Duration(seconds: 30)),
           ),
         ],
       ),
@@ -83,12 +83,12 @@ class PlayingPage extends ConsumerWidget {
     );
   }
 
-  Container _image(Episode? ep) {
+  Container _image(String? image) {
     return Container(
       // margin: const EdgeInsets.all(32),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
       clipBehavior: Clip.antiAlias,
-      child: (ep?.imageUrl != null) ? Image.network(ep!.imageUrl!) : null,
+      child: (image != null) ? Image.network(image) : null,
     );
   }
 }

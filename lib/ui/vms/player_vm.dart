@@ -28,7 +28,7 @@ class PlayerViewmodel extends Vm {
           id: track.url ?? '',
           title: track.episode?.title ?? '',
           artist: track.podcast?.title,
-          artUri: Uri.parse(track.episode?.imageUrl ?? ''),
+          artUri: Uri.parse(image ?? ''),
           duration: track.episode?.duration,
         ));
         _playing = track;
@@ -56,6 +56,8 @@ class PlayerViewmodel extends Vm {
   Episode? get playingEpisode => _playing?.episode;
 
   Podcast? get playingPodcast => _playing?.podcast;
+
+  String? get image => _playing?.episode?.imageUrl ?? _playing?.podcast?.image;
 
   void updatePosition() {
     if (audioHandler != null) {

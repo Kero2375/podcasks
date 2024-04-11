@@ -37,14 +37,14 @@ class BottomPlayer extends ConsumerWidget {
                           color: Colors.transparent,
                           child: Row(
                             children: [
-                              if (vm.playingEpisode?.imageUrl != null)
+                              if (vm.image != null)
                                 Container(
                                   margin: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   clipBehavior: Clip.antiAlias,
-                                  child: Image.network(vm.playingEpisode!.imageUrl!),
+                                  child: Image.network(vm.image!),
                                 ),
                               const SizedBox(width: 8),
                               Expanded(
