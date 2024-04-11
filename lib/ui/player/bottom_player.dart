@@ -25,36 +25,41 @@ class BottomPlayer extends ConsumerWidget {
               LinearProgressIndicator(value: vm.trackPosition),
               Expanded(
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(context, PlayingPage.route);
-                      },
-                      child: Row(
-                        children: [
-                          if (vm.playingEpisode?.imageUrl != null)
-                            Container(
-                              margin: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(4),
+                    Flexible(
+                      flex: 1,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, PlayingPage.route);
+                        },
+                        child: Container(
+                          color: Colors.transparent,
+                          child: Row(
+                            children: [
+                              if (vm.playingEpisode?.imageUrl != null)
+                                Container(
+                                  margin: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  clipBehavior: Clip.antiAlias,
+                                  child: Image.network(vm.playingEpisode!.imageUrl!),
+                                ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(vm.playingEpisode?.title ?? '', maxLines: 1,),
+                                // child: TextScroll(
+                                //   vm.playingEpisode?.title ?? '',
+                                //   mode: TextScrollMode.endless,
+                                //   velocity: const Velocity(pixelsPerSecond: Offset(30, 0)),
+                                //   pauseBetween: const Duration(seconds: 1),
+                                // ),
                               ),
-                              clipBehavior: Clip.antiAlias,
-                              child: Image.network(vm.playingEpisode!.imageUrl!),
-                            ),
-                          const SizedBox(width: 8),
-                          SizedBox(
-                            width: 250,
-                            height: 20,
-                            child: TextScroll(
-                              vm.playingEpisode?.title ?? '',
-                              mode: TextScrollMode.endless,
-                              velocity: const Velocity(pixelsPerSecond: Offset(30, 0)),
-                              pauseBetween: const Duration(seconds: 1),
-                            ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                     Padding(
