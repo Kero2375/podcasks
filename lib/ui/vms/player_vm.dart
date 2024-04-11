@@ -10,6 +10,7 @@ import 'package:ppp2/ui/vms/vm.dart';
 final playerViewmodel = ChangeNotifierProvider((ref) => PlayerViewmodel());
 
 class PlayerViewmodel extends Vm {
+  Track? get playing => _playing;
   Track? _playing;
 
   Duration get position => audioHandler?.position ?? Duration.zero;

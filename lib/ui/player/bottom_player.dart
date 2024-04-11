@@ -11,76 +11,82 @@ class BottomPlayer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.watch(playerViewmodel);
-    return BottomSheet(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-      enableDrag: false,
-      onClosing: () {},
-      builder: (context) {
-        final playing = vm.isPlaying();
-        return SizedBox(
-          height: playerHeight,
-          child: Column(
-            children: [
-              LinearProgressIndicator(value: vm.percent),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+    return vm.playing == null
+        ? const SizedBox.shrink()
+        : BottomSheet(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+            enableDrag: false,
+            onClosing: () {},
+            builder: (context) {
+              final playing = vm.isPlaying();
+              return SizedBox(
+                height: playerHeight,
+                child: Column(
                   children: [
-                    Flexible(
-                      flex: 1,
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, PlayingPage.route);
-                        },
-                        child: Container(
-                          color: Colors.transparent,
-                          child: Row(
-                            children: [
-                              if (vm.image != null)
-                                Container(
-                                  margin: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  clipBehavior: Clip.antiAlias,
-                                  child: Image.network(vm.image!),
+                    LinearProgressIndicator(value: vm.percent),
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Flexible(
+                            flex: 1,
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(context, PlayingPage.route);
+                              },
+                              child: Container(
+                                color: Colors.transparent,
+                                child: Row(
+                                  children: [
+                                    if (vm.image != null)
+                                      Container(
+                                        margin: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(4),
+                                        ),
+                                        clipBehavior: Clip.antiAlias,
+                                        child: Image.network(vm.image!),
+                                      ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        vm.playingEpisode?.title ?? '',
+                                        maxLines: 1,
+                                      ),
+                                      // child: TextScroll(
+                                      //   vm.playingEpisode?.title ?? '',
+                                      //   mode: TextScrollMode.endless,
+                                      //   velocity: const Velocity(pixelsPerSecond: Offset(30, 0)),
+                                      //   pauseBetween: const Duration(seconds: 1),
+                                      // ),
+                                    ),
+                                  ],
                                 ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(vm.playingEpisode?.title ?? '', maxLines: 1,),
-                                // child: TextScroll(
-                                //   vm.playingEpisode?.title ?? '',
-                                //   mode: TextScrollMode.endless,
-                                //   velocity: const Velocity(pixelsPerSecond: Offset(30, 0)),
-                                //   pauseBetween: const Duration(seconds: 1),
-                                // ),
                               ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: IconButton(
-                        onPressed: () {
-                          if (playing) {
-                            vm.pause();
-                          } else {
-                            vm.play();
-                          }
-                        },
-                        icon: playing ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: IconButton(
+                              onPressed: () {
+                                if (playing) {
+                                  vm.pause();
+                                } else {
+                                  vm.play();
+                                }
+                              },
+                              icon:
+                                  playing ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+              );
+            },
+          );
   }
 }
