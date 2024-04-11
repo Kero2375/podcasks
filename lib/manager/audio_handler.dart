@@ -44,7 +44,10 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   Future<void> stop() => _player.stop();
 
   @override
-  Future<void> seek(Duration position) => _player.seek(position);
+  Future<void> seek(Duration position) {
+    playbackState.add(playbackState.value.copyWith(updatePosition: position));
+    return _player.seek(position);
+  }
 
   bool get playing => _player.playing;
 

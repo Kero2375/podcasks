@@ -26,7 +26,13 @@ class PlayingPage extends ConsumerWidget {
           children: [
             _image(vm.image),
             _title(context, ep, podcast),
-            LinearProgressIndicator(value: vm.percent),
+            Slider(
+              value: vm.position.inSeconds / vm.duration.inSeconds,
+              // onChanged: (value) {},
+              onChangeStart: (value) => vm.pause(),
+              onChanged: (value) => vm.seek(value),
+              onChangeEnd: (value) => vm.play(),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

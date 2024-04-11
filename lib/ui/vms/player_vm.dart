@@ -70,8 +70,21 @@ class PlayerViewmodel extends Vm {
   }
 
   Future<void> forward(Duration time) async {
-    if (audioHandler != null && isPlaying()) {
+    if (audioHandler != null) {
       await audioHandler!.seek(audioHandler!.position + time);
+      if (!isPlaying()) {
+        notifyListeners();
+      }
+    }
+  }
+
+  Future<void> seek(double timePerc) async {
+    final d = Duration(seconds: (timePerc * duration.inSeconds).toInt());
+    if (audioHandler != null) {
+      await audioHandler!.seek(d);
+      if (!isPlaying()) {
+        notifyListeners();
+      }
     }
   }
 }
