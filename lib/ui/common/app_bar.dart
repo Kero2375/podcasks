@@ -9,7 +9,12 @@ AppBar mainAppBar(
   return AppBar(
     leading: cast
         ? IconButton(
-            onPressed: () {}, // todo: cast
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('Googlecast & Airplay are still WIP'),
+                duration: Duration(seconds: 2),
+              ));
+            }, // todo: cast
             icon: const Icon(Icons.cast),
           )
         : null,

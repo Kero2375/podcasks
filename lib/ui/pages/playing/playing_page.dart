@@ -27,7 +27,9 @@ class PlayingPage extends ConsumerWidget {
             _image(vm.image),
             _title(context, ep, podcast),
             Slider(
-              value: vm.position.inSeconds / vm.duration.inSeconds,
+              value: (vm.duration != Duration.zero)
+                  ? vm.position.inSeconds / vm.duration.inSeconds
+                  : 0,
               // onChanged: (value) {},
               onChangeStart: (value) => vm.pause(),
               onChanged: (value) => vm.seek(value),
@@ -78,8 +80,9 @@ class PlayingPage extends ConsumerWidget {
       children: [
         Text(
           ep?.title ?? '',
+          maxLines: 2,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 26),
+          style: const TextStyle(fontSize: 24),
         ),
         GestureDetector(
           onTap: () => Navigator.popAndPushNamed(context, PodcastPage.route, arguments: podcast),

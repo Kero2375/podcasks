@@ -6,7 +6,6 @@ import 'package:ppp2/repository/search_repo.dart';
 final locator = GetIt.instance;
 
 void setup() {
-  // todo
   locator.registerSingleton<SearchRepo>(SearchRepoPodcastSearch());
   locator.registerSingleton<FavouriteRepo>(FavouriteRepoSharedPref());
 }

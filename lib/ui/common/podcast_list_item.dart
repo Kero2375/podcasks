@@ -6,7 +6,7 @@ import 'package:ppp2/ui/pages/podcast_page.dart';
 class PodcastListItem extends ConsumerWidget {
   final Podcast podcast;
 
-  const PodcastListItem({
+  const   PodcastListItem({
     super.key,
     required this.podcast,
   });
@@ -14,7 +14,7 @@ class PodcastListItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) => InkWell(
         onTap: () {
-          Navigator.pushNamed(context, PodcastPage.route, arguments: podcast); // todo?
+          Navigator.pushNamed(context, PodcastPage.route, arguments: podcast);
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

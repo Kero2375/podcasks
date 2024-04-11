@@ -19,7 +19,6 @@ class SearchPage extends ConsumerWidget {
         actions: [
           IconButton(
             onPressed: () {
-              // todo: reset search bar
               Navigator.pop(context);
             },
             icon: const Icon(Icons.close),

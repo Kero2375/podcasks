@@ -6,7 +6,7 @@ import 'package:ppp2/ui/common/app_bar.dart';
 import 'package:ppp2/ui/common/fav_button.dart';
 import 'package:ppp2/ui/pages/episode_page.dart';
 import 'package:ppp2/ui/player/bottom_player.dart';
-import 'package:ppp2/ui/vms/theme_vm.dart';
+import 'package:ppp2/ui/vms/podcast_vm.dart';
 
 class PodcastPage extends ConsumerStatefulWidget {
   static const route = '/podcast_page';
@@ -22,16 +22,18 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
 
   @override
   void initState() {
-    final themeVm = ref.read(themeViewmodel);
-    themeVm.setPrimaryColor(widget.podcast?.image);
+    final vm = ref.read(podcastViewmodel);
+    vm.init(widget.podcast);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final vm = ref.watch(podcastViewmodel);
     return Scaffold(
       appBar: mainAppBar(context, title: widget.podcast?.title),
       body: SingleChildScrollView(
+        controller: vm.controller,
         child: (widget.podcast == null)
             ? const Center(child: Text("Error"))
             : Column(
@@ -47,8 +49,10 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     child: FavButton(widget.podcast!),
                   ),
-                  _episodes(),
-                  const SizedBox(height: BottomPlayer.playerHeight),
+                  _episodes(vm),
+                  // if (vm.displayingEpisodes.length < (vm.podcast?.episodes.length ?? 0))
+                  //   const CircularProgressIndicator(),
+                  // const SizedBox(height: BottomPlayer.playerHeight),
                 ],
               ),
       ),
@@ -56,23 +60,17 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
     );
   }
 
-  Widget _episodes() {
+  Widget _episodes(PodcastViewmodel vm) {
     return ListView.builder(
       physics: const PageScrollPhysics(),
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
-      itemCount: widget.podcast?.episodes.length ?? 0,
-      itemBuilder: (context, i) {
-        final ep = widget.podcast?.episodes[i];
-        if (ep != null) {
-          return _episode(context, ep);
-        }
-        return null;
-      },
+      itemCount: vm.displayingEpisodes.length,
+      itemBuilder: (context, i) => _episode(context, vm.displayingEpisodes[i]),
     );
   }
 
-  Widget _episode(BuildContext context, Episode ep) {
+  Widget _episode(BuildContext context, Episode? ep) {
     return InkWell(
       onTap: () {
         Navigator.pushNamed(context, EpisodePage.route, arguments: EpisodeData(ep, widget.podcast));
@@ -90,11 +88,11 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  ep.title,
+                  ep?.title ?? '',
                   style: const TextStyle(fontSize: 18),
                 ),
                 Html(
-                  data: ep.description,
+                  data: ep?.description ?? '',
                   style: {
                     '*': Style(
                       maxLines: 3,
