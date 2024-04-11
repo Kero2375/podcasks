@@ -8,6 +8,7 @@ import 'package:ppp2/ui/common/themes.dart';
 import 'package:ppp2/ui/player/bottom_player.dart';
 import 'package:ppp2/ui/vms/player_vm.dart';
 import 'package:ppp2/ui/vms/vm.dart';
+import 'package:ppp2/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EpisodeData {
@@ -89,21 +90,11 @@ class EpisodePage extends ConsumerWidget {
             episode?.title ?? '',
             style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
           ),
-          Text(_parseTime(episode?.publicationDate)),
+          Text(episode?.publicationDate?.toDate() ?? ''),
           // Text(_parseDuration(episode?.duration)),
         ],
       ),
     );
   }
 
-  String _parseDuration(Duration? d) {
-    if (d == null) return '';
-    final int min = d.inMinutes;
-    return '${min ~/ 60}:${min % 60}';
-  }
-
-  String _parseTime(DateTime? dt) {
-    if (dt == null) return '';
-    return '${dt.day <= 9 ? '0' : ''}${dt.day}/${dt.month <= 9 ? '0' : ''}${dt.month}/${dt.year}';
-  }
 }

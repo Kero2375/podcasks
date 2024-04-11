@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podcast_search/src/model/episode.dart';
-import 'package:podcast_search/src/model/podcast.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:ppp2/ui/common/app_bar.dart';
 import 'package:ppp2/ui/vms/player_vm.dart';
+import 'package:ppp2/utils.dart';
 
 class PlayingPage extends ConsumerWidget {
   static const route = '/playing_page';
@@ -25,7 +25,14 @@ class PlayingPage extends ConsumerWidget {
           children: [
             _image(ep),
             _title(context, ep, podcast),
-            LinearProgressIndicator(value: vm.trackPosition),
+            LinearProgressIndicator(value: vm.percent),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(vm.position.toTime()),
+                Text((vm.position - vm.duration).toTime()),
+              ],
+            ),
             _buttons(vm),
           ],
         ),
@@ -42,7 +49,7 @@ class PlayingPage extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.replay_10),
             iconSize: 30,
-            onPressed: () {},
+            onPressed: () => vm.forward(const Duration(seconds: -10)) ,
           ),
           IconButton.filled(
             icon: vm.isPlaying() ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
@@ -52,7 +59,7 @@ class PlayingPage extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.forward_30),
             iconSize: 30,
-            onPressed: () {},
+            onPressed: () => vm.forward(const Duration(seconds: 30)) ,
           ),
         ],
       ),

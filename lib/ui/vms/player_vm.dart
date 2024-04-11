@@ -12,8 +12,12 @@ final playerViewmodel = ChangeNotifierProvider((ref) => PlayerViewmodel());
 class PlayerViewmodel extends Vm {
   Track? _playing;
 
-  double get trackPosition => _trackPosition;
-  double _trackPosition = 0.0;
+  Duration get position => audioHandler?.position ?? Duration.zero;
+
+  Duration get duration => audioHandler?.duration ?? Duration.zero;
+
+  double get percent => _percent;
+  double _percent = 0.0;
   Timer? _positionTimer;
 
   Future<void> play({Track? track}) async {
@@ -55,12 +59,16 @@ class PlayerViewmodel extends Vm {
 
   void updatePosition() {
     if (audioHandler != null) {
-      final duration = audioHandler!.duration;
-      final position = audioHandler!.position;
       if (duration != Duration.zero) {
-        _trackPosition = position.inSeconds / duration.inSeconds;
+        _percent = position.inSeconds / duration.inSeconds;
         notifyListeners();
       }
+    }
+  }
+
+  Future<void> forward(Duration time) async {
+    if (audioHandler != null && isPlaying()) {
+      await audioHandler!.seek(audioHandler!.position + time);
     }
   }
 }

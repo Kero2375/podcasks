@@ -1,7 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podcast_search/src/model/podcast.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:ppp2/ui/common/themes.dart';
 import 'package:ppp2/ui/vms/home_vm.dart';
 

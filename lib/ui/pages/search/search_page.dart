@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ppp2/ui/pages/search/search_list.dart';
-import 'package:ppp2/ui/player/bottom_player.dart';
 import 'package:ppp2/ui/vms/search_vm.dart';
 import 'package:ppp2/ui/vms/vm.dart';
 

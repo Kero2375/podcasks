@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ppp2/ui/pages/playing/playing_page.dart';
 import 'package:ppp2/ui/vms/player_vm.dart';
-import 'package:text_scroll/text_scroll.dart';
 
 class BottomPlayer extends ConsumerWidget {
   static const double playerHeight = 64;
@@ -22,7 +21,7 @@ class BottomPlayer extends ConsumerWidget {
           height: playerHeight,
           child: Column(
             children: [
-              LinearProgressIndicator(value: vm.trackPosition),
+              LinearProgressIndicator(value: vm.percent),
               Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
