@@ -1,6 +1,7 @@
 
 import 'package:get_it/get_it.dart';
 import 'package:ppp2/repository/favourites_repo.dart';
+import 'package:ppp2/repository/history_repo.dart';
 import 'package:ppp2/repository/search_repo.dart';
 
 final locator = GetIt.instance;
@@ -8,4 +9,5 @@ final locator = GetIt.instance;
 void setup() {
   locator.registerSingleton<SearchRepo>(SearchRepoPodcastSearch());
   locator.registerSingleton<FavouriteRepo>(FavouriteRepoSharedPref());
+  locator.registerSingleton<HistoryRepo>(HistoryRepoSharedPrefs());
 }

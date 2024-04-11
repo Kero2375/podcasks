@@ -27,10 +27,7 @@ class PlayingPage extends ConsumerWidget {
             _image(vm.image),
             _title(context, ep, podcast),
             Slider(
-              value: (vm.duration != Duration.zero)
-                  ? vm.position.inSeconds / vm.duration.inSeconds
-                  : 0,
-              // onChanged: (value) {},
+              value: vm.percent,
               onChangeStart: (value) => vm.pause(),
               onChanged: (value) => vm.seek(value),
               onChangeEnd: (value) => vm.play(),
