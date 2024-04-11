@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:ppp2/ui/common/app_bar.dart';
+import 'package:ppp2/ui/pages/podcast_page.dart';
 import 'package:ppp2/ui/vms/player_vm.dart';
 import 'package:ppp2/utils.dart';
 
@@ -74,10 +75,13 @@ class PlayingPage extends ConsumerWidget {
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 26),
         ),
-        Text(
-          podcast?.title ?? '',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.primary),
+        GestureDetector(
+          onTap: () => Navigator.popAndPushNamed(context, PodcastPage.route, arguments: podcast),
+          child: Text(
+            podcast?.title ?? '',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.primary),
+          ),
         ),
       ],
     );
