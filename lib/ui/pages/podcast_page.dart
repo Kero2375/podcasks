@@ -49,10 +49,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
                       ),
                     },
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: FavButton(widget.podcast!),
-                  ),
+                  _favButton(),
                   _episodes(vm),
                   // if (vm.displayingEpisodes.length < (vm.podcast?.episodes.length ?? 0))
                   //   const CircularProgressIndicator(),
@@ -61,6 +58,13 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
               ),
       ),
       bottomSheet: const BottomPlayer(),
+    );
+  }
+
+  Widget _favButton() {
+    return  Padding(
+      padding: const EdgeInsets.all(16),
+      child: FavButton(widget.podcast!),
     );
   }
 

@@ -13,9 +13,8 @@ class HomeViewmodel extends Vm {
   final _favRepo = locator.get<FavouriteRepo>();
   final _historyRepo = locator.get<HistoryRepo>();
 
-  List<Podcast> _favourites = [];
-
   List<Podcast> get favourites => _favourites;
+  List<Podcast> _favourites = [];
 
   HomeViewmodel() {
     fetchFavourites();
@@ -37,13 +36,12 @@ class HomeViewmodel extends Vm {
     loading();
     if (podcast.url != null) {
       if (setFavourite) {
-        await _favRepo.addToFavourite(podcast.url!);
+        _favRepo.addToFavourite(podcast.url!);
       } else {
-        await _favRepo.removeFromFavourite(podcast.url!);
+        _favRepo.removeFromFavourite(podcast.url!);
       }
     }
-    fetchFavourites();
-    success();
+    await fetchFavourites();
   }
 
   bool isFavourite(Podcast? podcast) {

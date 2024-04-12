@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:ppp2/ui/common/themes.dart';
 import 'package:ppp2/ui/vms/home_vm.dart';
+import 'package:ppp2/ui/vms/vm.dart';
 
 class FavButton extends ConsumerWidget {
   final Podcast podcast;
@@ -13,11 +14,31 @@ class FavButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.watch(homeViewmodel);
     final bool isFav = vm.isFavourite(podcast);
-    return FilledButton.icon(
-      onPressed: () => vm.setFavourite(podcast, !isFav),
-      label: (isFav) ? const Text("Following") : const Text("Follow"),
-      icon: (isFav) ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border),
-      style: buttonStyle,
-    );
+    onTap() => vm.setFavourite(podcast, !isFav);
+    return vm.state == UiState.loading
+        ? (!isFav)
+            ? _following(() {})
+            : _follow(() {})
+        : isFav
+            ? _following(onTap)
+            : _follow(onTap);
   }
+
+  Widget _following(Function() onTap) => OutlinedButton.icon(
+        onPressed: onTap,
+        label: const Text("Following"),
+        icon: const Icon(Icons.favorite),
+        style: _style,
+      );
+
+  Widget _follow(Function() onTap) => FilledButton.icon(
+        onPressed: onTap,
+        label: const Text("Follow"),
+        icon: const Icon(Icons.favorite_border),
+        style: _style,
+      );
+
+  ButtonStyle get _style => buttonStyle.copyWith(
+        fixedSize: const MaterialStatePropertyAll(Size.fromWidth(150)),
+      );
 }

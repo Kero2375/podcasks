@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:ppp2/data/track.dart';
 import 'package:ppp2/ui/common/app_bar.dart';
@@ -33,13 +32,12 @@ class EpisodePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.watch(playerViewmodel);
     return Scaffold(
-      appBar: mainAppBar(context),
+      appBar: mainAppBar(context, title: podcast?.title),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _title(context),
-            _playButton(vm),
+            _title(context, vm),
             _description(),
             const SizedBox(height: BottomPlayer.playerHeight),
           ],
@@ -51,7 +49,7 @@ class EpisodePage extends ConsumerWidget {
 
   Widget _playButton(PlayerViewmodel vm) {
     return Center(
-      child: FilledButton.icon(
+      child: IconButton.filled(
         onPressed: () async {
           vm.isPlaying(url: episode?.contentUrl)
               ? vm.pause()
@@ -60,8 +58,8 @@ class EpisodePage extends ConsumerWidget {
         icon: vm.isPlaying(url: episode?.contentUrl)
             ? const Icon(Icons.pause)
             : const Icon(Icons.play_arrow),
-        label: vm.isPlaying(url: episode?.contentUrl) ? const Text('PAUSE') : const Text('PLAY'),
-        style: buttonStyle,
+        // label: vm.isPlaying(url: episode?.contentUrl) ? const Text('PAUSE') : const Text('PLAY'),
+        style: controlsButtonStyle(!vm.isPlaying()),
       ),
     );
   }
@@ -81,47 +79,30 @@ class EpisodePage extends ConsumerWidget {
     );
   }
 
-  Widget _title(BuildContext context) {
+  Widget _title(BuildContext context, PlayerViewmodel vm) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (episode?.imageUrl != null || podcast?.image != null) ...[
-                Container(
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(4)),
-                  clipBehavior: Clip.antiAlias,
-                  child: Image.network(
-                    episode?.imageUrl ?? podcast!.image!,
-                    width: 40,
-                    height: 40,
+              _playButton(vm),
+              const SizedBox(width: 8),
+              Flexible(
+                flex: 1,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Text(
+                    episode?.title ?? '',
+                    style: textStyleTitle,
                   ),
                 ),
-                const SizedBox(width: 8),
-              ],
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    podcast?.title ?? '',
-                    style: textStyleSmall,
-                  ),
-                  Text(
-                    episode?.author ?? '',
-                    style: textStyleSmallGray(context),
-                  ),
-                ],
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            episode?.title ?? '',
-            style: textStyleTitle,
-          ),
+          _iconInfo(context, Icons.people, episode?.author ?? ''),
           _iconInfo(context, Icons.calendar_today, episode?.publicationDate?.toDate() ?? ''),
           _iconInfo(context, Icons.hourglass_top, episode?.duration?.toTime() ?? ''),
         ],
@@ -140,10 +121,7 @@ class EpisodePage extends ConsumerWidget {
             color: Theme.of(context).colorScheme.onBackground.withOpacity(.5),
           ),
           const SizedBox(width: 8),
-          Text(
-            text ?? '',
-            style: textStyleSmallGray(context)
-          ),
+          Text(text ?? '', style: textStyleSmallGray(context)),
         ],
       ),
     );

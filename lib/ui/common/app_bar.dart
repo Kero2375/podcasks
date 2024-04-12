@@ -20,10 +20,12 @@ AppBar mainAppBar(
           )
         : null,
     title: Center(
-        child: Text(
-      title ?? '',
-      style: textStyleTitle,
-    )),
+      child: Text(
+        overflow: TextOverflow.ellipsis,
+        title ?? '',
+        style: textStyleTitle,
+      ),
+    ),
     actions: [
       IconButton(
         onPressed: () {
