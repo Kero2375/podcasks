@@ -24,7 +24,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
   @override
   void initState() {
     final vm = ref.read(podcastViewmodel);
-    vm.init(widget.podcast);
+    vm.init(widget.podcast?.episodes);
     super.initState();
   }
 
