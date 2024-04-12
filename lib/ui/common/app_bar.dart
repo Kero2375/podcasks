@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ppp2/ui/common/themes.dart';
 import 'package:ppp2/ui/pages/search/search_page.dart';
 
 AppBar mainAppBar(
@@ -18,7 +19,11 @@ AppBar mainAppBar(
             icon: const Icon(Icons.cast),
           )
         : null,
-    title: Center(child: Text(title ?? '')),
+    title: Center(
+        child: Text(
+      title ?? '',
+      style: textStyleTitle,
+    )),
     actions: [
       IconButton(
         onPressed: () {

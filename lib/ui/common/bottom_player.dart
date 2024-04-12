@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ppp2/ui/common/themes.dart';
 import 'package:ppp2/ui/pages/playing/playing_page.dart';
 import 'package:ppp2/ui/vms/player_vm.dart';
 
@@ -50,16 +52,16 @@ class BottomPlayer extends ConsumerWidget {
                                       ),
                                     const SizedBox(width: 8),
                                     Expanded(
-                                      child: Text(
-                                        vm.playingEpisode?.title ?? '',
-                                        maxLines: 1,
+                                      child: Html(
+                                        data: vm.playingEpisode?.title ?? '',
+                                        style: {
+                                          '*': Style(
+                                            margin: Margins.zero,
+                                            fontFamily: themeFontFamily.fontFamily,
+                                            textOverflow: TextOverflow.ellipsis,
+                                          ),
+                                        },
                                       ),
-                                      // child: TextScroll(
-                                      //   vm.playingEpisode?.title ?? '',
-                                      //   mode: TextScrollMode.endless,
-                                      //   velocity: const Velocity(pixelsPerSecond: Offset(30, 0)),
-                                      //   pauseBetween: const Duration(seconds: 1),
-                                      // ),
                                     ),
                                   ],
                                 ),

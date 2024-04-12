@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ppp2/ui/common/app_bar.dart';
 import 'package:ppp2/ui/pages/home/podcast_list.dart';
-import 'package:ppp2/ui/player/bottom_player.dart';
+import 'package:ppp2/ui/common/bottom_player.dart';
 import 'package:ppp2/ui/vms/home_vm.dart';
 import 'package:ppp2/ui/vms/player_vm.dart';
 import 'package:ppp2/ui/vms/vm.dart';

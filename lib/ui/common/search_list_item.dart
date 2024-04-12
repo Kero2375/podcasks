@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
+import 'package:ppp2/ui/common/themes.dart';
 import 'package:ppp2/ui/pages/podcast_page.dart';
 import 'package:ppp2/ui/vms/search_vm.dart';
 
@@ -47,18 +48,18 @@ class SearchListItem extends ConsumerWidget {
                   Text(
                     item.collectionName ?? '',
                     maxLines: 1,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: textStyleBody,
                   ),
                   Text(
                     item.artistName ?? '',
                     maxLines: 1,
-                    // style: const TextStyle(fontSize: 12),
+                    style: textStyleBodyGray(context),
                   ),
-                  Text(
-                    item.feedUrl ?? '',
-                    maxLines: 1,
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w200),
-                  ),
+                  // Text(
+                  //   item.feedUrl ?? '',
+                  //   maxLines: 1,
+                  //   style: textStyleSmallGray(context)
+                  // ),
                 ],
               ),
             ),

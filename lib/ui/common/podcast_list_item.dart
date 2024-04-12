@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
+import 'package:ppp2/ui/common/divider.dart';
+import 'package:ppp2/ui/common/themes.dart';
 import 'package:ppp2/ui/pages/podcast_page.dart';
 
 class PodcastListItem extends ConsumerWidget {
   final Podcast podcast;
+  final bool isLast;
 
   const   PodcastListItem({
     super.key,
     required this.podcast,
+    this.isLast = false,
   });
 
   @override
@@ -16,43 +20,44 @@ class PodcastListItem extends ConsumerWidget {
         onTap: () {
           Navigator.pushNamed(context, PodcastPage.route, arguments: podcast);
         },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                height: 45,
-                width: 45,
-                clipBehavior: Clip.antiAlias,
-                child: Image.network(
-                  podcast.image!,
-                ),
-              ),
-              const SizedBox(
-                width: 16,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      podcast.title ?? '',
-                      maxLines: 1,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+        child: Column(
+          children: [
+            // divider(context),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
                     ),
-                    // Text(
-                    //   podcast.url ?? '',
-                    //   maxLines: 1,
-                    //   style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w200),
-                    // ),
-                  ],
-                ),
+                    height: 45,
+                    width: 45,
+                    clipBehavior: Clip.antiAlias,
+                    child: Image.network(
+                      podcast.image!,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 16,
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          podcast.title ?? '',
+                          maxLines: 1,
+                          style: textStyleBody,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            // if (isLast) divider(context),
+          ],
         ),
       );
 }

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:ppp2/data/track.dart';
 import 'package:ppp2/ui/common/app_bar.dart';
+import 'package:ppp2/ui/common/bottom_player.dart';
 import 'package:ppp2/ui/common/themes.dart';
-import 'package:ppp2/ui/player/bottom_player.dart';
 import 'package:ppp2/ui/vms/player_vm.dart';
 import 'package:ppp2/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -32,7 +33,7 @@ class EpisodePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.watch(playerViewmodel);
     return Scaffold(
-      appBar: mainAppBar(context, title: podcast?.title),
+      appBar: mainAppBar(context),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -59,7 +60,7 @@ class EpisodePage extends ConsumerWidget {
         icon: vm.isPlaying(url: episode?.contentUrl)
             ? const Icon(Icons.pause)
             : const Icon(Icons.play_arrow),
-        label: vm.isPlaying(url: episode?.contentUrl) ? const Text('Pause') : const Text('Play'),
+        label: vm.isPlaying(url: episode?.contentUrl) ? const Text('PAUSE') : const Text('PLAY'),
         style: buttonStyle,
       ),
     );
@@ -71,7 +72,12 @@ class EpisodePage extends ConsumerWidget {
       onLinkTap: (url, attributes, element) {
         launchUrl(Uri.parse(url!));
       },
-      style: {'*': Style(margin: Margins.all(8))},
+      style: {
+        '*': Style(
+          margin: Margins.all(8),
+          fontFamily: themeFontFamily.fontFamily,
+        )
+      },
     );
   }
 
@@ -101,14 +107,11 @@ class EpisodePage extends ConsumerWidget {
                 children: [
                   Text(
                     podcast?.title ?? '',
-                    style: const TextStyle(fontSize: 12),
+                    style: textStyleSmall,
                   ),
                   Text(
                     episode?.author ?? '',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Theme.of(context).colorScheme.onBackground.withOpacity(.5),
-                    ),
+                    style: textStyleSmallGray(context),
                   ),
                 ],
               ),
@@ -117,7 +120,7 @@ class EpisodePage extends ConsumerWidget {
           const SizedBox(height: 8),
           Text(
             episode?.title ?? '',
-            style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            style: textStyleTitle,
           ),
           _iconInfo(context, Icons.calendar_today, episode?.publicationDate?.toDate() ?? ''),
           _iconInfo(context, Icons.hourglass_top, episode?.duration?.toTime() ?? ''),
@@ -139,7 +142,7 @@ class EpisodePage extends ConsumerWidget {
           const SizedBox(width: 8),
           Text(
             text ?? '',
-            style: const TextStyle(fontSize: 12),
+            style: textStyleSmallGray(context)
           ),
         ],
       ),

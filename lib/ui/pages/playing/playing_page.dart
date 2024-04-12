@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:ppp2/ui/common/app_bar.dart';
+import 'package:ppp2/ui/common/themes.dart';
 import 'package:ppp2/ui/pages/podcast_page.dart';
 import 'package:ppp2/ui/vms/player_vm.dart';
 import 'package:ppp2/utils.dart';
@@ -22,24 +23,10 @@ class PlayingPage extends ConsumerWidget {
       body: Padding(
         padding: const EdgeInsets.all(32),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _image(vm.image),
-            _title(context, ep, podcast),
-            Slider(
-              value: vm.percent,
-              onChangeStart: (value) => vm.pause(),
-              onChanged: (value) => vm.seek(value),
-              onChangeEnd: (value) => vm.play(),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(vm.position.toTime()),
-                Text((vm.position - vm.duration).toTime()),
-              ],
-            ),
-            _buttons(vm),
+            _bottomSection(context, ep, podcast, vm),
           ],
         ),
       ),
@@ -56,19 +43,50 @@ class PlayingPage extends ConsumerWidget {
             icon: const Icon(Icons.replay_10),
             iconSize: 30,
             onPressed: () => vm.forward(const Duration(seconds: -10)),
+            style: controlsButtonStyle,
           ),
           IconButton.filled(
             icon: vm.isPlaying() ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
             iconSize: 40,
             onPressed: () => vm.isPlaying() ? vm.pause() : vm.play(),
+            style: controlsButtonStyle,
           ),
           IconButton(
             icon: const Icon(Icons.forward_30),
             iconSize: 30,
             onPressed: () => vm.forward(const Duration(seconds: 30)),
+            style: controlsButtonStyle,
           ),
         ],
       ),
+    );
+  }
+
+  Widget _bottomSection(BuildContext context, Episode? ep, Podcast? podcast, PlayerViewmodel vm) {
+    return Column(
+      children: [
+        _title(context, ep, podcast),
+        Slider(
+          value: vm.percent,
+          onChangeStart: (value) => vm.pause(),
+          onChanged: (value) => vm.seek(value),
+          onChangeEnd: (value) => vm.play(),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              vm.position.toTime(),
+              style: textStyleSmallGray(context),
+            ),
+            Text(
+              (vm.position - vm.duration).toTime(),
+              style: textStyleSmallGray(context),
+            ),
+          ],
+        ),
+        _buttons(vm),
+      ],
     );
   }
 
@@ -77,16 +95,17 @@ class PlayingPage extends ConsumerWidget {
       children: [
         Text(
           ep?.title ?? '',
-          maxLines: 2,
+          maxLines: 3,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 24),
+          style: textStyleTitle,
         ),
+        const SizedBox(height: 8),
         GestureDetector(
           onTap: () => Navigator.popAndPushNamed(context, PodcastPage.route, arguments: podcast),
           child: Text(
             podcast?.title ?? '',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.primary),
+            style: textStyleSubtitle(context),
           ),
         ),
       ],

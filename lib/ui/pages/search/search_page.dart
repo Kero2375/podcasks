@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ppp2/ui/common/themes.dart';
 import 'package:ppp2/ui/pages/search/search_list.dart';
 import 'package:ppp2/ui/vms/search_vm.dart';
 import 'package:ppp2/ui/vms/vm.dart';
@@ -33,9 +34,11 @@ class SearchPage extends ConsumerWidget {
           child: TextField(
             autofocus: true,
             decoration: const InputDecoration(
-                focusedBorder: InputBorder.none,
-                border: InputBorder.none,
-                hintText: "Search Podcast..."),
+              focusedBorder: InputBorder.none,
+              border: InputBorder.none,
+              hintText: "Search Podcast...",
+            ),
+            style: textStyleBody,
             onChanged: (value) {
               if (value.length > 2) {
                 vm.search(value);

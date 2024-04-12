@@ -3,9 +3,11 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:ppp2/ui/common/app_bar.dart';
+import 'package:ppp2/ui/common/bottom_player.dart';
+import 'package:ppp2/ui/common/divider.dart';
 import 'package:ppp2/ui/common/fav_button.dart';
+import 'package:ppp2/ui/common/themes.dart';
 import 'package:ppp2/ui/pages/episode_page.dart';
-import 'package:ppp2/ui/player/bottom_player.dart';
 import 'package:ppp2/ui/vms/podcast_vm.dart';
 
 class PodcastPage extends ConsumerStatefulWidget {
@@ -19,7 +21,6 @@ class PodcastPage extends ConsumerStatefulWidget {
 }
 
 class _PodcastPageState extends ConsumerState<PodcastPage> {
-
   @override
   void initState() {
     final vm = ref.read(podcastViewmodel);
@@ -35,14 +36,17 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
       body: SingleChildScrollView(
         controller: vm.controller,
         child: (widget.podcast == null)
-            ? const Center(child: Text("Error"))
+            ? Center(child: Text("Error", style: textStyleBody))
             : Column(
                 children: [
                   _image(widget.podcast!),
                   Html(
                     data: widget.podcast!.description ?? '',
                     style: {
-                      '*': Style(margin: Margins.all(8)),
+                      '*': Style(
+                        margin: Margins.all(8),
+                        fontFamily: themeFontFamily.fontFamily,
+                      ),
                     },
                   ),
                   Padding(
@@ -77,19 +81,15 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
       },
       child: Column(
         children: [
-          Container(
-            color: Colors.white10,
-            width: double.infinity,
-            height: 1,
-          ),
+          divider(context),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
                   ep?.title ?? '',
-                  style: const TextStyle(fontSize: 18),
+                  style: textStyleHeader,
                 ),
                 Html(
                   data: ep?.description ?? '',
@@ -98,6 +98,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
                       maxLines: 3,
                       margin: Margins.zero,
                       textOverflow: TextOverflow.ellipsis,
+                      fontFamily: themeFontFamily.fontFamily,
                     ),
                   },
                 ),
@@ -111,6 +112,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
 
   Widget _image(Podcast item) {
     return Container(
+      margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(6)),
       clipBehavior: Clip.antiAlias,
       width: 120,
