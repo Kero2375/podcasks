@@ -32,6 +32,7 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.watch(themeViewmodel);
     return MaterialApp(
+      initialRoute: HomePage.route,
       routes: {
         HomePage.route: (context) => const HomePage(),
         SearchPage.route: (context) => const SearchPage(),

@@ -34,8 +34,11 @@ class BottomPlayer extends ConsumerWidget {
                           Flexible(
                             flex: 1,
                             child: GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(context, PlayingPage.route);
+                              onTap: () => Navigator.pushNamed(context, PlayingPage.route),
+                              onVerticalDragEnd: (details) {
+                                if (details.primaryVelocity! < 0) {
+                                  Navigator.pushNamed(context, PlayingPage.route);
+                                }
                               },
                               child: Container(
                                 color: Colors.transparent,
