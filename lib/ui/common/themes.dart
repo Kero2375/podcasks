@@ -8,9 +8,9 @@ get buttonStyle => ButtonStyle(
       textStyle: MaterialStatePropertyAll(textStyleBody),
     );
 
-get controlsButtonStyle => ButtonStyle(
+ButtonStyle controlsButtonStyle(bool rounded) => ButtonStyle(
   shape: MaterialStatePropertyAll(
-    RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    RoundedRectangleBorder(borderRadius: BorderRadius.circular(rounded? 100: 16)),
   ),
   textStyle: MaterialStatePropertyAll(textStyleBody),
 );
