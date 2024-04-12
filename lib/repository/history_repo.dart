@@ -36,7 +36,7 @@ class HistoryRepoSharedPrefs extends HistoryRepo {
       if (episode == null) return null;
       return Track(
           url: episode.contentUrl,
-          episode: PodcastEpisode.fromEpisode(episode!, podcast: podcast),
+          episode: PodcastEpisode.fromEpisode(episode, podcast: podcast),
           podcast: podcast);
     }
     return null;

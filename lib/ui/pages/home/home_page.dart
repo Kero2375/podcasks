@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podcast_search/podcast_search.dart';
 import 'package:ppp2/data/podcast_episode.dart';
 import 'package:ppp2/ui/common/app_bar.dart';
 import 'package:ppp2/ui/common/bottom_player.dart';
