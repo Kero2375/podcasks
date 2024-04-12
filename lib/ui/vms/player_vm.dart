@@ -24,7 +24,9 @@ class PlayerViewmodel extends Vm {
 
   Duration get duration => audioHandler?.duration ?? Duration.zero;
 
-  double get percent => (duration != Duration.zero) ? position.inSeconds / duration.inSeconds : 0.0;
+  double get percent => (duration != Duration.zero)
+      ? position.inSeconds / duration.inSeconds
+      : 0.0;
 
   Timer? _positionTimer;
   Timer? _saveTimer;
@@ -46,9 +48,11 @@ class PlayerViewmodel extends Vm {
       }
     }
     audioHandler?.play();
-    _positionTimer = Timer.periodic(const Duration(seconds: 1), (timer) => updatePosition());
+    _positionTimer =
+        Timer.periodic(const Duration(seconds: 1), (timer) => updatePosition());
     saveTrack();
-    _saveTimer = Timer.periodic(const Duration(seconds: 10), (timer) => saveTrack());
+    _saveTimer =
+        Timer.periodic(const Duration(seconds: 10), (timer) => saveTrack());
     success();
   }
 
@@ -73,7 +77,8 @@ class PlayerViewmodel extends Vm {
 
   bool isPlaying({String? url}) {
     if (url != null) {
-      return (audioHandler?.playing == true && playingEpisode?.contentUrl == url);
+      return (audioHandler?.playing == true &&
+          playingEpisode?.contentUrl == url);
     }
     return (audioHandler?.playing == true);
   }
@@ -90,7 +95,8 @@ class PlayerViewmodel extends Vm {
         notifyListeners();
       }
 
-      if (position.inSeconds == duration.inSeconds && duration != Duration.zero) {
+      if (position.inSeconds == duration.inSeconds &&
+          duration != Duration.zero) {
         seekPosition(Duration.zero);
         pause();
       }
@@ -139,7 +145,8 @@ class PlayerViewmodel extends Vm {
   }
 
   bool isScrollToInitialPosition() =>
-      scrollController.offset <= scrollController.initialScrollOffset + _scrollOffset;
+      scrollController.offset <=
+      scrollController.initialScrollOffset + _scrollOffset;
 
   scrollDown() async {
     if (isScrollToInitialPosition()) {

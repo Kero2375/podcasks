@@ -1,24 +1,23 @@
 import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
-import 'package:podcast_search/podcast_search.dart';
+import 'package:ppp2/data/podcast_episode.dart';
 import 'package:ppp2/ui/vms/vm.dart';
 
 class ListViewmodel extends Vm {
   int _maxItems = 10;
   int _page = 0;
 
-  List<Episode>? get episodes => _episodes;
-  List<Episode>? _episodes;
+  List<PodcastEpisode>? get episodes => _episodes;
+  List<PodcastEpisode>? _episodes;
 
-  List<Episode> get displayingEpisodes => _displayingEpisodes;
-  List<Episode> _displayingEpisodes = [];
+  List<PodcastEpisode> get displayingEpisodes => _displayingEpisodes;
+  List<PodcastEpisode> _displayingEpisodes = [];
 
   ScrollController get controller => _controller;
   ScrollController _controller = ScrollController();
 
-  init(List<Episode>? eps, {int? maxItems}) {
-    if(maxItems != null) _maxItems = maxItems;
+  init(List<PodcastEpisode>? eps, {int? maxItems}) {
+    if (maxItems != null) _maxItems = maxItems;
     _episodes = eps;
     _page = 0;
     if (episodes?.isNotEmpty != null) {

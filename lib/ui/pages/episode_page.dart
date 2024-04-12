@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
+import 'package:ppp2/data/podcast_episode.dart';
 import 'package:ppp2/data/track.dart';
 import 'package:ppp2/ui/common/app_bar.dart';
 import 'package:ppp2/ui/common/bottom_player.dart';
@@ -10,21 +11,14 @@ import 'package:ppp2/ui/vms/player_vm.dart';
 import 'package:ppp2/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class EpisodeData {
-  final Episode? episode;
-  final Podcast? podcast;
-
-  EpisodeData(this.episode, this.podcast);
-}
-
 class EpisodePage extends ConsumerWidget {
   static const route = '/podcast_page/episode_page';
 
-  final EpisodeData? episodeData;
+  final PodcastEpisode? episodeData;
 
   Podcast? get podcast => episodeData?.podcast;
 
-  Episode? get episode => episodeData?.episode;
+  Episode? get episode => episodeData;
 
   const EpisodePage(this.episodeData, {super.key});
 
@@ -53,13 +47,18 @@ class EpisodePage extends ConsumerWidget {
         onPressed: () async {
           vm.isPlaying(url: episode?.contentUrl)
               ? vm.pause()
-              : vm.play(track: Track(url: episode?.contentUrl, episode: episode, podcast: podcast));
+              : vm.play(
+                  track: Track(
+                      url: episode?.contentUrl,
+                      episode: PodcastEpisode.fromEpisode(episode!,
+                          podcast: podcast),
+                      podcast: podcast));
         },
         icon: vm.isPlaying(url: episode?.contentUrl)
             ? const Icon(Icons.pause)
             : const Icon(Icons.play_arrow),
         // label: vm.isPlaying(url: episode?.contentUrl) ? const Text('PAUSE') : const Text('PLAY'),
-        style: controlsButtonStyle(!vm.isPlaying()),
+        style: controlsButtonStyle(!vm.isPlaying(url: episode?.contentUrl)),
       ),
     );
   }
@@ -88,8 +87,10 @@ class EpisodePage extends ConsumerWidget {
             ],
           ),
           _iconInfo(context, Icons.people, episode?.author ?? ''),
-          _iconInfo(context, Icons.calendar_today, episode?.publicationDate?.toDate() ?? ''),
-          _iconInfo(context, Icons.hourglass_top, episode?.duration?.toTime() ?? ''),
+          _iconInfo(context, Icons.calendar_today,
+              episode?.publicationDate?.toDate() ?? ''),
+          _iconInfo(
+              context, Icons.hourglass_top, episode?.duration?.toTime() ?? ''),
         ],
       ),
     );

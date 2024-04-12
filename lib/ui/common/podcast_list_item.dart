@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
-import 'package:ppp2/ui/common/divider.dart';
 import 'package:ppp2/ui/common/themes.dart';
 import 'package:ppp2/ui/pages/podcast_page.dart';
 
@@ -9,7 +8,7 @@ class PodcastListItem extends ConsumerWidget {
   final Podcast podcast;
   final bool isLast;
 
-  const   PodcastListItem({
+  const PodcastListItem({
     super.key,
     required this.podcast,
     this.isLast = false,

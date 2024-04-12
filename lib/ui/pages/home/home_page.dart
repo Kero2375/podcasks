@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
+import 'package:ppp2/data/podcast_episode.dart';
 import 'package:ppp2/ui/common/app_bar.dart';
 import 'package:ppp2/ui/common/bottom_player.dart';
 import 'package:ppp2/ui/common/divider.dart';
@@ -32,7 +33,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     super.initState();
   }
 
-  Future<void> _checkSaved(HomeViewmodel homeVm, PlayerViewmodel playerVm) async {
+  Future<void> _checkSaved(
+      HomeViewmodel homeVm, PlayerViewmodel playerVm) async {
     final track = await homeVm.getLastSavedTrack();
     final position = await homeVm.getLastSavedPosition();
     if (track != null && position != null) {
@@ -47,16 +49,11 @@ class _HomePageState extends ConsumerState<HomePage> {
     final homeVm = ref.watch(homeViewmodel);
     final episodesVm = ref.watch(episodesHomeViewmodel);
 
-    episodesVm.init(
-      homeVm.favourites
-          .map((e) => e.episodes)
-          .flattened
-          .sorted((a, b) =>
-              b.publicationDate != null ? a.publicationDate?.compareTo(b.publicationDate!) ?? 0 : 0)
-          .reversed
-          .toList(),
-      maxItems: 30,
-    );
+    homeVm.addListener(() => _initEpisodeList(episodesVm, homeVm));
+
+    if (episodesVm.displayingEpisodes.isEmpty) {
+      _initEpisodeList(episodesVm, homeVm);
+    }
 
     return Scaffold(
       appBar: mainAppBar(
@@ -71,7 +68,8 @@ class _HomePageState extends ConsumerState<HomePage> {
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
               itemCount: episodesVm.displayingEpisodes.length,
-              itemBuilder: (context, i) => _episode(context, episodesVm.displayingEpisodes[i]),
+              itemBuilder: (context, i) =>
+                  _episode(context, episodesVm.displayingEpisodes[i]),
             ),
       bottomSheet: const BottomPlayer(),
       drawer: Drawer(
@@ -103,12 +101,27 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  Widget _episode(BuildContext context, Episode? ep) {
+  void _initEpisodeList(
+      EpisodesHomeViewmodel episodesVm, HomeViewmodel homeVm) {
+    episodesVm.init(
+      homeVm.favourites
+          .map((p) =>
+              p.episodes.map((e) => PodcastEpisode.fromEpisode(e, podcast: p)))
+          .flattened
+          .sorted((a, b) => b.publicationDate != null
+              ? a.publicationDate?.compareTo(b.publicationDate!) ?? 0
+              : 0)
+          .reversed
+          .toList(),
+      maxItems: 30,
+    );
+  }
+
+  Widget _episode(BuildContext context, PodcastEpisode? ep) {
+    final image = ep?.imageUrl ?? ep?.podcast?.image;
     return InkWell(
       onTap: () {
-        Navigator.pushNamed(context, EpisodePage.route,
-            arguments: EpisodeData(ep, null)); // fixme: podcast missing!!!!!!!!!!!!!!!!!!!!!!!11 (maybe wrapper object)
-        // fixme: list scroll not working here in home!
+        Navigator.pushNamed(context, EpisodePage.route, arguments: ep);
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,19 +130,37 @@ class _HomePageState extends ConsumerState<HomePage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (ep?.imageUrl != null)
-                  Image.network(
-                    ep!.imageUrl!,
-                    height: 40,
+                if (image != null)
+                  Container(
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(4),
+                      ),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: Image.network(
+                      image,
+                      height: 40,
+                    ),
                   ),
                 const SizedBox(width: 8),
                 Flexible(
                   flex: 1,
-                  child: Text(
-                    ep?.title ?? '',
-                    style: textStyleHeader,
-                    overflow: TextOverflow.fade,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        ep?.publicationDate?.toDate() ?? '',
+                        style: textStyleSmallGray(context),
+                      ),
+                      Text(
+                        ep?.title ?? '',
+                        style: textStyleHeader,
+                        overflow: TextOverflow.fade,
+                      ),
+                    ],
                   ),
                 ),
               ],

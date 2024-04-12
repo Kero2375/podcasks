@@ -16,7 +16,8 @@ class BottomPlayer extends ConsumerWidget {
     return vm.playing == null
         ? const SizedBox.shrink()
         : BottomSheet(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
             enableDrag: false,
             onClosing: () {},
             builder: (context) {
@@ -34,10 +35,12 @@ class BottomPlayer extends ConsumerWidget {
                           Flexible(
                             flex: 1,
                             child: GestureDetector(
-                              onTap: () => Navigator.pushNamed(context, PlayingPage.route),
+                              onTap: () => Navigator.pushNamed(
+                                  context, PlayingPage.route),
                               onVerticalDragEnd: (details) {
                                 if (details.primaryVelocity! < 0) {
-                                  Navigator.pushNamed(context, PlayingPage.route);
+                                  Navigator.pushNamed(
+                                      context, PlayingPage.route);
                                 }
                               },
                               child: Container(
@@ -48,7 +51,8 @@ class BottomPlayer extends ConsumerWidget {
                                       Container(
                                         margin: const EdgeInsets.all(8),
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(4),
+                                          borderRadius:
+                                              BorderRadius.circular(4),
                                         ),
                                         clipBehavior: Clip.antiAlias,
                                         child: Image.network(vm.image!),
@@ -60,7 +64,8 @@ class BottomPlayer extends ConsumerWidget {
                                         style: {
                                           '*': Style(
                                             margin: Margins.zero,
-                                            fontFamily: themeFontFamily.fontFamily,
+                                            fontFamily:
+                                                themeFontFamily.fontFamily,
                                             textOverflow: TextOverflow.ellipsis,
                                           ),
                                         },
@@ -81,8 +86,9 @@ class BottomPlayer extends ConsumerWidget {
                                   vm.play();
                                 }
                               },
-                              icon:
-                                  playing ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
+                              icon: playing
+                                  ? const Icon(Icons.pause)
+                                  : const Icon(Icons.play_arrow),
                             ),
                           ),
                         ],

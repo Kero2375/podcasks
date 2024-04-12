@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:ppp2/data/podcast_episode.dart';
 import 'package:ppp2/data/track.dart';
 import 'package:ppp2/locator.dart';
 import 'package:ppp2/repository/search_repo.dart';
@@ -19,7 +20,8 @@ class HistoryRepoSharedPrefs extends HistoryRepo {
   static const String playingEpisodeKey = 'playing_episode_sp_key';
   static const String positionKey = 'position_sp_key';
 
-  Future<SharedPreferences> get _getSp async => await SharedPreferences.getInstance();
+  Future<SharedPreferences> get _getSp async =>
+      await SharedPreferences.getInstance();
   final SearchRepo _searchRepo = locator.get<SearchRepo>();
 
   @override
@@ -29,8 +31,13 @@ class HistoryRepoSharedPrefs extends HistoryRepo {
     String? podcastUrl = sp.getString(playingPodcastKey);
     if (episodeId != null && podcastUrl != null) {
       final podcast = await _searchRepo.fetchPodcast(podcastUrl);
-      final episode = podcast?.episodes.firstWhereOrNull((element) => element.guid == episodeId);
-      return Track(url: episode?.contentUrl, episode: episode, podcast: podcast);
+      final episode = podcast?.episodes
+          .firstWhereOrNull((element) => element.guid == episodeId);
+      if (episode == null) return null;
+      return Track(
+          url: episode.contentUrl,
+          episode: PodcastEpisode.fromEpisode(episode!, podcast: podcast),
+          podcast: podcast);
     }
     return null;
   }

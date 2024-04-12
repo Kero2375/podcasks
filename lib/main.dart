@@ -2,6 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
+import 'package:ppp2/data/podcast_episode.dart';
 import 'package:ppp2/locator.dart';
 import 'package:ppp2/manager/audio_handler.dart';
 import 'package:ppp2/ui/pages/episode_page.dart';
@@ -46,7 +47,8 @@ class MyApp extends ConsumerWidget {
           );
         } else if (settings.name == EpisodePage.route) {
           return MaterialPageRoute(
-            builder: (context) => EpisodePage(settings.arguments as EpisodeData?),
+            builder: (context) =>
+                EpisodePage(settings.arguments as PodcastEpisode?),
           );
         }
         return null;

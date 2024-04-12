@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
+import 'package:ppp2/data/podcast_episode.dart';
 import 'package:ppp2/ui/common/app_bar.dart';
 import 'package:ppp2/ui/common/bottom_player.dart';
 import 'package:ppp2/ui/common/divider.dart';
@@ -9,6 +10,7 @@ import 'package:ppp2/ui/common/fav_button.dart';
 import 'package:ppp2/ui/common/themes.dart';
 import 'package:ppp2/ui/pages/episode_page.dart';
 import 'package:ppp2/ui/vms/podcast_vm.dart';
+import 'package:ppp2/utils.dart';
 
 class PodcastPage extends ConsumerStatefulWidget {
   static const route = '/podcast_page';
@@ -24,7 +26,9 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
   @override
   void initState() {
     final vm = ref.read(podcastViewmodel);
-    vm.init(widget.podcast?.episodes);
+    vm.init(widget.podcast?.episodes
+        .map((e) => PodcastEpisode.fromEpisode(e))
+        .toList());
     super.initState();
   }
 
@@ -114,7 +118,11 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
   Widget _episode(BuildContext context, Episode? ep) {
     return InkWell(
       onTap: () {
-        Navigator.pushNamed(context, EpisodePage.route, arguments: EpisodeData(ep, widget.podcast));
+        if (ep != null && widget.podcast != null) {
+          Navigator.pushNamed(context, EpisodePage.route,
+              arguments:
+                  PodcastEpisode.fromEpisode(ep, podcast: widget.podcast!));
+        }
       },
       child: Column(
         children: [
@@ -124,6 +132,10 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                Text(
+                  ep?.publicationDate?.toDate() ?? '',
+                  style: textStyleSmallGray(context),
+                ),
                 Text(
                   ep?.title ?? '',
                   style: textStyleHeader,
