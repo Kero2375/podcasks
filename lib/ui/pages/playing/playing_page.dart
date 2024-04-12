@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:ppp2/ui/common/app_bar.dart';
 import 'package:ppp2/ui/common/themes.dart';
+import 'package:ppp2/ui/pages/episode_page.dart';
 import 'package:ppp2/ui/pages/podcast_page.dart';
 import 'package:ppp2/ui/vms/player_vm.dart';
 import 'package:ppp2/utils.dart';
@@ -20,7 +21,22 @@ class PlayingPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: mainAppBar(context),
-      body: Padding(
+      body: SingleChildScrollView(
+        controller: vm.scrollController,
+        child: Column(
+          children: [
+            _pageContent(context, vm, ep, podcast),
+            description(ep),
+          ],
+        ),
+      ),
+    );
+  }
+
+  SizedBox _pageContent(BuildContext context, PlayerViewmodel vm, Episode? ep, Podcast? podcast) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height - MediaQuery.of(context).viewPadding.top * 2,
+      child: Padding(
         padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -86,6 +102,13 @@ class PlayingPage extends ConsumerWidget {
           ],
         ),
         _buttons(vm),
+        IconButton(
+          onPressed: () => vm.scrollDown(),
+          icon: Icon(
+            Icons.keyboard_arrow_down,
+            color: Theme.of(context).colorScheme.onBackground.withOpacity(.5),
+          ),
+        ),
       ],
     );
   }

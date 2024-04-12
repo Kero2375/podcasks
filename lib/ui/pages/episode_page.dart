@@ -38,7 +38,7 @@ class EpisodePage extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _title(context, vm),
-            _description(),
+            description(episode),
             const SizedBox(height: BottomPlayer.playerHeight),
           ],
         ),
@@ -61,21 +61,6 @@ class EpisodePage extends ConsumerWidget {
         // label: vm.isPlaying(url: episode?.contentUrl) ? const Text('PAUSE') : const Text('PLAY'),
         style: controlsButtonStyle(!vm.isPlaying()),
       ),
-    );
-  }
-
-  Html _description() {
-    return Html(
-      data: episode?.description ?? '',
-      onLinkTap: (url, attributes, element) {
-        launchUrl(Uri.parse(url!));
-      },
-      style: {
-        '*': Style(
-          margin: Margins.all(8),
-          fontFamily: themeFontFamily.fontFamily,
-        )
-      },
     );
   }
 
@@ -126,4 +111,19 @@ class EpisodePage extends ConsumerWidget {
       ),
     );
   }
+}
+
+Html description(Episode? episode) {
+  return Html(
+    data: episode?.description ?? '',
+    onLinkTap: (url, attributes, element) {
+      launchUrl(Uri.parse(url!));
+    },
+    style: {
+      '*': Style(
+        margin: Margins.all(8),
+        fontFamily: themeFontFamily.fontFamily,
+      )
+    },
+  );
 }

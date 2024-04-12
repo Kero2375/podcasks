@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:ppp2/data/track.dart';
@@ -12,6 +13,10 @@ import 'package:ppp2/ui/vms/vm.dart';
 final playerViewmodel = ChangeNotifierProvider((ref) => PlayerViewmodel());
 
 class PlayerViewmodel extends Vm {
+  ScrollController scrollController = ScrollController();
+
+  int _scrollOffset = 300;
+
   Track? get playing => _playing;
   Track? _playing;
 
@@ -130,6 +135,19 @@ class PlayerViewmodel extends Vm {
     if (audioHandler != null) {
       _historyRepo.setPlaying(playing);
       _historyRepo.setPosition(position);
+    }
+  }
+
+  bool isScrollToInitialPosition() =>
+      scrollController.offset <= scrollController.initialScrollOffset + _scrollOffset;
+
+  scrollDown() async {
+    if (isScrollToInitialPosition()) {
+      await scrollController.animateTo(
+        scrollController.initialScrollOffset + _scrollOffset,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.decelerate,
+      );
     }
   }
 }
