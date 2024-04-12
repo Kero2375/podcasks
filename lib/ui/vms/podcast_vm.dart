@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
@@ -9,8 +10,19 @@ class PodcastViewmodel extends Vm {
   static const int _maxItems = 10;
   int _page = 0;
 
-  Podcast? get podcast => _podcast;
-  Podcast? _podcast;
+  bool get newerFirst => _newerFirst;
+  bool _newerFirst = true;
+
+  List<Episode>? get episodes => newerFirst
+      ? _episodes
+      : _episodes
+          ?.sorted((a, b) {
+            final dateA = a.publicationDate;
+            final dateB = b.publicationDate;
+            return (dateA != null && dateB != null) ? dateA.compareTo(dateB) : 0;
+          })
+          .toList();
+  List<Episode>? _episodes;
 
   List<Episode> get displayingEpisodes => _displayingEpisodes;
   List<Episode> _displayingEpisodes = [];
@@ -19,17 +31,27 @@ class PodcastViewmodel extends Vm {
   ScrollController _controller = ScrollController();
 
   init(Podcast? podcast) {
-    _podcast = podcast;
+    _episodes = podcast?.episodes;
     _page = 0;
-    if (_podcast?.episodes.isNotEmpty != null) {
-      if (_podcast!.episodes.length < _maxItems) {
-        _displayingEpisodes = _podcast!.episodes;
-      } else {
-        _displayingEpisodes = _podcast!.episodes.sublist(0, _maxItems);
-      }
-      _controller = ScrollController();
-      _controller.addListener(_loadMoreData);
+    if (episodes?.isNotEmpty != null) {
+      _initEpisodesList();
     }
+  }
+
+  void _initEpisodesList() {
+    if (episodes!.length < _maxItems) {
+      _displayingEpisodes = episodes!;
+    } else {
+      _displayingEpisodes = episodes!.sublist(0, _maxItems);
+    }
+    _controller = ScrollController();
+    _controller.addListener(_loadMoreData);
+  }
+
+  setNewerFirst(bool newFirst) {
+    _newerFirst = newFirst;
+    _initEpisodesList();
+    notifyListeners();
   }
 
   @override
@@ -42,9 +64,9 @@ class PodcastViewmodel extends Vm {
     if (_controller.position.pixels == _controller.position.maxScrollExtent) {
       // User has reached the end of the list
       // Load more data or trigger pagination in flutter
-      if (_podcast?.episodes != null) {
+      if (episodes != null) {
         _page += 1;
-        _displayingEpisodes.addAll(_podcast!.episodes.sublist(
+        _displayingEpisodes.addAll(episodes!.sublist(
           /*start*/
           _page * _maxItems,
           /*end*/ (_page + 1) * _maxItems,

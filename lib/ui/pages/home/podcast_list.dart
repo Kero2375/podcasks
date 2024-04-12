@@ -11,9 +11,14 @@ class PodcastList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return Column(
       children: [
         ...items
+            .sorted((a, b) {
+              final dateA = a.title;
+              final dateB = b.title;
+              return (dateA != null && dateB != null) ? dateA.compareTo(dateB) : 0;
+            })
             .mapIndexed(
               (i, e) => PodcastListItem(podcast: e, isLast: i == items.length - 1),
             )

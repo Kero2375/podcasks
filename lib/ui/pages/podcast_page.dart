@@ -28,11 +28,44 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
     super.initState();
   }
 
+  void handleClick(bool item, PodcastViewmodel vm) {
+    vm.setNewerFirst(item);
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = ref.watch(podcastViewmodel);
     return Scaffold(
-      appBar: mainAppBar(context, title: widget.podcast?.title),
+      appBar: mainAppBar(
+        context,
+        title: widget.podcast?.title,
+        actions: PopupMenuButton(
+          icon: const Icon(Icons.sort),
+          onSelected: (item) => handleClick(item, vm),
+          itemBuilder: (context) => [
+            PopupMenuItem(
+              value: false,
+              child: Row(
+                children: [
+                  const Icon(Icons.arrow_downward),
+                  const SizedBox(width: 8),
+                  Text('Older first', style: textStyleBody),
+                ],
+              ),
+            ),
+            PopupMenuItem(
+              value: true,
+              child: Row(
+                children: [
+                  const Icon(Icons.arrow_upward),
+                  const SizedBox(width: 8),
+                  Text('Newer first', style: textStyleBody),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
       body: SingleChildScrollView(
         controller: vm.controller,
         child: (widget.podcast == null)
@@ -62,7 +95,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
   }
 
   Widget _favButton() {
-    return  Padding(
+    return Padding(
       padding: const EdgeInsets.all(16),
       child: FavButton(widget.podcast!),
     );
