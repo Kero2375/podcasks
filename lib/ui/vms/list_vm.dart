@@ -1,4 +1,5 @@
-import 'dart:developer';
+import 'dart:developer' as dev;
+import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:ppp2/data/podcast_episode.dart';
 import 'package:ppp2/ui/vms/vm.dart';
@@ -26,6 +27,7 @@ class ListViewmodel extends Vm {
   }
 
   void initEpisodesList() {
+    _page = 0;
     if (episodes!.length < _maxItems) {
       _displayingEpisodes = episodes!;
     } else {
@@ -49,13 +51,13 @@ class ListViewmodel extends Vm {
           _displayingEpisodes.addAll(episodes!.sublist(
             /*start*/
             _page * _maxItems,
-            /*end*/ (_page + 1) * _maxItems,
+            min(episodes!.length, (_page + 1) * _maxItems),
           ));
           notifyListeners();
         }
       }
     } catch (e) {
-      log("Error");
+      dev.log(e.toString());
     }
   }
 }

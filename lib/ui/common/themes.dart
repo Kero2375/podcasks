@@ -15,7 +15,7 @@ ButtonStyle controlsButtonStyle(bool rounded) => ButtonStyle(
   textStyle: MaterialStatePropertyAll(textStyleBody),
 );
 
-TextStyle get themeFontFamily => GoogleFonts.jetBrainsMono();
+TextStyle get themeFontFamily => GoogleFonts.robotoMono();
 
 TextStyle get textStyleTitle => themeFontFamily.copyWith(
       fontSize: 24,

@@ -15,7 +15,7 @@ final playerViewmodel = ChangeNotifierProvider((ref) => PlayerViewmodel());
 class PlayerViewmodel extends Vm {
   ScrollController scrollController = ScrollController();
 
-  int _scrollOffset = 300;
+  final int _scrollOffset = 300;
 
   Track? get playing => _playing;
   Track? _playing;

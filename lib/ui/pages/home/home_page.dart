@@ -61,14 +61,21 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
       body: homeVm.state == UiState.loading
           ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
+          : SingleChildScrollView(
               controller: episodesVm.controller,
-              physics: const ScrollPhysics(),
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: episodesVm.displayingEpisodes.length,
-              itemBuilder: (context, i) =>
-                  _episode(context, episodesVm.displayingEpisodes[i]),
+              child: Column(
+                children: [
+                  ListView.builder(
+                    physics: const ScrollPhysics(),
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: episodesVm.displayingEpisodes.length,
+                    itemBuilder: (context, i) =>
+                        _episode(context, episodesVm.displayingEpisodes[i]),
+                  ),
+                  const SizedBox(height: BottomPlayer.playerHeight),
+                ],
+              ),
             ),
       bottomSheet: const BottomPlayer(),
       drawer: Drawer(
@@ -117,7 +124,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   Widget _episode(BuildContext context, PodcastEpisode? ep) {
-    final image = ep?.imageUrl ?? ep?.podcast?.image;
+    final image = ep?.podcast?.image;
     return InkWell(
       onTap: () {
         Navigator.pushNamed(context, EpisodePage.route, arguments: ep);
