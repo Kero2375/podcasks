@@ -38,9 +38,7 @@ class SearchListItem extends ConsumerWidget {
                   item.bestArtworkUrl!,
                 ),
               ),
-            const SizedBox(
-              width: 16,
-            ),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

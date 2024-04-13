@@ -9,21 +9,41 @@ final searchViewmodel = ChangeNotifierProvider((ref) => SearchViewmodel());
 class SearchViewmodel extends Vm {
   final _searchRepo = locator.get<SearchRepo>();
 
+  get searched => _searched;
   List<Item> _searched = [];
 
+  Podcast? get selected => _selected;
   Podcast? _selected;
 
-  Podcast? get selected => _selected;
-
-  get searched => _searched;
+  Country get country => _country;
+  Country _country = Country.none;
 
   SearchViewmodel() {
+    charts();
+  }
+
+  Future<void> charts() async {
+    loading();
+    _searched = await _searchRepo.charts(country);
     success();
   }
 
   Future<void> search(String term) async {
-    // todo: add debounce
-    _searched = await _searchRepo.search(term);
+    loading();
+    if (term.startsWith("http")) {
+      final pod = await _searchRepo.fetchPodcast(term);
+      _searched = [
+        Item(
+          feedUrl: term,
+          artworkUrl: pod?.image,
+          collectionName: pod?.title,
+          artistName: pod?.episodes.firstOrNull?.author ?? pod?.title,
+        )
+      ];
+    } else {
+      // todo: add debounce
+      _searched = await _searchRepo.search(term);
+    }
     success();
   }
 
@@ -31,5 +51,9 @@ class SearchViewmodel extends Vm {
     loading();
     _selected = await _searchRepo.fetchPodcast(feedUrl);
     success();
+  }
+
+  void setCountry() {
+    _country = country == Country.none ? Country.italy : Country.none;
   }
 }

@@ -36,12 +36,14 @@ class SearchPage extends ConsumerWidget {
             decoration: const InputDecoration(
               focusedBorder: InputBorder.none,
               border: InputBorder.none,
-              hintText: "Search Podcast...",
+              hintText: "Search or add RSS feed...",
             ),
             style: textStyleBody,
             onChanged: (value) {
-              if (value.length > 2) {
+              if (value.trim().isNotEmpty) {
                 vm.search(value);
+              } else {
+                vm.charts();
               }
             },
           ),

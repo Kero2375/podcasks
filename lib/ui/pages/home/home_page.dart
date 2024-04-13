@@ -104,6 +104,13 @@ class _HomePageState extends ConsumerState<HomePage> {
           ],
         ),
       ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   items: const [
+      //     BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
+      //     BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Explore'),
+      //     BottomNavigationBarItem(icon: Icon(Icons.favorite_outline), label: 'Favorites'),
+      //   ],
+      // ),
     );
   }
 
