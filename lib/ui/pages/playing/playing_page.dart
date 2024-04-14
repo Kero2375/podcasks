@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
+import 'package:ppp2/data/podcast_episode.dart';
 import 'package:ppp2/ui/common/app_bar.dart';
 import 'package:ppp2/ui/common/themes.dart';
 import 'package:ppp2/ui/pages/episode_page.dart';
@@ -33,9 +34,11 @@ class PlayingPage extends ConsumerWidget {
     );
   }
 
-  SizedBox _pageContent(BuildContext context, PlayerViewmodel vm, Episode? ep, Podcast? podcast) {
+  SizedBox _pageContent(BuildContext context, PlayerViewmodel vm,
+      PodcastEpisode? ep, Podcast? podcast) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height - MediaQuery.of(context).viewPadding.top * 2,
+      height: MediaQuery.of(context).size.height -
+          MediaQuery.of(context).viewPadding.top * 2,
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: Column(
@@ -62,7 +65,9 @@ class PlayingPage extends ConsumerWidget {
             style: controlsButtonStyle(true),
           ),
           IconButton.filled(
-            icon: vm.isPlaying() ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
+            icon: vm.isPlaying()
+                ? const Icon(Icons.pause)
+                : const Icon(Icons.play_arrow),
             iconSize: 40,
             onPressed: () => vm.isPlaying() ? vm.pause() : vm.play(),
             style: controlsButtonStyle(!vm.isPlaying()),
@@ -78,7 +83,8 @@ class PlayingPage extends ConsumerWidget {
     );
   }
 
-  Widget _bottomSection(BuildContext context, Episode? ep, Podcast? podcast, PlayerViewmodel vm) {
+  Widget _bottomSection(BuildContext context, PodcastEpisode? ep,
+      Podcast? podcast, PlayerViewmodel vm) {
     return Column(
       children: [
         _title(context, ep, podcast),
@@ -113,18 +119,23 @@ class PlayingPage extends ConsumerWidget {
     );
   }
 
-  Widget _title(BuildContext context, Episode? ep, Podcast? podcast) {
+  Widget _title(BuildContext context, PodcastEpisode? ep, Podcast? podcast) {
     return Column(
       children: [
-        Text(
-          ep?.title ?? '',
-          maxLines: 3,
-          textAlign: TextAlign.center,
-          style: textStyleTitle,
+        GestureDetector(
+          onTap: () => Navigator.popAndPushNamed(context, EpisodePage.route,
+              arguments: ep),
+          child: Text(
+            ep?.title ?? '',
+            maxLines: 3,
+            textAlign: TextAlign.center,
+            style: textStyleTitle,
+          ),
         ),
         const SizedBox(height: 8),
         GestureDetector(
-          onTap: () => Navigator.popAndPushNamed(context, PodcastPage.route, arguments: podcast),
+          onTap: () => Navigator.popAndPushNamed(context, PodcastPage.route,
+              arguments: podcast),
           child: Text(
             podcast?.title ?? '',
             textAlign: TextAlign.center,

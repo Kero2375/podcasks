@@ -1,5 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:ppp2/data/podcast_episode.dart';
@@ -20,6 +21,10 @@ Future<void> main() async {
       androidNotificationChannelId: 'com.kero.ppp2.channel.audio',
       androidNotificationChannelName: 'Podcast playback',
     ),
+  );
+  await FlutterDownloader.initialize(
+    debug: true,
+    ignoreSsl: true,
   );
   runApp(
     const ProviderScope(child: MyApp()),

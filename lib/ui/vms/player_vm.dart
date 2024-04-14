@@ -4,15 +4,18 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
+import 'package:ppp2/data/podcast_episode.dart';
 import 'package:ppp2/data/track.dart';
 import 'package:ppp2/locator.dart';
 import 'package:ppp2/manager/audio_handler.dart';
 import 'package:ppp2/repository/history_repo.dart';
+import 'package:ppp2/repository/search_repo.dart';
 import 'package:ppp2/ui/vms/vm.dart';
 
 final playerViewmodel = ChangeNotifierProvider((ref) => PlayerViewmodel());
 
 class PlayerViewmodel extends Vm {
+  final SearchRepo _searchRepo = locator.get<SearchRepo>();
   ScrollController scrollController = ScrollController();
 
   final int _scrollOffset = 300;
@@ -83,7 +86,7 @@ class PlayerViewmodel extends Vm {
     return (audioHandler?.playing == true);
   }
 
-  Episode? get playingEpisode => _playing?.episode;
+  PodcastEpisode? get playingEpisode => _playing?.episode;
 
   Podcast? get playingPodcast => _playing?.podcast;
 
@@ -157,4 +160,6 @@ class PlayerViewmodel extends Vm {
       );
     }
   }
+
+  download(Episode? episode) => _searchRepo.download(episode);
 }

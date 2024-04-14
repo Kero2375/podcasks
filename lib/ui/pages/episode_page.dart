@@ -67,7 +67,7 @@ class EpisodePage extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,6 +85,16 @@ class EpisodePage extends ConsumerWidget {
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            onPressed: () => vm.download(episode),
+            icon: const Icon(Icons.download),
+            style: buttonStyle,
+            label: Text(
+              "Download",
+              style: textStyleBody,
+            ),
           ),
           _iconInfo(context, Icons.people, episode?.author ?? ''),
           _iconInfo(context, Icons.calendar_today,
