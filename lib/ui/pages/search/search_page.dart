@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:ppp2/ui/common/themes.dart';
+import 'package:ppp2/ui/pages/search/filters_dialog.dart';
 import 'package:ppp2/ui/pages/search/search_list.dart';
 import 'package:ppp2/ui/vms/search_vm.dart';
 import 'package:ppp2/ui/vms/vm.dart';
@@ -33,10 +35,24 @@ class SearchPage extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: TextField(
             autofocus: true,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               focusedBorder: InputBorder.none,
               border: InputBorder.none,
               hintText: "Search or add RSS feed...",
+              suffixIcon: IconButton(
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (context) => FiltersDialog(
+                    countries: const [
+                      Country.none,
+                      Country.italy,
+                      Country.unitedKingdom,
+                      Country.unitedArabEmirates,
+                    ]
+                  ),
+                ),
+                icon: const Icon(Icons.filter_list_sharp),
+              ),
             ),
             style: textStyleBody,
             onChanged: (value) {

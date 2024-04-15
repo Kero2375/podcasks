@@ -53,7 +53,12 @@ class SearchViewmodel extends Vm {
     success();
   }
 
-  void setCountry() {
-    _country = country == Country.none ? Country.italy : Country.none;
+  void setCountry(Country? c) {
+    if (c != null) {
+      _country = c;
+      notifyListeners();
+    }
   }
+
+  Country getSelectedCountry() => _country;
 }
