@@ -59,8 +59,11 @@ class SearchViewmodel extends Vm {
   Future<void> setCountry(Country? c) async {
     if (c != null) {
       _country = c;
-      searchBarController.text = '';
-      await charts();
+      if (searchBarController.text == '') {
+        await charts();
+      } else {
+        await search(searchBarController.text);
+      }
     }
   }
 

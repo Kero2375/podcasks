@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
@@ -87,14 +88,33 @@ class EpisodePage extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 8),
-          OutlinedButton.icon(
-            onPressed: () => vm.download(episode),
-            icon: const Icon(Icons.download),
-            style: buttonStyle,
-            label: Text(
-              "Download",
-              style: textStyleBody,
-            ),
+          Wrap(
+            direction: Axis.horizontal,
+            children: [
+              OutlinedButton.icon(
+                onPressed: () => vm.download(episode),
+                icon: const Icon(Icons.download),
+                style: buttonStyle,
+                label: Text(
+                  "Download",
+                  style: textStyleBody,
+                ),
+              ),
+              const SizedBox(width: 8),
+              OutlinedButton.icon(
+                onPressed: () {
+                  if (episode?.link != null) {
+                    Clipboard.setData(ClipboardData(text: episode!.link!));
+                  }
+                },
+                icon: const Icon(Icons.share),
+                style: buttonStyle,
+                label: Text(
+                  "Share",
+                  style: textStyleBody,
+                ),
+              ),
+            ],
           ),
           if (episode?.author != null)
             _iconInfo(context, Icons.people, episode!.author!),

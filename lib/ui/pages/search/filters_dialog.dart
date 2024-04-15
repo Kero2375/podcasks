@@ -5,12 +5,7 @@ import 'package:ppp2/ui/common/themes.dart';
 import 'package:ppp2/ui/vms/search_vm.dart';
 
 class FiltersDialog extends ConsumerWidget {
-  final List<Country> countries;
-
-  const FiltersDialog({
-    super.key,
-    required this.countries,
-  });
+  const FiltersDialog({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,8 +20,8 @@ class FiltersDialog extends ConsumerWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.language),
-                  const SizedBox(width: 8),
+                  // const Icon(Icons.language),
+                  // const SizedBox(width: 8),
                   Text(
                     "Select region",
                     style: textStyleHeader,
@@ -39,15 +34,18 @@ class FiltersDialog extends ConsumerWidget {
               child: Scrollbar(
                 radius: const Radius.circular(16),
                 child: ListView(
-                  children: countries
+                  children: Country.values
                       .map(
                         (c) => ListTile(
                           onTap: () => vm.setCountry(c),
                           title: Text(
-                            c.name
-                                .split(RegExp(r"(?=[A-Z])"))
-                                .map((e) => e[0].toUpperCase() + e.substring(1))
-                                .join(' '),
+                            (c.name == 'none')
+                                ? 'Any'
+                                : c.name
+                                    .split(RegExp(r"(?=[A-Z])"))
+                                    .map((e) =>
+                                        e[0].toUpperCase() + e.substring(1))
+                                    .join(' '),
                             style: textStyleBody,
                           ),
                           leading: Radio<Country>(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podcast_search/podcast_search.dart';
 import 'package:ppp2/ui/common/themes.dart';
 import 'package:ppp2/ui/pages/search/filters_dialog.dart';
 import 'package:ppp2/ui/pages/search/search_list.dart';
@@ -42,8 +41,7 @@ class SearchPage extends ConsumerWidget {
               suffixIcon: IconButton(
                 onPressed: () => showDialog(
                   context: context,
-                  builder: (context) =>
-                      const FiltersDialog(countries: Country.values),
+                  builder: (context) => const FiltersDialog(),
                 ),
                 icon: const Icon(Icons.filter_alt),
               ),
