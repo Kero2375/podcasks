@@ -1,9 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
-import 'package:ppp2/locator.dart';
-import 'package:ppp2/repository/search_repo.dart';
-import 'package:ppp2/ui/vms/vm.dart';
+import 'package:podcasks/locator.dart';
+import 'package:podcasks/repository/search_repo.dart';
+import 'package:podcasks/ui/vms/vm.dart';
 
 final searchViewmodel = ChangeNotifierProvider((ref) => SearchViewmodel());
 

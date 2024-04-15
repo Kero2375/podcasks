@@ -1,18 +1,18 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ppp2/data/podcast_episode.dart';
-import 'package:ppp2/ui/common/app_bar.dart';
-import 'package:ppp2/ui/common/bottom_player.dart';
-import 'package:ppp2/ui/common/divider.dart';
-import 'package:ppp2/ui/common/themes.dart';
-import 'package:ppp2/ui/pages/episode_page.dart';
-import 'package:ppp2/ui/pages/home/podcast_list.dart';
-import 'package:ppp2/ui/vms/episodes_home_vm.dart';
-import 'package:ppp2/ui/vms/home_vm.dart';
-import 'package:ppp2/ui/vms/player_vm.dart';
-import 'package:ppp2/ui/vms/vm.dart';
-import 'package:ppp2/utils.dart';
+import 'package:podcasks/data/podcast_episode.dart';
+import 'package:podcasks/ui/common/app_bar.dart';
+import 'package:podcasks/ui/common/bottom_player.dart';
+import 'package:podcasks/ui/common/divider.dart';
+import 'package:podcasks/ui/common/themes.dart';
+import 'package:podcasks/ui/pages/episode_page.dart';
+import 'package:podcasks/ui/pages/home/podcast_list.dart';
+import 'package:podcasks/ui/vms/episodes_home_vm.dart';
+import 'package:podcasks/ui/vms/home_vm.dart';
+import 'package:podcasks/ui/vms/player_vm.dart';
+import 'package:podcasks/ui/vms/vm.dart';
+import 'package:podcasks/utils.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   static const route = "/";
@@ -55,10 +55,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     }
 
     return Scaffold(
-      appBar: mainAppBar(
-        context,
-        title: 'Podcasts',
-      ),
+      appBar: mainAppBar(context, title: 'Podcasks'),
       body: homeVm.state == UiState.loading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(

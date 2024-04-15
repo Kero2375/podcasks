@@ -1,5 +1,5 @@
 import 'package:podcast_search/podcast_search.dart';
-import 'package:ppp2/data/podcast_episode.dart';
+import 'package:podcasks/data/podcast_episode.dart';
 
 class Track {
   final Podcast? podcast;

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ppp2/ui/common/themes.dart';
-import 'package:ppp2/ui/pages/search/filters_dialog.dart';
-import 'package:ppp2/ui/pages/search/search_list.dart';
-import 'package:ppp2/ui/vms/search_vm.dart';
-import 'package:ppp2/ui/vms/vm.dart';
+import 'package:podcasks/ui/common/themes.dart';
+import 'package:podcasks/ui/pages/search/filters_dialog.dart';
+import 'package:podcasks/ui/pages/search/search_list.dart';
+import 'package:podcasks/ui/vms/search_vm.dart';
+import 'package:podcasks/ui/vms/vm.dart';
 
 class SearchPage extends ConsumerWidget {
   static const route = "/search_page";

@@ -1,8 +1,7 @@
-
 import 'package:get_it/get_it.dart';
-import 'package:ppp2/repository/favourites_repo.dart';
-import 'package:ppp2/repository/history_repo.dart';
-import 'package:ppp2/repository/search_repo.dart';
+import 'package:podcasks/repository/favourites_repo.dart';
+import 'package:podcasks/repository/history_repo.dart';
+import 'package:podcasks/repository/search_repo.dart';
 
 final locator = GetIt.instance;
 

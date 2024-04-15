@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ppp2/ui/common/themes.dart';
-import 'package:ppp2/ui/pages/search/search_page.dart';
+import 'package:podcasks/ui/common/themes.dart';
+import 'package:podcasks/ui/pages/search/search_page.dart';
 
 AppBar mainAppBar(
   BuildContext context, {

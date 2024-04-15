@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ppp2/ui/vms/vm.dart';
+import 'package:podcasks/ui/vms/vm.dart';
 
 final themeViewmodel = ChangeNotifierProvider((ref) => ThemeViewmodel());
 
@@ -10,7 +10,7 @@ class ThemeViewmodel extends Vm {
   getAppTheme(Brightness brightness) => ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
+          seedColor: const Color(0xfff3820e),
           brightness: brightness,
         ),
       );

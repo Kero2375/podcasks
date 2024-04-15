@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
-import 'package:ppp2/data/podcast_episode.dart';
-import 'package:ppp2/ui/common/app_bar.dart';
-import 'package:ppp2/ui/common/themes.dart';
-import 'package:ppp2/ui/pages/episode_page.dart';
-import 'package:ppp2/ui/pages/podcast_page.dart';
-import 'package:ppp2/ui/vms/player_vm.dart';
-import 'package:ppp2/utils.dart';
+import 'package:podcasks/data/podcast_episode.dart';
+import 'package:podcasks/ui/common/app_bar.dart';
+import 'package:podcasks/ui/common/themes.dart';
+import 'package:podcasks/ui/pages/episode_page.dart';
+import 'package:podcasks/ui/pages/podcast_page.dart';
+import 'package:podcasks/ui/vms/player_vm.dart';
+import 'package:podcasks/utils.dart';
 
 class PlayingPage extends ConsumerWidget {
   static const route = '/playing_page';

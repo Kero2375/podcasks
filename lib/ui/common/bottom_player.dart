@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ppp2/ui/common/themes.dart';
-import 'package:ppp2/ui/pages/playing/playing_page.dart';
-import 'package:ppp2/ui/vms/player_vm.dart';
+import 'package:podcasks/ui/common/themes.dart';
+import 'package:podcasks/ui/pages/playing/playing_page.dart';
+import 'package:podcasks/ui/vms/player_vm.dart';
 
 class BottomPlayer extends ConsumerWidget {
   static const double playerHeight = 64;

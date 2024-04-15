@@ -1,8 +1,8 @@
 import 'package:collection/collection.dart';
-import 'package:ppp2/data/podcast_episode.dart';
-import 'package:ppp2/data/track.dart';
-import 'package:ppp2/locator.dart';
-import 'package:ppp2/repository/search_repo.dart';
+import 'package:podcasks/data/podcast_episode.dart';
+import 'package:podcasks/data/track.dart';
+import 'package:podcasks/locator.dart';
+import 'package:podcasks/repository/search_repo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class HistoryRepo {

@@ -1,11 +1,11 @@
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
-import 'package:ppp2/data/track.dart';
-import 'package:ppp2/locator.dart';
-import 'package:ppp2/repository/favourites_repo.dart';
-import 'package:ppp2/repository/history_repo.dart';
-import 'package:ppp2/ui/vms/vm.dart';
+import 'package:podcasks/data/track.dart';
+import 'package:podcasks/locator.dart';
+import 'package:podcasks/repository/favourites_repo.dart';
+import 'package:podcasks/repository/history_repo.dart';
+import 'package:podcasks/ui/vms/vm.dart';
 
 final homeViewmodel = ChangeNotifierProvider((ref) => HomeViewmodel());
 
@@ -45,7 +45,9 @@ class HomeViewmodel extends Vm {
   }
 
   bool isFavourite(Podcast? podcast) {
-    return _favourites.firstWhereOrNull((element) => element.url == podcast?.url) != null;
+    return _favourites
+            .firstWhereOrNull((element) => element.url == podcast?.url) !=
+        null;
   }
 
   Future<Track?> getLastSavedTrack() => _historyRepo.getPlaying();
@@ -54,5 +56,6 @@ class HomeViewmodel extends Vm {
 
   Future<void> saveTrack(Track? track) => _historyRepo.setPlaying(track);
 
-  Future<void> savePosition(Duration? position) => _historyRepo.setPosition(position);
+  Future<void> savePosition(Duration? position) =>
+      _historyRepo.setPosition(position);
 }

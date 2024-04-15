@@ -1,8 +1,8 @@
 import 'dart:developer' as dev;
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
-import 'package:ppp2/data/podcast_episode.dart';
-import 'package:ppp2/ui/vms/vm.dart';
+import 'package:podcasks/data/podcast_episode.dart';
+import 'package:podcasks/ui/vms/vm.dart';
 
 class ListViewmodel extends Vm {
   int _maxItems = 10;

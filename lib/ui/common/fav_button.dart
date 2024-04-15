@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
-import 'package:ppp2/ui/common/themes.dart';
-import 'package:ppp2/ui/vms/home_vm.dart';
-import 'package:ppp2/ui/vms/vm.dart';
+import 'package:podcasks/ui/common/themes.dart';
+import 'package:podcasks/ui/vms/home_vm.dart';
+import 'package:podcasks/ui/vms/vm.dart';
 
 class FavButton extends ConsumerWidget {
   final Podcast podcast;

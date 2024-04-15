@@ -3,13 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
-import 'package:ppp2/data/podcast_episode.dart';
-import 'package:ppp2/data/track.dart';
-import 'package:ppp2/ui/common/app_bar.dart';
-import 'package:ppp2/ui/common/bottom_player.dart';
-import 'package:ppp2/ui/common/themes.dart';
-import 'package:ppp2/ui/vms/player_vm.dart';
-import 'package:ppp2/utils.dart';
+import 'package:podcasks/data/podcast_episode.dart';
+import 'package:podcasks/data/track.dart';
+import 'package:podcasks/ui/common/app_bar.dart';
+import 'package:podcasks/ui/common/bottom_player.dart';
+import 'package:podcasks/ui/common/themes.dart';
+import 'package:podcasks/ui/vms/player_vm.dart';
+import 'package:podcasks/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EpisodePage extends ConsumerWidget {

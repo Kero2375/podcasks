@@ -4,13 +4,13 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
-import 'package:ppp2/data/podcast_episode.dart';
-import 'package:ppp2/data/track.dart';
-import 'package:ppp2/locator.dart';
-import 'package:ppp2/manager/audio_handler.dart';
-import 'package:ppp2/repository/history_repo.dart';
-import 'package:ppp2/repository/search_repo.dart';
-import 'package:ppp2/ui/vms/vm.dart';
+import 'package:podcasks/data/podcast_episode.dart';
+import 'package:podcasks/data/track.dart';
+import 'package:podcasks/locator.dart';
+import 'package:podcasks/manager/audio_handler.dart';
+import 'package:podcasks/repository/history_repo.dart';
+import 'package:podcasks/repository/search_repo.dart';
+import 'package:podcasks/ui/vms/vm.dart';
 
 final playerViewmodel = ChangeNotifierProvider((ref) => PlayerViewmodel());
 

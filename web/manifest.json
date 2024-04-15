@@ -1,6 +1,6 @@
 {
-    "name": "ppp2",
-    "short_name": "ppp2",
+    "name": "podcasks",
+    "short_name": "podcasks",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

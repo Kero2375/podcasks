@@ -3,22 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
-import 'package:ppp2/data/podcast_episode.dart';
-import 'package:ppp2/locator.dart';
-import 'package:ppp2/manager/audio_handler.dart';
-import 'package:ppp2/ui/pages/episode_page.dart';
-import 'package:ppp2/ui/pages/home/home_page.dart';
-import 'package:ppp2/ui/pages/playing/playing_page.dart';
-import 'package:ppp2/ui/pages/podcast_page.dart';
-import 'package:ppp2/ui/pages/search/search_page.dart';
-import 'package:ppp2/ui/vms/theme_vm.dart';
+import 'package:podcasks/data/podcast_episode.dart';
+import 'package:podcasks/locator.dart';
+import 'package:podcasks/manager/audio_handler.dart';
+import 'package:podcasks/ui/pages/episode_page.dart';
+import 'package:podcasks/ui/pages/home/home_page.dart';
+import 'package:podcasks/ui/pages/playing/playing_page.dart';
+import 'package:podcasks/ui/pages/podcast_page.dart';
+import 'package:podcasks/ui/pages/search/search_page.dart';
+import 'package:podcasks/ui/vms/theme_vm.dart';
 
 Future<void> main() async {
   setup();
   audioHandler = await AudioService.init(
     builder: () => MyAudioHandler(),
     config: const AudioServiceConfig(
-      androidNotificationChannelId: 'com.kero.ppp2.channel.audio',
+      androidNotificationChannelId: 'com.kero.podcasks.channel.audio',
       androidNotificationChannelName: 'Podcast playback',
     ),
   );

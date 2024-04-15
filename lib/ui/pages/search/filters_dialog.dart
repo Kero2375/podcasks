@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
-import 'package:ppp2/ui/common/themes.dart';
-import 'package:ppp2/ui/vms/search_vm.dart';
+import 'package:podcasks/ui/common/themes.dart';
+import 'package:podcasks/ui/vms/search_vm.dart';
 
 class FiltersDialog extends ConsumerWidget {
   const FiltersDialog({super.key});
