@@ -96,11 +96,21 @@ class EpisodePage extends ConsumerWidget {
               style: textStyleBody,
             ),
           ),
-          _iconInfo(context, Icons.people, episode?.author ?? ''),
+          if (episode?.author != null)
+            _iconInfo(context, Icons.people, episode!.author!),
           _iconInfo(context, Icons.calendar_today,
               episode?.publicationDate?.toDate() ?? ''),
-          _iconInfo(
-              context, Icons.hourglass_top, episode?.duration?.toTime() ?? ''),
+          (episode?.duration != null)
+              ? _iconInfo(context, Icons.hourglass_top,
+                  episode?.duration?.toTime() ?? '')
+              : FutureBuilder(
+                  initialData: null,
+                  future: vm.getDurationFromMp3(episode?.contentUrl),
+                  builder: (context, snapshot) => (snapshot.hasData)
+                      ? _iconInfo(
+                          context, Icons.hourglass_top, snapshot.data?.toTime())
+                      : _iconInfo(context, Icons.hourglass_top, '...'),
+                )
         ],
       ),
     );

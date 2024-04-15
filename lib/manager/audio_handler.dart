@@ -28,6 +28,14 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     }
   }
 
+  Future<Duration?> getDuration(String url) async {
+    final p1 = AudioPlayer();
+    await p1.setUrl(url);
+    final duration = p1.duration;
+    p1.dispose();
+    return duration;
+  }
+
   @override
   Future<void> play() {
     playbackState.add(playbackState.value.copyWith(playing: true));

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
+import 'package:ppp2/ui/common/themes.dart';
 import 'package:ppp2/ui/vms/search_vm.dart';
 
 class FiltersDialog extends ConsumerWidget {
@@ -18,23 +19,57 @@ class FiltersDialog extends ConsumerWidget {
       child: SizedBox(
         height: 500,
         child: Column(
-          children: countries
-              .map(
-                (c) => ListTile(
-                  title: Text(
-                    c.name
-                        .split(RegExp(r"(?=[A-Z])"))
-                        .map((e) => e[0].toUpperCase() + e.substring(1))
-                        .join(' '),
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.language),
+                  const SizedBox(width: 8),
+                  Text(
+                    "Select region",
+                    style: textStyleHeader,
                   ),
-                  leading: Radio<Country>(
-                    value: c,
-                    groupValue: vm.getSelectedCountry(),
-                    onChanged: vm.setCountry,
-                  ),
+                ],
+              ),
+            ),
+            Flexible(
+              flex: 1,
+              child: Scrollbar(
+                radius: const Radius.circular(16),
+                child: ListView(
+                  children: countries
+                      .map(
+                        (c) => ListTile(
+                          onTap: () => vm.setCountry(c),
+                          title: Text(
+                            c.name
+                                .split(RegExp(r"(?=[A-Z])"))
+                                .map((e) => e[0].toUpperCase() + e.substring(1))
+                                .join(' '),
+                            style: textStyleBody,
+                          ),
+                          leading: Radio<Country>(
+                            value: c,
+                            groupValue: vm.getSelectedCountry(),
+                            onChanged: vm.setCountry,
+                          ),
+                        ),
+                      )
+                      .toList(),
                 ),
-              )
-              .toList(),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: FilledButton(
+                onPressed: () => Navigator.pop(context),
+                style: buttonStyle,
+                child: const Text("OK"),
+              ),
+            )
+          ],
         ),
       ),
     );

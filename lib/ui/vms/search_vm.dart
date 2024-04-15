@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:ppp2/locator.dart';
@@ -22,6 +23,8 @@ class SearchViewmodel extends Vm {
     charts();
   }
 
+  TextEditingController searchBarController = TextEditingController();
+
   Future<void> charts() async {
     loading();
     _searched = await _searchRepo.charts(country);
@@ -42,7 +45,7 @@ class SearchViewmodel extends Vm {
       ];
     } else {
       // todo: add debounce
-      _searched = await _searchRepo.search(term);
+      _searched = await _searchRepo.search(term, country);
     }
     success();
   }
@@ -53,10 +56,11 @@ class SearchViewmodel extends Vm {
     success();
   }
 
-  void setCountry(Country? c) {
+  Future<void> setCountry(Country? c) async {
     if (c != null) {
       _country = c;
-      notifyListeners();
+      searchBarController.text = '';
+      await charts();
     }
   }
 

@@ -42,19 +42,14 @@ class SearchPage extends ConsumerWidget {
               suffixIcon: IconButton(
                 onPressed: () => showDialog(
                   context: context,
-                  builder: (context) => FiltersDialog(
-                    countries: const [
-                      Country.none,
-                      Country.italy,
-                      Country.unitedKingdom,
-                      Country.unitedArabEmirates,
-                    ]
-                  ),
+                  builder: (context) =>
+                      const FiltersDialog(countries: Country.values),
                 ),
-                icon: const Icon(Icons.filter_list_sharp),
+                icon: const Icon(Icons.filter_alt),
               ),
             ),
             style: textStyleBody,
+            controller: vm.searchBarController,
             onChanged: (value) {
               if (value.trim().isNotEmpty) {
                 vm.search(value);

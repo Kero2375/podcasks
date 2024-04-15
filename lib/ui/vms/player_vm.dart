@@ -36,6 +36,13 @@ class PlayerViewmodel extends Vm {
 
   final HistoryRepo _historyRepo = locator.get<HistoryRepo>();
 
+  Future<Duration?> getDurationFromMp3(String? url) async {
+    if (url != null) {
+      return await audioHandler?.getDuration(url);
+    }
+    return null;
+  }
+
   @override
   void dispose() {
     _positionTimer?.cancel();

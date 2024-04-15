@@ -3,19 +3,19 @@ import 'package:path_provider/path_provider.dart';
 import 'package:podcast_search/podcast_search.dart';
 
 abstract class SearchRepo {
-  Future<List<Item>> search(String term);
+  Future<List<Item>> search(String term, Country country);
 
   Future<Podcast?> fetchPodcast(String? feedUrl);
 
-  Future<List<Item>> charts([Country country = Country.none]);
+  Future<List<Item>> charts(Country country);
 
   download(Episode? episode);
 }
 
 class SearchRepoPodcastSearch extends SearchRepo {
   @override
-  Future<List<Item>> search(String term) async {
-    final result = await Search().search(term, limit: 10);
+  Future<List<Item>> search(String term, Country country) async {
+    final result = await Search().search(term, limit: 10, country: country);
     return result.items;
   }
 
@@ -40,10 +40,8 @@ class SearchRepoPodcastSearch extends SearchRepo {
         url: episode!.contentUrl!,
         headers: {},
         savedDir: (await getExternalStorageDirectory())?.path ?? '',
-        showNotification:
-            true, // show download progress in status bar (for Android)
-        openFileFromNotification:
-            true, // click on notification to open downloaded file (for Android)
+        showNotification: true,
+        openFileFromNotification: true,
         saveInPublicStorage: true,
       );
     }
