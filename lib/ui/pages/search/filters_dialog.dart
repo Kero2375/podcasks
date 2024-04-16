@@ -48,10 +48,19 @@ class FiltersDialog extends ConsumerWidget {
                                     .join(' '),
                             style: textStyleBody,
                           ),
-                          leading: Radio<Country>(
-                            value: c,
-                            groupValue: vm.getSelectedCountry(),
-                            onChanged: vm.setCountry,
+                          leading: FutureBuilder(
+                            future: vm.country,
+                            builder: (context, snapshot) => (snapshot.hasData)
+                                ? Radio<Country>(
+                                    value: c,
+                                    groupValue: snapshot.data,
+                                    onChanged: vm.setCountry,
+                                  )
+                                : Radio<Country>(
+                                    value: c,
+                                    groupValue: Country.none,
+                                    onChanged: vm.setCountry,
+                                  ),
                           ),
                         ),
                       )

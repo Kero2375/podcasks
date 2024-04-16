@@ -6,6 +6,10 @@ MyAudioHandler? audioHandler;
 class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   final _player = AudioPlayer();
 
+  dispose() {
+    _player.dispose();
+  }
+
   setMediaUrl(MediaItem? item) {
     if (item?.id != null) {
       mediaItem.add(item!);
@@ -21,15 +25,18 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
             MediaAction.seekBackward,
           },
           processingState: AudioProcessingState.ready,
-          playing: true,
+          playing: false,
         ),
       );
       _player.setUrl(item.id);
     }
   }
 
-  Future<Duration?> getDuration(String url) async {
-    final p1 = AudioPlayer();
+  Future<Duration?> getDuration(String url, [AudioPlayer? player]) async {
+    if (player == null) {
+      return _player.duration;
+    }
+    final p1 = player;
     await p1.setUrl(url);
     final duration = p1.duration;
     p1.dispose();
@@ -37,15 +44,25 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   @override
-  Future<void> play() {
-    playbackState.add(playbackState.value.copyWith(playing: true));
-    return _player.play();
+  Future<void> play() async {
+    playbackState.add(
+      playbackState.value.copyWith(
+        playing: true,
+        updatePosition: _player.position,
+      ),
+    );
+    _player.play();
   }
 
   @override
-  Future<void> pause() {
-    playbackState.add(playbackState.value.copyWith(playing: false));
-    return _player.pause();
+  Future<void> pause() async {
+    playbackState.add(
+      playbackState.value.copyWith(
+        playing: false,
+        updatePosition: _player.position,
+      ),
+    );
+    _player.pause();
   }
 
   @override

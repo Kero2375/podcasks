@@ -52,7 +52,7 @@ class SearchPage extends ConsumerWidget {
               if (value.trim().isNotEmpty) {
                 vm.search(value);
               } else {
-                vm.charts();
+                vm.init();
               }
             },
           ),

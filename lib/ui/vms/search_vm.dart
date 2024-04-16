@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podcasks/repository/prefs_repo.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/repository/search_repo.dart';
@@ -9,6 +10,7 @@ final searchViewmodel = ChangeNotifierProvider((ref) => SearchViewmodel());
 
 class SearchViewmodel extends Vm {
   final _searchRepo = locator.get<SearchRepo>();
+  final _prefsRepo = locator.get<PrefsRepo>();
 
   get searched => _searched;
   List<Item> _searched = [];
@@ -16,18 +18,17 @@ class SearchViewmodel extends Vm {
   Podcast? get selected => _selected;
   Podcast? _selected;
 
-  Country get country => _country;
-  Country _country = Country.none;
+  Future<Country> get country async => await _prefsRepo.getCountry();
 
   SearchViewmodel() {
-    charts();
+    init();
   }
 
   TextEditingController searchBarController = TextEditingController();
 
-  Future<void> charts() async {
+  Future<void> init() async {
     loading();
-    _searched = await _searchRepo.charts(country);
+    _searched = await _searchRepo.charts(await country);
     success();
   }
 
@@ -45,7 +46,7 @@ class SearchViewmodel extends Vm {
       ];
     } else {
       // todo: add debounce
-      _searched = await _searchRepo.search(term, country);
+      _searched = await _searchRepo.search(term, await country);
     }
     success();
   }
@@ -58,14 +59,13 @@ class SearchViewmodel extends Vm {
 
   Future<void> setCountry(Country? c) async {
     if (c != null) {
-      _country = c;
+      // _country = c;
+      _prefsRepo.setCountry(c);
       if (searchBarController.text == '') {
-        await charts();
+        await init();
       } else {
         await search(searchBarController.text);
       }
     }
   }
-
-  Country getSelectedCountry() => _country;
 }

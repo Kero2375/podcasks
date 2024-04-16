@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/data/track.dart';
@@ -36,15 +37,18 @@ class PlayerViewmodel extends Vm {
 
   final HistoryRepo _historyRepo = locator.get<HistoryRepo>();
 
-  Future<Duration?> getDurationFromMp3(String? url) async {
+  Future<Duration?> getDurationFromMp3(String? url,
+      [bool newPlayer = true]) async {
     if (url != null) {
-      return await audioHandler?.getDuration(url);
+      return await audioHandler?.getDuration(
+          url, newPlayer ? AudioPlayer() : null);
     }
     return null;
   }
 
   @override
   void dispose() {
+    audioHandler?.dispose();
     _positionTimer?.cancel();
     _saveTimer?.cancel();
     super.dispose();
@@ -67,13 +71,15 @@ class PlayerViewmodel extends Vm {
   }
 
   Future<void> setPlaying(Track track) async {
+    print('---------------> ${track.url}');
     _playing = track;
     await audioHandler?.setMediaUrl(MediaItem(
       id: track.url ?? '',
       title: track.episode?.title ?? '',
       artist: track.podcast?.title,
       artUri: Uri.parse(image ?? ''),
-      duration: track.episode?.duration,
+      duration:
+          track.episode?.duration ?? await getDurationFromMp3(track.url, false),
     ));
   }
 
