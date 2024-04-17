@@ -17,7 +17,7 @@ class PlayingPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.watch(playerViewmodel);
-    final ep = vm.playingEpisode;
+    final ep = vm.playing;
     final podcast = vm.playingPodcast;
 
     return Scaffold(

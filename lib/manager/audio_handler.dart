@@ -4,13 +4,22 @@ import 'package:just_audio/just_audio.dart';
 MyAudioHandler? audioHandler;
 
 class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
-  final _player = AudioPlayer();
+  late final AudioPlayer _player;
 
   dispose() {
     _player.dispose();
   }
 
-  setMediaUrl(MediaItem? item) {
+  MyAudioHandler() {
+    _player = AudioPlayer();
+    _player.durationStream.listen((d) {
+      mediaItem.add(
+        mediaItem.value?.copyWith(duration: d),
+      );
+    });
+  }
+
+  setMediaUrl(MediaItem? item) async {
     if (item?.id != null) {
       mediaItem.add(item!);
       playbackState.add(
@@ -29,29 +38,28 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         ),
       );
       _player.setUrl(item.id);
+      await _player.load();
     }
   }
 
-  Future<Duration?> getDuration(String url, [AudioPlayer? player]) async {
-    if (player == null) {
-      return _player.duration;
-    }
-    final p1 = player;
-    await p1.setUrl(url);
-    final duration = p1.duration;
-    p1.dispose();
-    return duration;
-  }
+  // Future<Duration?> getDurationFromUrl(String url) async {
+  //   final ap = AudioPlayer();
+  //   await ap.setUrl(url);
+  //   final d = ap.duration;
+  //   await ap.dispose();
+  //   return d;
+  //   return null;
+  // }
 
   @override
   Future<void> play() async {
     playbackState.add(
       playbackState.value.copyWith(
         playing: true,
-        updatePosition: _player.position,
+        updatePosition: position,
       ),
     );
-    _player.play();
+    await _player.play();
   }
 
   @override

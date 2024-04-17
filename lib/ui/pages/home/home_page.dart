@@ -34,8 +34,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   Future<void> _checkSaved(
       HomeViewmodel homeVm, PlayerViewmodel playerVm) async {
-    final track = await homeVm.getLastSavedTrack();
-    final position = await homeVm.getLastSavedPosition();
+    final (track, position) = await homeVm.getLastSaved() ?? (null, null);
     if (track != null && position != null) {
       await playerVm.setPlaying(track);
       await playerVm.pause();
@@ -67,8 +66,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
                     itemCount: episodesVm.displayingEpisodes.length,
-                    itemBuilder: (context, i) =>
-                        _episode(context, episodesVm.displayingEpisodes[i]),
+                    itemBuilder: (context, i) => _episode(
+                        context, episodesVm.displayingEpisodes[i], episodesVm),
                   ),
                   const SizedBox(height: BottomPlayer.playerHeight),
                 ],
@@ -127,7 +126,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  Widget _episode(BuildContext context, PodcastEpisode? ep) {
+  Widget _episode(BuildContext context, PodcastEpisode? ep,
+      EpisodesHomeViewmodel episodesVm) {
     final image = ep?.podcast?.image;
     return InkWell(
       onTap: () {

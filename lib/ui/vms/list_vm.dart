@@ -2,9 +2,13 @@ import 'dart:developer' as dev;
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:podcasks/data/podcast_episode.dart';
+import 'package:podcasks/locator.dart';
+import 'package:podcasks/repository/history_repo.dart';
 import 'package:podcasks/ui/vms/vm.dart';
+import 'package:podcast_search/podcast_search.dart';
 
 class ListViewmodel extends Vm {
+  final HistoryRepo _historyRepo = locator.get<HistoryRepo>();
   int _maxItems = 10;
   int _page = 0;
 
@@ -59,5 +63,10 @@ class ListViewmodel extends Vm {
     } catch (e) {
       dev.log(e.toString());
     }
+  }
+
+  Future<bool> isStarted(Episode ep) async {
+    final pos = await _historyRepo.getPosition(ep);
+    return (pos != null && pos.inSeconds != 0);
   }
 }

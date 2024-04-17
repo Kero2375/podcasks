@@ -60,7 +60,7 @@ class BottomPlayer extends ConsumerWidget {
                                     const SizedBox(width: 8),
                                     Expanded(
                                       child: Html(
-                                        data: vm.playingEpisode?.title ?? '',
+                                        data: vm.playing?.title ?? '',
                                         style: {
                                           '*': Style(
                                             margin: Margins.zero,

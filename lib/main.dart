@@ -15,6 +15,7 @@ import 'package:podcasks/ui/pages/search/search_page.dart';
 import 'package:podcasks/ui/vms/theme_vm.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   setup();
   audioHandler = await AudioService.init(
     builder: () => MyAudioHandler(),
@@ -25,7 +26,9 @@ Future<void> main() async {
   );
   await FlutterDownloader.initialize(
     ignoreSsl: true,
+    debug: true,
   );
+
   runApp(
     const ProviderScope(child: MyApp()),
   );

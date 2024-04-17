@@ -111,11 +111,13 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
       itemCount: vm.displayingEpisodes.length,
-      itemBuilder: (context, i) => _episode(context, vm.displayingEpisodes[i]),
+      itemBuilder: (context, i) =>
+          _episode(context, vm.displayingEpisodes[i], vm.isStarted),
     );
   }
 
-  Widget _episode(BuildContext context, Episode? ep) {
+  Widget _episode(
+      BuildContext context, Episode? ep, Future Function(Episode) isStarted) {
     return InkWell(
       onTap: () {
         if (ep != null && widget.podcast != null) {
@@ -132,6 +134,29 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                FutureBuilder(
+                  future: ep != null ? isStarted(ep) : Future.value(false),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData && snapshot.data) {
+                      Color primary = Theme.of(context).colorScheme.primary;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Icon(Icons.music_note, size: 15, color: primary),
+                            const SizedBox(width: 8),
+                            Text(
+                              'LISTENING',
+                              style: textStyleSmall.copyWith(color: primary),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
                 Text(
                   ep?.publicationDate?.toDate() ?? '',
                   style: textStyleSmallGray(context),

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podcasks/manager/audio_handler.dart';
+import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/data/podcast_episode.dart';
-import 'package:podcasks/data/track.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/bottom_player.dart';
 import 'package:podcasks/ui/common/themes.dart';
@@ -42,22 +43,28 @@ class EpisodePage extends ConsumerWidget {
     );
   }
 
-  Widget _playButton(PlayerViewmodel vm) {
+  Widget _playButton(PlayerViewmodel vm, BuildContext context) {
     return Center(
       child: IconButton.filled(
         onPressed: () async {
           vm.isPlaying(url: episode?.contentUrl)
               ? vm.pause()
               : vm.play(
-                  track: Track(
-                      url: episode?.contentUrl,
-                      episode: PodcastEpisode.fromEpisode(episode!,
-                          podcast: podcast),
-                      podcast: podcast));
+                  track: PodcastEpisode.fromEpisode(episode!, podcast: podcast),
+                  seekPos: true,
+                );
         },
-        icon: vm.isPlaying(url: episode?.contentUrl)
-            ? const Icon(Icons.pause)
-            : const Icon(Icons.play_arrow),
+        icon: vm.state == UiState.loading
+            ? SizedBox(
+                width: 15,
+                height: 15,
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              )
+            : vm.isPlaying(url: episode?.contentUrl)
+                ? const Icon(Icons.pause)
+                : const Icon(Icons.play_arrow),
         // label: vm.isPlaying(url: episode?.contentUrl) ? const Text('PAUSE') : const Text('PLAY'),
         style: controlsButtonStyle(!vm.isPlaying(url: episode?.contentUrl)),
       ),
@@ -73,7 +80,7 @@ class EpisodePage extends ConsumerWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _playButton(vm),
+              _playButton(vm, context),
               const SizedBox(width: 8),
               Flexible(
                 flex: 1,
@@ -123,14 +130,7 @@ class EpisodePage extends ConsumerWidget {
           (episode?.duration != null)
               ? _iconInfo(context, Icons.hourglass_top,
                   episode?.duration?.toTime() ?? '')
-              : FutureBuilder(
-                  initialData: null,
-                  future: vm.getDurationFromMp3(episode?.contentUrl),
-                  builder: (context, snapshot) => (snapshot.hasData)
-                      ? _iconInfo(
-                          context, Icons.hourglass_top, snapshot.data?.toTime())
-                      : _iconInfo(context, Icons.hourglass_top, '...'),
-                )
+              : const SizedBox.shrink()
         ],
       ),
     );

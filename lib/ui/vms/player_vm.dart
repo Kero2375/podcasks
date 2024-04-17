@@ -3,13 +3,12 @@ import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:podcasks/repository/history_repo.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/data/podcast_episode.dart';
-import 'package:podcasks/data/track.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/manager/audio_handler.dart';
-import 'package:podcasks/repository/history_repo.dart';
+import 'package:podcasks/repository/last_playing_repo.dart';
 import 'package:podcasks/repository/search_repo.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 
@@ -21,8 +20,8 @@ class PlayerViewmodel extends Vm {
 
   final int _scrollOffset = 300;
 
-  Track? get playing => _playing;
-  Track? _playing;
+  PodcastEpisode? get playing => _playing;
+  PodcastEpisode? _playing;
 
   Duration get position => audioHandler?.position ?? Duration.zero;
 
@@ -35,16 +34,8 @@ class PlayerViewmodel extends Vm {
   Timer? _positionTimer;
   Timer? _saveTimer;
 
+  final LastPlayingRepo _lastPlayingRepo = locator.get<LastPlayingRepo>();
   final HistoryRepo _historyRepo = locator.get<HistoryRepo>();
-
-  Future<Duration?> getDurationFromMp3(String? url,
-      [bool newPlayer = true]) async {
-    if (url != null) {
-      return await audioHandler?.getDuration(
-          url, newPlayer ? AudioPlayer() : null);
-    }
-    return null;
-  }
 
   @override
   void dispose() {
@@ -54,14 +45,24 @@ class PlayerViewmodel extends Vm {
     super.dispose();
   }
 
-  Future<void> play({Track? track}) async {
+  Future<void> play({PodcastEpisode? track, bool seekPos = false}) async {
     loading();
-    if (track != null) {
-      if (track.url != _playing?.url) {
+    if (track?.podcast != null) {
+      if (track!.contentUrl != _playing?.contentUrl) {
         await setPlaying(track);
       }
     }
+
+    if (track != null && seekPos) {
+      final pos = await _historyRepo.getPosition(track);
+      print("POS ================= $pos");
+      if (pos != null) {
+        await seekPosition(pos);
+      }
+    }
+
     audioHandler?.play();
+
     _positionTimer =
         Timer.periodic(const Duration(seconds: 1), (timer) => updatePosition());
     saveTrack();
@@ -70,17 +71,19 @@ class PlayerViewmodel extends Vm {
     success();
   }
 
-  Future<void> setPlaying(Track track) async {
-    print('---------------> ${track.url}');
+  Future<void> setPlaying(PodcastEpisode track) async {
     _playing = track;
-    await audioHandler?.setMediaUrl(MediaItem(
-      id: track.url ?? '',
-      title: track.episode?.title ?? '',
-      artist: track.podcast?.title,
-      artUri: Uri.parse(image ?? ''),
-      duration:
-          track.episode?.duration ?? await getDurationFromMp3(track.url, false),
-    ));
+    await audioHandler?.setMediaUrl(
+      MediaItem(
+        id: track.contentUrl ?? '',
+        title: track.title,
+        artist: track.podcast?.title,
+        artUri: Uri.parse(image ?? ''),
+        duration: track.duration,
+      ),
+    );
+
+    _lastPlayingRepo.setLastPlaying(playing);
   }
 
   Future<void> pause() async {
@@ -93,28 +96,28 @@ class PlayerViewmodel extends Vm {
 
   bool isPlaying({String? url}) {
     if (url != null) {
-      return (audioHandler?.playing == true &&
-          playingEpisode?.contentUrl == url);
+      return (audioHandler?.playing == true && playing?.contentUrl == url);
     }
     return (audioHandler?.playing == true);
   }
 
-  PodcastEpisode? get playingEpisode => _playing?.episode;
-
   Podcast? get playingPodcast => _playing?.podcast;
 
-  String? get image => _playing?.episode?.imageUrl ?? _playing?.podcast?.image;
+  String? get image => _playing?.imageUrl ?? _playing?.podcast?.image;
 
-  void updatePosition() {
+  Future<void> updatePosition() async {
     if (audioHandler != null) {
       if (duration != Duration.zero) {
         notifyListeners();
       }
 
+      // finished episode
       if (position.inSeconds == duration.inSeconds &&
           duration != Duration.zero) {
-        seekPosition(Duration.zero);
-        pause();
+        await seekPosition(Duration.zero);
+        await saveTrack();
+        await pause();
+        notifyListeners();
       }
     }
   }
@@ -153,10 +156,9 @@ class PlayerViewmodel extends Vm {
     }
   }
 
-  saveTrack() {
-    if (audioHandler != null) {
-      _historyRepo.setPlaying(playing);
-      _historyRepo.setPosition(position);
+  Future<void> saveTrack() async {
+    if (audioHandler != null && playing != null) {
+      await _historyRepo.setPosition(playing!, position);
     }
   }
 
