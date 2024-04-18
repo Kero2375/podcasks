@@ -80,22 +80,39 @@ class _HomePageState extends ConsumerState<HomePage> {
               onRefresh: () async {
                 await episodesVm.update();
                 await homeVm.update();
-                await homeVm.fetchFavourites(false);
+                await homeVm.fetchFavourites();
+                await homeVm.fetchAllSaved();
               },
-              child: SingleChildScrollView(
-                controller: episodesVm.controller,
-                child: Column(
-                  children: [
-                    ListView.builder(
-                      physics: const ScrollPhysics(),
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: episodesVm.displayingEpisodes.length,
-                      itemBuilder: (context, i) => _episode(context,
-                          episodesVm.displayingEpisodes[i], episodesVm),
-                    ),
-                    const SizedBox(height: BottomPlayer.playerHeight),
-                  ],
+              child: LayoutBuilder(
+                builder: (context, constraints) => SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  controller: episodesVm.controller,
+                  child: ConstrainedBox(
+                    constraints:
+                        BoxConstraints(minHeight: constraints.maxHeight),
+                    child: episodesVm.displayingEpisodes.isEmpty
+                        ? Center(
+                            child: Padding(
+                            padding: const EdgeInsets.only(bottom: 64),
+                            child: Text('no podcasts',
+                                style: textStyleBodyGray(context)),
+                          ))
+                        : Column(
+                            children: [
+                              ListView.builder(
+                                physics: const ScrollPhysics(),
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                itemCount: episodesVm.displayingEpisodes.length,
+                                itemBuilder: (context, i) => _episode(
+                                    context,
+                                    episodesVm.displayingEpisodes[i],
+                                    episodesVm),
+                              ),
+                              const SizedBox(height: BottomPlayer.playerHeight),
+                            ],
+                          ),
+                  ),
                 ),
               ),
             ),
@@ -132,15 +149,16 @@ class _HomePageState extends ConsumerState<HomePage> {
   void _initEpisodeList(
       EpisodesHomeViewmodel episodesVm, HomeViewmodel homeVm) {
     episodesVm.init(
-      homeVm.favourites
-          .map((p) =>
-              p.episodes.map((e) => PodcastEpisode.fromEpisode(e, podcast: p)))
-          .flattened
-          .sorted((a, b) => b.publicationDate != null
-              ? a.publicationDate?.compareTo(b.publicationDate!) ?? 0
-              : 0)
-          .reversed
-          .toList(),
+      homeVm.saved +
+          homeVm.favourites
+              .map((p) => p.episodes
+                  .map((e) => PodcastEpisode.fromEpisode(e, podcast: p)))
+              .flattened
+              .sorted((a, b) => b.publicationDate != null
+                  ? a.publicationDate?.compareTo(b.publicationDate!) ?? 0
+                  : 0)
+              .reversed
+              .toList(),
       maxItems: 30,
     );
   }

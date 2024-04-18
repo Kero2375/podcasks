@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/search/filters_dialog.dart';
-import 'package:podcasks/ui/vms/search_vm.dart';
 
 class SearchTextField extends StatelessWidget {
   final TextEditingController controller;

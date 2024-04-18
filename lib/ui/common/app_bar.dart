@@ -12,8 +12,8 @@ AppBar mainAppBar(
     leading: leading,
     title: Center(
       child: Text(
-        overflow: TextOverflow.ellipsis,
         title ?? '',
+        overflow: TextOverflow.ellipsis,
         style: textStyleTitle,
       ),
     ),

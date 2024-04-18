@@ -8,6 +8,8 @@ abstract class HistoryRepo {
   Future<void> setPosition(PodcastEpisode episode, Duration? position);
 
   Future<Duration?> getPosition(Episode episode);
+
+  Future<List<PodcastEpisode>> getAllSaved();
 }
 
 class HistoryRepoIsar extends HistoryRepo {
@@ -43,11 +45,25 @@ class HistoryRepoIsar extends HistoryRepo {
     if (id != null && position != null) {
       await isar?.writeTxn(
         () async => await isar?.saveTracks.put(SaveTrack(
-          id: id,
-          url: episode.contentUrl,
-          position: position.inSeconds,
-        )),
+            id: id,
+            url: episode.contentUrl,
+            position: position.inSeconds,
+            podcastUrl: episode.podcast?.url)),
       );
     }
+  }
+
+  @override
+  Future<List<PodcastEpisode>> getAllSaved() async {
+    final track = await isar?.saveTracks.where().findAll();
+    List<PodcastEpisode> episodes = [];
+    track?.where((e) => e.position != 0).forEach((t) async {
+      if (t.podcastUrl != null && t.url != null) {
+        final pod = await Podcast.loadFeed(url: t.podcastUrl!);
+        final ep = pod.episodes.firstWhere((e) => e.contentUrl == t.url);
+        episodes.add(PodcastEpisode.fromEpisode(ep, podcast: pod));
+      }
+    });
+    return episodes;
   }
 }

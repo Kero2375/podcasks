@@ -1,7 +1,9 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/repository/history_repo.dart';
+import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/repository/favourites_repo.dart';
@@ -18,19 +20,27 @@ class HomeViewmodel extends Vm {
   List<Podcast> get favourites => _favourites;
   List<Podcast> _favourites = [];
 
+  List<PodcastEpisode> get saved => _saved;
+  List<PodcastEpisode> _saved = [];
+
   HomeViewmodel() {
-    fetchFavourites();
+    init();
+  }
+
+  init() async {
+    loading();
+    await fetchFavourites();
+    await fetchAllSaved();
+    success();
   }
 
   Future<List<Podcast>> fetchFavourites([bool showLoading = true]) async {
-    if (showLoading) loading();
     final favFeeds = await _favRepo.getAllFavourites();
     List<Podcast> list = [];
     for (var value in favFeeds) {
       list.add(await Podcast.loadFeed(url: value));
     }
     _favourites = list;
-    success();
     return _favourites;
   }
 
@@ -44,6 +54,7 @@ class HomeViewmodel extends Vm {
       }
     }
     await fetchFavourites();
+    success();
   }
 
   bool isFavourite(Podcast? podcast) {
@@ -61,5 +72,9 @@ class HomeViewmodel extends Vm {
       }
     }
     return null;
+  }
+
+  Future<void> fetchAllSaved([bool showLoading = true]) async {
+    _saved = await _historyRepo.getAllSaved();
   }
 }
