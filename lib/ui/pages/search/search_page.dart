@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podcasks/ui/common/search_text_field.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/search/filters_dialog.dart';
 import 'package:podcasks/ui/pages/search/search_list.dart';
@@ -26,36 +27,12 @@ class SearchPage extends ConsumerWidget {
             icon: const Icon(Icons.close),
           ),
         ],
-        title: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            color: Theme.of(context).colorScheme.secondaryContainer,
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: TextField(
-            autofocus: true,
-            decoration: InputDecoration(
-              focusedBorder: InputBorder.none,
-              border: InputBorder.none,
-              hintText: "Search or add RSS feed...",
-              suffixIcon: IconButton(
-                onPressed: () => showDialog(
-                  context: context,
-                  builder: (context) => const FiltersDialog(),
-                ),
-                icon: const Icon(Icons.filter_alt),
-              ),
-            ),
-            style: textStyleBody,
-            controller: vm.searchBarController,
-            onChanged: (value) {
-              if (value.trim().isNotEmpty) {
-                vm.search(value);
-              } else {
-                vm.init();
-              }
-            },
-          ),
+        title: SearchTextField(
+          controller: vm.searchBarController,
+          search: vm.search,
+          init: vm.init,
+          hint: 'Search or add RSS feed...',
+          showFilters: true,
         ),
       ),
       body: Padding(

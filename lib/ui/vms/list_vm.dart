@@ -1,9 +1,11 @@
 import 'dart:developer' as dev;
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/repository/history_repo.dart';
+import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcast_search/podcast_search.dart';
 
@@ -20,6 +22,12 @@ class ListViewmodel extends Vm {
 
   ScrollController get controller => _controller;
   ScrollController _controller = ScrollController();
+
+  final Ref _ref;
+
+  ListViewmodel(this._ref) {
+    _ref.watch(playerViewmodel);
+  }
 
   init(List<PodcastEpisode>? eps, {int? maxItems}) {
     if (maxItems != null) _maxItems = maxItems;
@@ -65,7 +73,8 @@ class ListViewmodel extends Vm {
     }
   }
 
-  Future<bool> isStarted(Episode ep) async {
+  Future<bool> isStarted(Episode? ep) async {
+    if (ep == null) return false;
     final pos = await _historyRepo.getPosition(ep);
     return (pos != null && pos.inSeconds != 0);
   }

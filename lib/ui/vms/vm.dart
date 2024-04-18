@@ -19,4 +19,8 @@ class Vm extends ChangeNotifier {
     state = UiState.loading;
     notifyListeners();
   }
+
+  update() {
+    notifyListeners();
+  }
 }

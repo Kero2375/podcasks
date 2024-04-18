@@ -22,8 +22,8 @@ class HomeViewmodel extends Vm {
     fetchFavourites();
   }
 
-  Future<List<Podcast>> fetchFavourites() async {
-    loading();
+  Future<List<Podcast>> fetchFavourites([bool showLoading = true]) async {
+    if (showLoading) loading();
     final favFeeds = await _favRepo.getAllFavourites();
     List<Podcast> list = [];
     for (var value in favFeeds) {

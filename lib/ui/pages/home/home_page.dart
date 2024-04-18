@@ -1,10 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/bottom_player.dart';
 import 'package:podcasks/ui/common/divider.dart';
+import 'package:podcasks/ui/common/listening_tag.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/episode_page.dart';
 import 'package:podcasks/ui/pages/home/podcast_list.dart';
@@ -54,23 +56,47 @@ class _HomePageState extends ConsumerState<HomePage> {
     }
 
     return Scaffold(
-      appBar: mainAppBar(context, title: 'Podcasks'),
+      appBar: mainAppBar(
+        context,
+        title: 'Podcasks',
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              icon: SvgPicture.asset(
+                'assets/icon/favorites_list.svg',
+                width: 32,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            );
+          },
+        ),
+      ),
       body: homeVm.state == UiState.loading
           ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              controller: episodesVm.controller,
-              child: Column(
-                children: [
-                  ListView.builder(
-                    physics: const ScrollPhysics(),
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: episodesVm.displayingEpisodes.length,
-                    itemBuilder: (context, i) => _episode(
-                        context, episodesVm.displayingEpisodes[i], episodesVm),
-                  ),
-                  const SizedBox(height: BottomPlayer.playerHeight),
-                ],
+          : RefreshIndicator(
+              onRefresh: () async {
+                await episodesVm.update();
+                await homeVm.update();
+                await homeVm.fetchFavourites(false);
+              },
+              child: SingleChildScrollView(
+                controller: episodesVm.controller,
+                child: Column(
+                  children: [
+                    ListView.builder(
+                      physics: const ScrollPhysics(),
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemCount: episodesVm.displayingEpisodes.length,
+                      itemBuilder: (context, i) => _episode(context,
+                          episodesVm.displayingEpisodes[i], episodesVm),
+                    ),
+                    const SizedBox(height: BottomPlayer.playerHeight),
+                  ],
+                ),
               ),
             ),
       bottomSheet: const BottomPlayer(),
@@ -100,13 +126,6 @@ class _HomePageState extends ConsumerState<HomePage> {
           ],
         ),
       ),
-      // bottomNavigationBar: BottomNavigationBar(
-      //   items: const [
-      //     BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
-      //     BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Explore'),
-      //     BottomNavigationBarItem(icon: Icon(Icons.favorite_outline), label: 'Favorites'),
-      //   ],
-      // ),
     );
   }
 
@@ -142,25 +161,35 @@ class _HomePageState extends ConsumerState<HomePage> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (image != null)
-                  Container(
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(4),
-                      ),
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: Image.network(
-                      image,
-                      height: 40,
+                Container(
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(4),
                     ),
                   ),
+                  clipBehavior: Clip.antiAlias,
+                  child: Row(
+                    children: [
+                      if (image != null)
+                        Image.network(
+                          image,
+                          height: 40,
+                          width: 40,
+                        ),
+                    ],
+                  ),
+                ),
                 const SizedBox(width: 8),
                 Flexible(
                   flex: 1,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      ListeningTag(
+                        ep: ep,
+                        isStarted: episodesVm.isStarted,
+                        padding: const EdgeInsets.only(bottom: 4),
+                      ),
                       Text(
                         ep?.publicationDate?.toDate() ?? '',
                         style: textStyleSmallGray(context),
