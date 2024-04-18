@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/repository/search_repo.dart';
-import 'package:podcast_search/podcast_search.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class LastPlayingRepo {

@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/repository/history_repo.dart';
-import 'package:podcasks/ui/pages/episode_page.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/repository/favourites_repo.dart';
