@@ -62,16 +62,13 @@ class HomeViewmodel extends Vm {
   }
 
   Future<(PodcastEpisode, Duration)?> getLastSaved() async {
-    loading();
     final ep = await _lastPlayingRepo.getLastPlaying();
     if (ep != null) {
       final pos = await _historyRepo.getPosition(ep);
       if (pos != null) {
-        success();
         return (ep, pos);
       }
     }
-    success();
     return null;
   }
 
