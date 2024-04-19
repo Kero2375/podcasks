@@ -29,9 +29,13 @@ class SearchViewmodel extends Vm {
 
   TextEditingController searchBarController = TextEditingController();
 
+  Future<String> get genre async => await _prefsRepo.getGenre();
+
+  List<String> get genres => _prefsRepo.getAllGenres();
+
   Future<void> init() async {
     loading();
-    _searched = await _searchRepo.charts(await country);
+    _searched = await _searchRepo.charts(await country, await genre);
     success();
   }
 
@@ -50,7 +54,6 @@ class SearchViewmodel extends Vm {
             )
           ];
         } else {
-          // todo: add debounce
           _searched = await _searchRepo.search(term, await country);
         }
         success();
@@ -68,11 +71,22 @@ class SearchViewmodel extends Vm {
     if (c != null) {
       // _country = c;
       _prefsRepo.setCountry(c);
-      if (searchBarController.text == '') {
-        await init();
-      } else {
-        await search(searchBarController.text);
-      }
+      await _updateSearch();
+    }
+  }
+
+  Future<void> setGenre(String? g) async {
+    if (g != null) {
+      _prefsRepo.setGenre(g);
+      _updateSearch();
+    }
+  }
+
+  Future<void> _updateSearch() async {
+    if (searchBarController.text == '') {
+      await init();
+    } else {
+      await search(searchBarController.text);
     }
   }
 }

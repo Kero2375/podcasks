@@ -63,3 +63,26 @@ class PodcastEpisode extends Episode {
     );
   }
 }
+
+const itunesGenres = [
+  'All',
+  'Arts',
+  'Business',
+  'Comedy',
+  'Education',
+  'Fiction',
+  'Government',
+  'Health & Fitness',
+  'History',
+  'Kids & Family',
+  'Leisure',
+  'Music',
+  'News',
+  'Religion & Spirituality',
+  'Science',
+  'Society & Culture',
+  'Sports',
+  'TV & Film',
+  'Technology',
+  'True Crime',
+];

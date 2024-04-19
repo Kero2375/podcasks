@@ -50,3 +50,9 @@ textStyleSmallGray(context) => themeFontFamily.copyWith(
 TextStyle get textStyleSmall => themeFontFamily.copyWith(
       fontSize: 12,
     );
+
+MenuStyle get dropdownItemsStyle => const MenuStyle(
+      alignment: Alignment.bottomLeft,
+    );
+
+  

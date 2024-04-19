@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -6,10 +7,18 @@ abstract class PrefsRepo {
   Future<void> setCountry(Country country);
 
   Future<Country> getCountry();
+
+  Future<void> setGenre(String g);
+
+  List<String> getAllGenres();
+
+  Future<String> getGenre();
 }
 
 class PrefsRepoSharedPref extends PrefsRepo {
   static const String countryKey = 'country_sp_key';
+  static const String genreKey = 'genre_sp_key';
+  String genre = 'All';
 
   Future<SharedPreferences> get _getSp async =>
       await SharedPreferences.getInstance();
@@ -26,5 +35,18 @@ class PrefsRepoSharedPref extends PrefsRepo {
   Future<void> setCountry(Country country) async {
     final sp = await _getSp;
     await sp.setString(countryKey, country.code);
+  }
+
+  @override
+  List<String> getAllGenres() => itunesGenres;
+
+  @override
+  Future<String> getGenre() async {
+    return Future.value(genre);
+  }
+
+  @override
+  Future<void> setGenre(String g) async {
+    genre = g;
   }
 }
