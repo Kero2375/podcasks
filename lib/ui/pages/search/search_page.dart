@@ -39,7 +39,7 @@ class SearchPage extends ConsumerWidget {
             ? const Center(
                 child: CircularProgressIndicator(),
               )
-            : SearchList(items: vm.searched),
+            : Expanded(child: SearchList(items: vm.searched)),
       ),
     );
   }

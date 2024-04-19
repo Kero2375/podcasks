@@ -182,7 +182,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         child: Column(
           children: [
             Text('welcome!', style: textStyleBody),
-            Text('you are not listening anything yet', style: textStyleBody),
+            Text('you\'re not listening to anything', style: textStyleBody),
             const SizedBox(height: 8),
             Text('¯\\_(ツ)_/¯', style: textStyleBody),
             const SizedBox(height: 8),

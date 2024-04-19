@@ -34,7 +34,11 @@ class FilterDropdown<T> extends StatelessWidget {
           .map((g) => DropdownMenuItem<T>(
                 alignment: Alignment.center,
                 value: g,
-                child: Text(_formatForMenu(getString(g))),
+                child: Text(
+                  _formatForMenu(getString(g)),
+                  style: textStyleBody.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground),
+                ),
               ))
           .toList(),
       style: textStyleBody,
