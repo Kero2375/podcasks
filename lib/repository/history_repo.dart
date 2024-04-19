@@ -57,13 +57,14 @@ class HistoryRepoIsar extends HistoryRepo {
   Future<List<PodcastEpisode>> getAllSaved() async {
     final track = await isar?.saveTracks.where().findAll();
     List<PodcastEpisode> episodes = [];
-    track?.where((e) => e.position != 0).forEach((t) async {
+
+    for (SaveTrack t in track?.where((e) => e.position != 0) ?? []) {
       if (t.podcastUrl != null && t.url != null) {
         final pod = await Podcast.loadFeed(url: t.podcastUrl!);
         final ep = pod.episodes.firstWhere((e) => e.contentUrl == t.url);
         episodes.add(PodcastEpisode.fromEpisode(ep, podcast: pod));
       }
-    });
+    }
     return episodes;
   }
 }

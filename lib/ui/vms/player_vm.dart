@@ -49,7 +49,7 @@ class PlayerViewmodel extends Vm {
     loading();
     if (track?.podcast != null) {
       if (track!.contentUrl != _playing?.contentUrl) {
-        await setPlaying(track);
+        await setupPlayer(track);
       }
     }
 
@@ -61,16 +61,12 @@ class PlayerViewmodel extends Vm {
     }
 
     audioHandler?.play();
-
-    _positionTimer =
-        Timer.periodic(const Duration(seconds: 1), (timer) => updatePosition());
-    saveTrack();
-    _saveTimer =
-        Timer.periodic(const Duration(seconds: 10), (timer) => saveTrack());
+    _startSaveTimers();
     success();
   }
 
-  Future<void> setPlaying(PodcastEpisode track) async {
+  Future<void> setupPlayer(PodcastEpisode track) async {
+    loading();
     _playing = track;
     await audioHandler?.setMediaUrl(
       MediaItem(
@@ -80,16 +76,37 @@ class PlayerViewmodel extends Vm {
         artUri: Uri.parse(image ?? ''),
         duration: track.duration,
       ),
+      (playbackState) async {
+        if (playbackState.playing) {
+          await _startSaveTimers();
+        } else {
+          _stopSaveTimers();
+        }
+        success();
+      },
     );
 
     _lastPlayingRepo.setLastPlaying(playing);
+    success();
+  }
+
+  Future<void> _startSaveTimers() async {
+    _positionTimer =
+        Timer.periodic(const Duration(seconds: 1), (timer) => updatePosition());
+    _saveTimer =
+        Timer.periodic(const Duration(seconds: 10), (timer) => saveTrack());
+    await saveTrack();
+  }
+
+  void _stopSaveTimers() {
+    _positionTimer?.cancel();
+    _saveTimer?.cancel();
   }
 
   Future<void> pause() async {
     loading();
     await audioHandler?.pause();
-    _positionTimer?.cancel();
-    _saveTimer?.cancel();
+    _stopSaveTimers();
     success();
   }
 

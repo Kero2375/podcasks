@@ -10,6 +10,7 @@ import 'package:podcasks/ui/common/listening_tag.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/episode_page.dart';
 import 'package:podcasks/ui/pages/home/podcast_list.dart';
+import 'package:podcasks/ui/pages/search/search_page.dart';
 import 'package:podcasks/ui/vms/episodes_home_vm.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
@@ -38,7 +39,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       HomeViewmodel homeVm, PlayerViewmodel playerVm) async {
     final (track, position) = await homeVm.getLastSaved() ?? (null, null);
     if (track != null && position != null) {
-      await playerVm.setPlaying(track);
+      await playerVm.setupPlayer(track);
       await playerVm.pause();
       await playerVm.seekPosition(position);
     }
@@ -59,20 +60,23 @@ class _HomePageState extends ConsumerState<HomePage> {
       appBar: mainAppBar(
         context,
         title: 'Podcasks',
-        leading: Builder(
-          builder: (context) {
-            return IconButton(
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-              icon: SvgPicture.asset(
-                'assets/icon/favorites_list.svg',
-                width: 32,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-            );
-          },
-        ),
+        leading: homeVm.favourites.isNotEmpty
+            ? Builder(
+                builder: (context) {
+                  return IconButton(
+                    onPressed: () {
+                      Scaffold.of(context).openDrawer();
+                    },
+                    icon: SvgPicture.asset(
+                      'assets/icon/favorites_list.svg',
+                      width: 32,
+                      // ignore: deprecated_member_use
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                  );
+                },
+              )
+            : const SizedBox.shrink(),
       ),
       body: homeVm.state == UiState.loading
           ? const Center(child: CircularProgressIndicator())
@@ -93,10 +97,36 @@ class _HomePageState extends ConsumerState<HomePage> {
                     child: episodesVm.displayingEpisodes.isEmpty
                         ? Center(
                             child: Padding(
-                            padding: const EdgeInsets.only(bottom: 64),
-                            child: Text('no podcasts',
-                                style: textStyleBodyGray(context)),
-                          ))
+                              padding: const EdgeInsets.only(bottom: 64),
+                              child: Column(
+                                children: [
+                                  Text('welcome!', style: textStyleBody),
+                                  Text('you are not listening anything yet',
+                                      style: textStyleBody),
+                                  const SizedBox(height: 8),
+                                  Text('¯\\_(ツ)_/¯', style: textStyleBody),
+                                  const SizedBox(height: 8),
+                                  FilledButton(
+                                    onPressed: () {
+                                      Navigator.pushNamed(
+                                        context,
+                                        SearchPage.route,
+                                      );
+                                    },
+                                    style: buttonStyle,
+                                    child: const Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.search),
+                                        SizedBox(width: 8),
+                                        Text('explore podcasts'),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
                         : Column(
                             children: [
                               ListView.builder(
@@ -117,32 +147,34 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
             ),
       bottomSheet: const BottomPlayer(),
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            SizedBox(
-              height: 86,
-              child: DrawerHeader(
-                child: Row(
-                  children: [
-                    const SizedBox(width: 8),
-                    Icon(
-                      Icons.favorite,
-                      color: Theme.of(context).colorScheme.primary,
+      drawer: homeVm.favourites.isNotEmpty
+          ? Drawer(
+              child: ListView(
+                children: [
+                  SizedBox(
+                    height: 86,
+                    child: DrawerHeader(
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 8),
+                          Icon(
+                            Icons.favorite,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          const SizedBox(width: 16),
+                          Text(
+                            "Following",
+                            style: textStyleSubtitle(context),
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(width: 16),
-                    Text(
-                      "Following",
-                      style: textStyleSubtitle(context),
-                    ),
-                  ],
-                ),
+                  ),
+                  PodcastList(items: homeVm.favourites),
+                ],
               ),
-            ),
-            PodcastList(items: homeVm.favourites),
-          ],
-        ),
-      ),
+            )
+          : null,
     );
   }
 

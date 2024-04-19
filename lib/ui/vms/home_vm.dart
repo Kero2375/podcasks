@@ -1,9 +1,7 @@
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/repository/history_repo.dart';
-import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/repository/favourites_repo.dart';
@@ -34,7 +32,7 @@ class HomeViewmodel extends Vm {
     success();
   }
 
-  Future<List<Podcast>> fetchFavourites([bool showLoading = true]) async {
+  Future<List<Podcast>> fetchFavourites() async {
     final favFeeds = await _favRepo.getAllFavourites();
     List<Podcast> list = [];
     for (var value in favFeeds) {
@@ -64,17 +62,20 @@ class HomeViewmodel extends Vm {
   }
 
   Future<(PodcastEpisode, Duration)?> getLastSaved() async {
+    loading();
     final ep = await _lastPlayingRepo.getLastPlaying();
     if (ep != null) {
       final pos = await _historyRepo.getPosition(ep);
       if (pos != null) {
+        success();
         return (ep, pos);
       }
     }
+    success();
     return null;
   }
 
-  Future<void> fetchAllSaved([bool showLoading = true]) async {
+  Future<void> fetchAllSaved() async {
     _saved = await _historyRepo.getAllSaved();
   }
 }
