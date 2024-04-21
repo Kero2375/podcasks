@@ -5,10 +5,12 @@ import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcast_search/podcast_search.dart';
 
 abstract class HistoryRepo {
-  Future<void> setPosition(PodcastEpisode episode, Duration? position);
+  Future<void> setPosition(
+      PodcastEpisode episode, Duration? position, bool finished);
 
-  Future<Duration?> getPosition(Episode episode);
+  Future<(Duration, bool)?> getPosition(Episode episode);
 
+  @Deprecated('Avoid fetching all saved episodes')
   Future<List<PodcastEpisode>> getAllSaved();
 }
 
@@ -28,37 +30,42 @@ class HistoryRepoIsar extends HistoryRepo {
   }
 
   @override
-  Future<Duration?> getPosition(Episode episode) async {
+  Future<(Duration, bool)?> getPosition(Episode episode) async {
     final id = episode.contentUrl?.hashCode;
     if (id != null) {
       final saved = await isar?.saveTracks.get(id);
       if (saved != null && saved.position != null) {
-        return Duration(seconds: saved.position!);
+        return (Duration(seconds: saved.position!), saved.finished ?? false);
       }
     }
     return null;
   }
 
   @override
-  Future<void> setPosition(PodcastEpisode episode, Duration? position) async {
+  Future<void> setPosition(
+      PodcastEpisode episode, Duration? position, bool finished) async {
     final id = episode.contentUrl?.hashCode;
     if (id != null && position != null) {
       await isar?.writeTxn(
-        () async => await isar?.saveTracks.put(SaveTrack(
-            id: id,
-            url: episode.contentUrl,
-            position: position.inSeconds,
-            podcastUrl: episode.podcast?.url)),
+        () async => await isar?.saveTracks.put(
+          SaveTrack(
+              id: id,
+              url: episode.contentUrl,
+              position: position.inSeconds,
+              podcastUrl: episode.podcast?.url,
+              finished: finished),
+        ),
       );
     }
   }
 
   @override
   Future<List<PodcastEpisode>> getAllSaved() async {
-    final track = await isar?.saveTracks.where().findAll();
+    final track =
+        await isar?.saveTracks.filter().positionGreaterThan(0).findAll();
     List<PodcastEpisode> episodes = [];
 
-    for (SaveTrack t in track?.where((e) => e.position != 0) ?? []) {
+    for (SaveTrack t in track ?? []) {
       if (t.podcastUrl != null && t.url != null) {
         final pod = await Podcast.loadFeed(url: t.podcastUrl!);
         final ep = pod.episodes.firstWhere((e) => e.contentUrl == t.url);

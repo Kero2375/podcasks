@@ -25,7 +25,8 @@ class SearchRepoPodcastSearch extends SearchRepo {
   }
 
   @override
-  Future<List<Item>> charts([Country country = Country.none, String genre = 'Any']) async {
+  Future<List<Item>> charts(
+      [Country country = Country.none, String genre = 'Any']) async {
     final result = await Search().charts(
       genre: genre,
       limit: 10,

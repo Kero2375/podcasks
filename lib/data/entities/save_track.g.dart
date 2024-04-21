@@ -17,18 +17,23 @@ const SaveTrackSchema = CollectionSchema(
   name: r'SaveTrack',
   id: -3731165250737059919,
   properties: {
-    r'podcastUrl': PropertySchema(
+    r'finished': PropertySchema(
       id: 0,
+      name: r'finished',
+      type: IsarType.bool,
+    ),
+    r'podcastUrl': PropertySchema(
+      id: 1,
       name: r'podcastUrl',
       type: IsarType.string,
     ),
     r'position': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'position',
       type: IsarType.long,
     ),
     r'url': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'url',
       type: IsarType.string,
     )
@@ -74,9 +79,10 @@ void _saveTrackSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.podcastUrl);
-  writer.writeLong(offsets[1], object.position);
-  writer.writeString(offsets[2], object.url);
+  writer.writeBool(offsets[0], object.finished);
+  writer.writeString(offsets[1], object.podcastUrl);
+  writer.writeLong(offsets[2], object.position);
+  writer.writeString(offsets[3], object.url);
 }
 
 SaveTrack _saveTrackDeserialize(
@@ -86,10 +92,11 @@ SaveTrack _saveTrackDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = SaveTrack(
+    finished: reader.readBoolOrNull(offsets[0]),
     id: id,
-    podcastUrl: reader.readStringOrNull(offsets[0]),
-    position: reader.readLongOrNull(offsets[1]),
-    url: reader.readStringOrNull(offsets[2]),
+    podcastUrl: reader.readStringOrNull(offsets[1]),
+    position: reader.readLongOrNull(offsets[2]),
+    url: reader.readStringOrNull(offsets[3]),
   );
   return object;
 }
@@ -102,10 +109,12 @@ P _saveTrackDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 1:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 2:
+      return (reader.readLongOrNull(offset)) as P;
+    case 3:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -203,6 +212,33 @@ extension SaveTrackQueryWhere
 
 extension SaveTrackQueryFilter
     on QueryBuilder<SaveTrack, SaveTrack, QFilterCondition> {
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> finishedIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'finished',
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition>
+      finishedIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'finished',
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> finishedEqualTo(
+      bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'finished',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> idEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
@@ -631,6 +667,18 @@ extension SaveTrackQueryLinks
     on QueryBuilder<SaveTrack, SaveTrack, QFilterCondition> {}
 
 extension SaveTrackQuerySortBy on QueryBuilder<SaveTrack, SaveTrack, QSortBy> {
+  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> sortByFinished() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'finished', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> sortByFinishedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'finished', Sort.desc);
+    });
+  }
+
   QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> sortByPodcastUrl() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'podcastUrl', Sort.asc);
@@ -670,6 +718,18 @@ extension SaveTrackQuerySortBy on QueryBuilder<SaveTrack, SaveTrack, QSortBy> {
 
 extension SaveTrackQuerySortThenBy
     on QueryBuilder<SaveTrack, SaveTrack, QSortThenBy> {
+  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> thenByFinished() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'finished', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> thenByFinishedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'finished', Sort.desc);
+    });
+  }
+
   QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -721,6 +781,12 @@ extension SaveTrackQuerySortThenBy
 
 extension SaveTrackQueryWhereDistinct
     on QueryBuilder<SaveTrack, SaveTrack, QDistinct> {
+  QueryBuilder<SaveTrack, SaveTrack, QDistinct> distinctByFinished() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'finished');
+    });
+  }
+
   QueryBuilder<SaveTrack, SaveTrack, QDistinct> distinctByPodcastUrl(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -747,6 +813,12 @@ extension SaveTrackQueryProperty
   QueryBuilder<SaveTrack, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<SaveTrack, bool?, QQueryOperations> finishedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'finished');
     });
   }
 

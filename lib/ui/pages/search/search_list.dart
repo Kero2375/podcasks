@@ -11,17 +11,7 @@ class SearchList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      children:
-          // <Widget>[
-          //       SingleChildScrollView(
-          //         scrollDirection: Axis.horizontal,
-          //         child: Row(
-          //           mainAxisSize: MainAxisSize.min,
-          //           children: List.filled(10, box(context)),
-          //         ),
-          //       )
-          //     ] +
-          items.map((e) => SearchListItem(item: e)).toList(),
+      children: items.map((e) => SearchListItem(item: e)).toList(),
     );
   }
 }

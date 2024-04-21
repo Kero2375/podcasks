@@ -7,11 +7,13 @@ class SaveTrack {
   String? url;
   String? podcastUrl;
   int? position;
+  bool? finished;
 
   SaveTrack({
     required this.id,
     required this.url,
     required this.position,
     required this.podcastUrl,
+    required this.finished,
   });
 }

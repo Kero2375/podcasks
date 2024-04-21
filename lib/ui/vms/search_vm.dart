@@ -15,7 +15,7 @@ class SearchViewmodel extends Vm {
 
   final _debouncer = Debouncer(milliseconds: 500);
 
-  get searched => _searched;
+  List<Item> get searched => _searched;
   List<Item> _searched = [];
 
   Podcast? get selected => _selected;

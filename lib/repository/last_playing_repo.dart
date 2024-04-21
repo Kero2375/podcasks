@@ -26,7 +26,7 @@ class LastPlayingRepoSharedPrefs extends LastPlayingRepo {
     final episodeUrl = sp.getString(lastPlayingEpisodeKey);
     final podcastUrl = sp.getString(lastPlayingPodcastKey);
 
-    if (episodeUrl != null && podcastUrl != null) {
+    if (episodeUrl != null && podcastUrl != null ) {
       final podcast = await _searchRepo.fetchPodcast(podcastUrl);
       final episode = podcast?.episodes
           .firstWhereOrNull((element) => element.contentUrl == episodeUrl);

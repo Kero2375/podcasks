@@ -14,6 +14,7 @@ import 'package:podcasks/ui/pages/podcast_page.dart';
 import 'package:podcasks/ui/pages/search/search_page.dart';
 import 'package:podcasks/ui/vms/episodes_home_vm.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
+import 'package:podcasks/ui/vms/list_vm.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcasks/utils.dart';
@@ -32,14 +33,16 @@ class _HomePageState extends ConsumerState<HomePage> {
   void initState() {
     final homeVm = ref.read(homeViewmodel);
     final playerVm = ref.read(playerViewmodel);
-    _checkSaved(homeVm, playerVm);
+    final episodesVm = ref.read(episodesHomeViewmodel);
+    _checkSaved(homeVm, playerVm, episodesVm);
     super.initState();
   }
 
-  Future<void> _checkSaved(
-      HomeViewmodel homeVm, PlayerViewmodel playerVm) async {
+  Future<void> _checkSaved(HomeViewmodel homeVm, PlayerViewmodel playerVm,
+      EpisodesHomeViewmodel episodesVm) async {
     final (track, position) = await homeVm.getLastSaved() ?? (null, null);
-    if (track != null && position != null) {
+    final state = await episodesVm.getEpisodeState(track);
+    if (track != null && position != null && state != EpisodeState.finished) {
       await playerVm.setupPlayer(track);
       await playerVm.pause();
       await playerVm.seekPosition(position);
@@ -48,19 +51,26 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   void _initEpisodeList(
       EpisodesHomeViewmodel episodesVm, HomeViewmodel homeVm) {
-    episodesVm.init(
-      homeVm.saved +
-          homeVm.favourites
-              .map((p) => p.episodes
-                  .map((e) => PodcastEpisode.fromEpisode(e, podcast: p)))
-              .flattened
-              .sorted((a, b) => b.publicationDate != null
-                  ? a.publicationDate?.compareTo(b.publicationDate!) ?? 0
-                  : 0)
-              .reversed
-              .toList(),
-      maxItems: 30,
-    );
+    final PodcastEpisode? saved = homeVm.saved;
+    final favourites = homeVm.favourites;
+    final list = <PodcastEpisode>[];
+
+    if (saved != null &&
+        favourites.firstWhereOrNull((p) => p.url == saved.podcast?.url) ==
+            null) {
+      list.add(saved);
+    }
+
+    list.addAll(favourites
+        .map((p) =>
+            p.episodes.map((e) => PodcastEpisode.fromEpisode(e, podcast: p)))
+        .flattened
+        .sorted((a, b) => b.publicationDate != null
+            ? a.publicationDate?.compareTo(b.publicationDate!) ?? 0
+            : 0)
+        .reversed);
+
+    episodesVm.init(list, maxItems: 30);
   }
 
   @override
@@ -88,10 +98,11 @@ class _HomePageState extends ConsumerState<HomePage> {
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
               onRefresh: () async {
+                await homeVm.fetchFavourites();
+                await homeVm.fetchListening();
                 await episodesVm.update();
                 await homeVm.update();
-                await homeVm.fetchFavourites();
-                await homeVm.fetchAllSaved();
+                // _initEpisodeList(episodesVm, homeVm);
               },
               child: LayoutBuilder(
                 builder: (context, constraints) => SingleChildScrollView(
@@ -185,6 +196,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             Text('you\'re not listening to anything', style: textStyleBody),
             const SizedBox(height: 8),
             Text('¯\\_(ツ)_/¯', style: textStyleBody),
+            // Text('(╬ ಠ益ಠ)', style: textStyleBody),
             const SizedBox(height: 8),
             FilledButton(
               onPressed: () {
@@ -254,8 +266,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                     children: [
                       ListeningTag(
                         ep: ep,
-                        isStarted: episodesVm.isStarted,
+                        isFinished: episodesVm.getEpisodeState,
                         padding: const EdgeInsets.only(bottom: 4),
+                        playing:
+                            ref.read(playerViewmodel).playing?.contentUrl ==
+                                ep?.contentUrl,
                       ),
                       Text(
                         ep?.publicationDate?.toDate() ?? '',

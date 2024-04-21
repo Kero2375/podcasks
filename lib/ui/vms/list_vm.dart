@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/repository/history_repo.dart';
-import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcast_search/podcast_search.dart';
 
@@ -26,7 +25,7 @@ class ListViewmodel extends Vm {
   final Ref _ref;
 
   ListViewmodel(this._ref) {
-    _ref.watch(playerViewmodel);
+    // _ref.watch(playerViewmodel);
   }
 
   init(List<PodcastEpisode>? eps, {int? maxItems}) {
@@ -73,9 +72,19 @@ class ListViewmodel extends Vm {
     }
   }
 
-  Future<bool> isStarted(Episode? ep) async {
-    if (ep == null) return false;
-    final pos = await _historyRepo.getPosition(ep);
-    return (pos != null && pos.inSeconds != 0);
+  Future<EpisodeState> getEpisodeState(Episode? ep) async {
+    if (ep == null) return EpisodeState.none;
+    final (pos, finished) = await _historyRepo.getPosition(ep) ?? (null, null);
+    return finished == true
+        ? EpisodeState.finished
+        : (pos != null && pos.inSeconds != 0)
+            ? EpisodeState.started
+            : EpisodeState.none;
   }
+}
+
+enum EpisodeState {
+  none,
+  started,
+  finished,
 }

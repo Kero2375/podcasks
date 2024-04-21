@@ -1,0 +1,26 @@
+!! ⚠️ PLEASE REVIEW THIS LOG FOR SENSITIVE INFORMATION BEFORE SHARING ⚠️ !!
+Dart Code extension: 3.86.0
+Flutter extension: 3.86.0 (not activated)
+
+App: Visual Studio Code
+App Host: desktop
+Version: linux 1.88.1
+
+
+Logging Categories:
+    FlutterDaemon
+
+Sun Apr 21 2024 [22:11:45 GMT+0200 (Central European Summer Time)] Log file started
+[10:11:45 PM] [FlutterDaemon] [Info] Spawning /home/kero/fvm/versions/3.13.2/bin/flutter with args ["daemon"]
+[10:11:45 PM] [FlutterDaemon] [Info] ..  in /home/kero/fvm/versions/3.13.2
+[10:11:45 PM] [FlutterDaemon] [Info] ..  with {"toolEnv":{"FLUTTER_HOST":"VSCode","PUB_ENVIRONMENT":"vscode.dart-code","FLUTTER_ROOT":"/home/kero/fvm/versions/3.13.2"}}
+[10:11:45 PM] [FlutterDaemon] [Info]     PID: 10144
+[10:11:46 PM] [FlutterDaemon] [Info] <== [{"event":"daemon.connected","params":{"version":"0.6.1","pid":10259}}]
+[10:11:46 PM] [FlutterDaemon] [Info] ==> [{"id":"1","method":"device.enable"}]
+[10:11:46 PM] [FlutterDaemon] [Info] ==> [{"id":"2","method":"emulator.getEmulators"}]
+[10:11:46 PM] [FlutterDaemon] [Info] ==> [{"id":"3","method":"daemon.getSupportedPlatforms","params":{"projectRoot":"/home/kero/flutter/podcasts"}}]
+[10:11:46 PM] [FlutterDaemon] [Info] <== [{"event":"daemon.logMessage","params":{"level":"status","message":"Starting device daemon..."}}]
+[10:11:46 PM] [FlutterDaemon] [Info] <== [{"id":"1"}]
+[10:11:46 PM] [FlutterDaemon] [Info] <== [{"id":"2","result":[]}]
+[10:11:46 PM] [FlutterDaemon] [Info] <== [{"id":"3","result":{"platforms":["linux","macos","windows","ios","android","web"]}}]
+[10:11:50 PM] [FlutterDaemon] [Info] <== [{"event":"device.added","params":{"id":"linux","name":"Linux","platform":"linux-x64","emulator":false,"category":"desktop","platformType":"linux","ephemeral":false,"emulatorId":null,"sdk":"Manjaro Linux 6.5.13-7-MANJARO","capabilities":{"hotReload":true,"hotRestart":true,"screenshot":false,"fastStart":false,"flutterExit":true,"hardwareRendering":true,"startPaused":true}}}]

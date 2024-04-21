@@ -4,6 +4,7 @@ import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/podcast_page.dart';
 import 'package:podcasks/ui/vms/search_vm.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SearchListItem extends ConsumerWidget {
   final Item item;
@@ -19,8 +20,14 @@ class SearchListItem extends ConsumerWidget {
     return InkWell(
       onTap: () async {
         final nav = Navigator.of(context);
-        await vm.fetchPodcast(item.feedUrl);
-        nav.pushNamed(PodcastPage.route, arguments: vm.selected);
+        if (item.feedUrl == null) {
+          if (item.collectionViewUrl != null) {
+            launchUrl(Uri.parse(item.collectionViewUrl!));
+          }
+        } else {
+          await vm.fetchPodcast(item.feedUrl);
+          nav.pushNamed(PodcastPage.route, arguments: vm.selected);
+        }
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -45,12 +52,12 @@ class SearchListItem extends ConsumerWidget {
                 children: [
                   Text(
                     item.collectionName ?? '',
-                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: textStyleBody,
                   ),
                   Text(
                     item.artistName ?? '',
-                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: textStyleBodyGray(context),
                   ),
                   // Text(
@@ -61,6 +68,15 @@ class SearchListItem extends ConsumerWidget {
                 ],
               ),
             ),
+            if (item.feedUrl == null) ...[
+              const SizedBox(width: 16),
+              Icon(
+                Icons.open_in_new,
+                size: 24,
+                color:
+                    Theme.of(context).colorScheme.onBackground.withOpacity(.5),
+              )
+            ],
           ],
         ),
       ),

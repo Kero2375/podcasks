@@ -13,7 +13,7 @@ class BottomPlayer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.watch(playerViewmodel);
-    return vm.playing == null || vm.position == Duration.zero
+    return vm.playing == null //|| vm.position == Duration.zero
         ? const SizedBox.shrink()
         : BottomSheet(
             shape:

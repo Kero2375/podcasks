@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/ui/common/listening_tag.dart';
-import 'package:podcasks/ui/common/search_text_field.dart';
+import 'package:podcasks/ui/pages/search/search_text_field.dart';
+import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
+import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
@@ -93,8 +95,8 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
       body: RefreshIndicator(
         onRefresh: () async {
           vm.initEpisodesList();
+          await ref.read(homeViewmodel).fetchListening();
           await vm.update();
-          await Future.delayed(const Duration(seconds: 1));
         },
         child: SingleChildScrollView(
           controller: vm.controller,
@@ -174,12 +176,12 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
       shrinkWrap: true,
       itemCount: vm.displayingEpisodes.length,
       itemBuilder: (context, i) =>
-          _episode(context, vm.displayingEpisodes[i], vm.isStarted),
+          _episode(context, vm.displayingEpisodes[i], vm.getEpisodeState),
     );
   }
 
-  Widget _episode(
-      BuildContext context, Episode? ep, Future Function(Episode?) isStarted) {
+  Widget _episode(BuildContext context, Episode? ep,
+      Future<EpisodeState> Function(Episode? ep) getEpisodeState) {
     return InkWell(
       onTap: () {
         if (ep != null && widget.podcast != null) {
@@ -197,9 +199,12 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ListeningTag(
-                    ep: ep,
-                    isStarted: isStarted,
-                    padding: const EdgeInsets.only(bottom: 8)),
+                  ep: ep,
+                  isFinished: getEpisodeState,
+                  padding: const EdgeInsets.only(bottom: 8),
+                  playing: ref.read(playerViewmodel).playing?.contentUrl ==
+                      ep?.contentUrl,
+                ),
                 Text(
                   ep?.publicationDate?.toDate() ?? '',
                   style: textStyleSmallGray(context),

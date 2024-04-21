@@ -18,8 +18,8 @@ class HomeViewmodel extends Vm {
   List<Podcast> get favourites => _favourites;
   List<Podcast> _favourites = [];
 
-  List<PodcastEpisode> get saved => _saved;
-  List<PodcastEpisode> _saved = [];
+  PodcastEpisode? get saved => _saved;
+  PodcastEpisode? _saved;
 
   HomeViewmodel() {
     init();
@@ -28,7 +28,7 @@ class HomeViewmodel extends Vm {
   init() async {
     loading();
     await fetchFavourites();
-    await fetchAllSaved();
+    await fetchListening();
     success();
   }
 
@@ -66,13 +66,19 @@ class HomeViewmodel extends Vm {
     if (ep != null) {
       final pos = await _historyRepo.getPosition(ep);
       if (pos != null) {
-        return (ep, pos);
+        return (ep, pos.$1);
       }
     }
     return null;
   }
 
-  Future<void> fetchAllSaved() async {
-    _saved = await _historyRepo.getAllSaved();
+  Future<void> fetchListening() async {
+    final last = await _lastPlayingRepo.getLastPlaying();
+    if (last != null) {
+      final time = await _historyRepo.getPosition(last);
+      print("LISTENING: ${last.title} [$time]");
+      if (time?.$1.inSeconds != 0) _saved = last;
+    }
+    // _saved = [];
   }
 }

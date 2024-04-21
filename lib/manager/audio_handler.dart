@@ -19,7 +19,8 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     });
   }
 
-  setMediaUrl(MediaItem? item, Function(PlaybackState) playbackStateListener) async {
+  setMediaUrl(
+      MediaItem? item, Function(PlaybackState) playbackStateListener) async {
     if (item?.id != null) {
       mediaItem.add(item!);
       playbackState.add(
@@ -39,7 +40,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       );
       _player.setUrl(item.id);
       await _player.load();
-      playbackState.listen(playbackStateListener);
+      // playbackState.listen(playbackStateListener);
     }
   }
 
@@ -66,7 +67,9 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   @override
-  Future<void> stop() => _player.stop();
+  Future<void> stop() async {
+    return _player.stop();
+  }
 
   @override
   Future<void> seek(Duration position) {

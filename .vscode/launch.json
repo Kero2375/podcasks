@@ -10,6 +10,7 @@
             "request": "launch",
             "program": "lib/main.dart",
             "flutterMode": "debug",
+            // "deviceId": "32081FDH2004GH",
         }
         
     ]

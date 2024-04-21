@@ -56,17 +56,18 @@ class PlayerViewmodel extends Vm {
     if (track != null && seekPos) {
       final pos = await _historyRepo.getPosition(track);
       if (pos != null) {
-        await seekPosition(pos);
+        await seekPosition(pos.$1);
       }
     }
 
     audioHandler?.play();
+    saveTrack();
     _startSaveTimers();
     success();
   }
 
   Future<void> setupPlayer(PodcastEpisode track) async {
-    loading();
+    // loading();
     _playing = track;
     await audioHandler?.setMediaUrl(
       MediaItem(
@@ -82,31 +83,34 @@ class PlayerViewmodel extends Vm {
         } else {
           _stopSaveTimers();
         }
-        success();
+        // success();
       },
     );
 
     _lastPlayingRepo.setLastPlaying(playing);
-    success();
+    // success();
   }
 
   Future<void> _startSaveTimers() async {
+    _stopSaveTimers();
+    print("STARTED");
     _positionTimer =
         Timer.periodic(const Duration(seconds: 1), (timer) => updatePosition());
     _saveTimer =
         Timer.periodic(const Duration(seconds: 10), (timer) => saveTrack());
-    await saveTrack();
+    // await saveTrack();
   }
 
   void _stopSaveTimers() {
+    print("STOPPED");
     _positionTimer?.cancel();
     _saveTimer?.cancel();
   }
 
   Future<void> pause() async {
     loading();
-    await audioHandler?.pause();
     _stopSaveTimers();
+    await audioHandler?.pause();
     success();
   }
 
@@ -131,7 +135,7 @@ class PlayerViewmodel extends Vm {
       if (position.inSeconds == duration.inSeconds &&
           duration != Duration.zero) {
         await seekPosition(Duration.zero);
-        await saveTrack();
+        await saveTrack(true);
         await pause();
         notifyListeners();
       }
@@ -172,9 +176,10 @@ class PlayerViewmodel extends Vm {
     }
   }
 
-  Future<void> saveTrack() async {
+  Future<void> saveTrack([bool finished = false]) async {
     if (audioHandler != null && playing != null) {
-      await _historyRepo.setPosition(playing!, position);
+      print("SAVETRACK");
+      await _historyRepo.setPosition(playing!, position, finished);
     }
   }
 
