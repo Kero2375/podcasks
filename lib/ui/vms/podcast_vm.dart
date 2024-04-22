@@ -3,11 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/ui/common/debouncer.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
 
-final podcastViewmodel = ChangeNotifierProvider((ref) => PodcastViewmodel(ref));
+final podcastViewmodel = ChangeNotifierProvider((ref) => PodcastViewmodel());
 
 class PodcastViewmodel extends ListViewmodel {
-  PodcastViewmodel(super.ref);
-
   TextEditingController? get searchController => _searchController;
   TextEditingController? _searchController;
 

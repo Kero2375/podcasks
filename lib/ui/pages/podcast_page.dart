@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podcasks/ui/common/episode_menu.dart';
 import 'package:podcasks/ui/common/listening_tag.dart';
 import 'package:podcasks/ui/pages/search/search_text_field.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
@@ -30,6 +31,8 @@ class PodcastPage extends ConsumerStatefulWidget {
 }
 
 class _PodcastPageState extends ConsumerState<PodcastPage> {
+  Offset _tapPos = Offset.zero;
+
   // @override
   _initEpisodeList(ListViewmodel vm) {
     if (vm.displayingEpisodes.isEmpty) {
@@ -44,6 +47,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
 
   @override
   void initState() {
+    _tapPos = Offset.zero;
     final vm = ref.read(podcastViewmodel);
     vm.init(widget.podcast?.episodes
         .map((e) => PodcastEpisode.fromEpisode(e))
@@ -176,19 +180,36 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
       shrinkWrap: true,
       itemCount: vm.displayingEpisodes.length,
       itemBuilder: (context, i) =>
-          _episode(context, vm.displayingEpisodes[i], vm.getEpisodeState),
+          _episode(context, vm.displayingEpisodes[i], vm.getEpisodeState, vm),
     );
   }
 
-  Widget _episode(BuildContext context, Episode? ep,
-      Future<EpisodeState> Function(Episode? ep) getEpisodeState) {
+  Widget _episode(
+      BuildContext context,
+      Episode? ep,
+      Future<EpisodeState> Function(Episode? ep) getEpisodeState,
+      PodcastViewmodel vm) {
+    final pep = ep != null
+        ? PodcastEpisode.fromEpisode(ep, podcast: widget.podcast)
+        : null;
+
     return InkWell(
       onTap: () {
-        if (ep != null && widget.podcast != null) {
-          Navigator.pushNamed(context, EpisodePage.route,
-              arguments:
-                  PodcastEpisode.fromEpisode(ep, podcast: widget.podcast!));
+        if (pep != null && widget.podcast != null) {
+          Navigator.pushNamed(context, EpisodePage.route, arguments: pep);
         }
+      },
+      onTapDown: (details) => setState(() => _tapPos = details.globalPosition),
+      onLongPress: () async {
+        await vm.getEpisodeState(ep).then((value) => {
+              showEpisodeMenu(
+                context: context,
+                value: value,
+                vm: vm,
+                ep: pep,
+                tapPos: _tapPos,
+              ),
+            });
       },
       child: Column(
         children: [

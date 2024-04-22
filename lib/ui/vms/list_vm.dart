@@ -1,7 +1,6 @@
 import 'dart:developer' as dev;
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/repository/history_repo.dart';
@@ -22,9 +21,7 @@ class ListViewmodel extends Vm {
   ScrollController get controller => _controller;
   ScrollController _controller = ScrollController();
 
-  final Ref _ref;
-
-  ListViewmodel(this._ref) {
+  ListViewmodel() {
     // _ref.watch(playerViewmodel);
   }
 
@@ -80,6 +77,22 @@ class ListViewmodel extends Vm {
         : (pos != null && pos.inSeconds != 0)
             ? EpisodeState.started
             : EpisodeState.none;
+  }
+
+  Future<void> markAsFinished(PodcastEpisode? ep) async {
+    if (ep != null) {
+      await _historyRepo.setPosition(ep, Duration.zero, true);
+      initEpisodesList();
+      update();
+    }
+  }
+
+  Future<void> cancelProgress(PodcastEpisode? ep) async {
+    if (ep != null) {
+      await _historyRepo.removeEpisode(ep);
+      initEpisodesList();
+      update();
+    }
   }
 }
 

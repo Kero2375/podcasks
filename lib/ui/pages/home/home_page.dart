@@ -6,6 +6,7 @@ import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/bottom_player.dart';
 import 'package:podcasks/ui/common/divider.dart';
+import 'package:podcasks/ui/common/episode_menu.dart';
 import 'package:podcasks/ui/common/listening_tag.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/episode_page.dart';
@@ -29,6 +30,8 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
+  Offset _tapPos = Offset.zero;
+
   @override
   void initState() {
     final homeVm = ref.read(homeViewmodel);
@@ -227,6 +230,18 @@ class _HomePageState extends ConsumerState<HomePage> {
     return InkWell(
       onTap: () =>
           Navigator.pushNamed(context, EpisodePage.route, arguments: ep),
+      onTapDown: (details) => setState(() => _tapPos = details.globalPosition),
+      onLongPress: () async {
+        await episodesVm.getEpisodeState(ep).then((value) => {
+              showEpisodeMenu(
+                context: context,
+                value: value,
+                vm: episodesVm,
+                ep: ep,
+                tapPos: _tapPos,
+              ),
+            });
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

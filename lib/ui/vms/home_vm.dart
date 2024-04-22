@@ -76,7 +76,6 @@ class HomeViewmodel extends Vm {
     final last = await _lastPlayingRepo.getLastPlaying();
     if (last != null) {
       final time = await _historyRepo.getPosition(last);
-      print("LISTENING: ${last.title} [$time]");
       if (time?.$1.inSeconds != 0) _saved = last;
     }
     // _saved = [];

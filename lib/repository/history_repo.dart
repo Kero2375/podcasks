@@ -8,6 +8,8 @@ abstract class HistoryRepo {
   Future<void> setPosition(
       PodcastEpisode episode, Duration? position, bool finished);
 
+  Future<void> removeEpisode(PodcastEpisode episode);
+
   Future<(Duration, bool)?> getPosition(Episode episode);
 
   @Deprecated('Avoid fetching all saved episodes')
@@ -73,5 +75,15 @@ class HistoryRepoIsar extends HistoryRepo {
       }
     }
     return episodes;
+  }
+
+  @override
+  Future<void> removeEpisode(PodcastEpisode episode) async {
+    final id = episode.contentUrl?.hashCode;
+    if (id != null) {
+      await isar?.writeTxn(
+        () async => await isar?.saveTracks.delete(id),
+      );
+    }
   }
 }
