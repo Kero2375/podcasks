@@ -83,5 +83,13 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   Duration get duration => _player.duration ?? Duration.zero;
 
+  double get speed => _player.speed;
+
+  @override
+  Future<void> setSpeed(double speed) {
+    playbackState.add(playbackState.value.copyWith(speed: speed));
+    return _player.setSpeed(speed);
+  }
+
 // Future<void> skipToQueueItem(int i) => _player.seek(Duration.zero, index: i);
 }

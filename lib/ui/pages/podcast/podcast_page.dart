@@ -124,6 +124,9 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
     return PopupMenuButton(
       icon: const Icon(Icons.sort),
       onSelected: (item) => handleClick(item, vm),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
       itemBuilder: (context) => [
         PopupMenuItem(
           value: false,

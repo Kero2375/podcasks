@@ -12,6 +12,9 @@ Future<int?> showEpisodeMenu({
 }) {
   final screenSize = MediaQuery.of(context).size;
   return showMenu(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8),
+    ),
     context: context,
     items: <PopupMenuEntry<int>>[
       if (value != EpisodeState.finished)

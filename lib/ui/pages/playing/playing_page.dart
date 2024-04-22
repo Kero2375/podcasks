@@ -21,7 +21,28 @@ class PlayingPage extends ConsumerWidget {
     final podcast = vm.playingPodcast;
 
     return Scaffold(
-      appBar: mainAppBar(context),
+      appBar: mainAppBar(context,
+          actions: Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: PopupMenuButton<double>(
+              onSelected: vm.setSpeed,
+              icon: Text(
+                '⚡️ ${vm.speed}x',
+                style: textStyleBody,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              itemBuilder: (context) => [
+                _speedMenuItem(0.5),
+                _speedMenuItem(0.75),
+                _speedMenuItem(1),
+                _speedMenuItem(1.25),
+                _speedMenuItem(1.5),
+                _speedMenuItem(2),
+              ],
+            ),
+          )),
       body: SingleChildScrollView(
         controller: vm.scrollController,
         child: Column(
@@ -32,6 +53,16 @@ class PlayingPage extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  PopupMenuItem<double> _speedMenuItem(double speed) {
+    return PopupMenuItem(
+        value: speed,
+        textStyle: textStyleBody,
+        child: Text(
+          '⚡️ ${speed}x',
+          style: textStyleBody,
+        ));
   }
 
   SizedBox _pageContent(BuildContext context, PlayerViewmodel vm,
@@ -54,9 +85,9 @@ class PlayingPage extends ConsumerWidget {
 
   Widget _buttons(PlayerViewmodel vm) {
     return Padding(
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 8),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
             icon: const Icon(Icons.replay_10),
@@ -148,7 +179,7 @@ class PlayingPage extends ConsumerWidget {
 
   Container _image(String? image) {
     return Container(
-      // margin: const EdgeInsets.all(32),
+      margin: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
       clipBehavior: Clip.antiAlias,
       child: (image != null) ? Image.network(image) : null,

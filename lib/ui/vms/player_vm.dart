@@ -29,6 +29,8 @@ class PlayerViewmodel extends Vm {
 
   Duration get duration => audioHandler?.duration ?? Duration.zero;
 
+  double get speed => audioHandler?.speed ?? 1;
+
   double get percent => (duration != Duration.zero)
       ? position.inSeconds / duration.inSeconds
       : 0.0;
@@ -96,8 +98,9 @@ class PlayerViewmodel extends Vm {
   Future<void> _startSaveTimers() async {
     _stopSaveTimers();
     print("STARTED");
-    _positionTimer =
-        Timer.periodic(const Duration(seconds: 1), (timer) => updatePosition());
+    _positionTimer = Timer.periodic(
+        Duration(milliseconds: ((1 / speed) * 1000).toInt()),
+        (timer) => updatePosition());
     _saveTimer =
         Timer.periodic(const Duration(seconds: 10), (timer) => saveTrack());
     // await saveTrack();
@@ -200,4 +203,11 @@ class PlayerViewmodel extends Vm {
   }
 
   download(Episode? episode) => _searchRepo.download(episode);
+
+  Future<void> setSpeed(double speed) async {
+    await audioHandler?.setSpeed(speed);
+    await saveTrack();
+    await _startSaveTimers();
+    notifyListeners();
+  }
 }
