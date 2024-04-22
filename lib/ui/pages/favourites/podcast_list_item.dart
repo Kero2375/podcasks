@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/ui/common/themes.dart';
-import 'package:podcasks/ui/pages/podcast_page.dart';
+import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 
 class PodcastListItem extends ConsumerWidget {
   final Podcast podcast;

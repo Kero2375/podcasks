@@ -5,7 +5,7 @@ import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/episode_page.dart';
-import 'package:podcasks/ui/pages/podcast_page.dart';
+import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcasks/utils.dart';
 

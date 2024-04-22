@@ -1,24 +1,17 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podcasks/ui/common/episode_menu.dart';
-import 'package:podcasks/ui/common/listening_tag.dart';
+import 'package:podcasks/ui/pages/home/episode_item.dart';
 import 'package:podcasks/ui/pages/search/search_text_field.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
-import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/bottom_player.dart';
-import 'package:podcasks/ui/common/divider.dart';
 import 'package:podcasks/ui/common/fav_button.dart';
 import 'package:podcasks/ui/common/themes.dart';
-import 'package:podcasks/ui/pages/episode_page.dart';
 import 'package:podcasks/ui/vms/podcast_vm.dart';
-import 'package:podcasks/utils.dart';
 
 class PodcastPage extends ConsumerStatefulWidget {
   static const route = '/podcast_page';
@@ -31,8 +24,6 @@ class PodcastPage extends ConsumerStatefulWidget {
 }
 
 class _PodcastPageState extends ConsumerState<PodcastPage> {
-  Offset _tapPos = Offset.zero;
-
   // @override
   _initEpisodeList(ListViewmodel vm) {
     if (vm.displayingEpisodes.isEmpty) {
@@ -47,17 +38,15 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
 
   @override
   void initState() {
-    _tapPos = Offset.zero;
     final vm = ref.read(podcastViewmodel);
     vm.init(widget.podcast?.episodes
-        .map((e) => PodcastEpisode.fromEpisode(e))
+        .map((e) => PodcastEpisode.fromEpisode(e, podcast: widget.podcast))
         .toList());
     super.initState();
   }
 
   void handleClick(bool item, PodcastViewmodel vm) {
     vm.setNewerFirst(item);
-    // _initEpisodesList();
   }
 
   @override
@@ -179,76 +168,11 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
       itemCount: vm.displayingEpisodes.length,
-      itemBuilder: (context, i) =>
-          _episode(context, vm.displayingEpisodes[i], vm.getEpisodeState, vm),
-    );
-  }
-
-  Widget _episode(
-      BuildContext context,
-      Episode? ep,
-      Future<EpisodeState> Function(Episode? ep) getEpisodeState,
-      PodcastViewmodel vm) {
-    final pep = ep != null
-        ? PodcastEpisode.fromEpisode(ep, podcast: widget.podcast)
-        : null;
-
-    return InkWell(
-      onTap: () {
-        if (pep != null && widget.podcast != null) {
-          Navigator.pushNamed(context, EpisodePage.route, arguments: pep);
-        }
-      },
-      onTapDown: (details) => setState(() => _tapPos = details.globalPosition),
-      onLongPress: () async {
-        await vm.getEpisodeState(ep).then((value) => {
-              showEpisodeMenu(
-                context: context,
-                value: value,
-                vm: vm,
-                ep: pep,
-                tapPos: _tapPos,
-              ),
-            });
-      },
-      child: Column(
-        children: [
-          divider(context),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ListeningTag(
-                  ep: ep,
-                  isFinished: getEpisodeState,
-                  padding: const EdgeInsets.only(bottom: 8),
-                  playing: ref.read(playerViewmodel).playing?.contentUrl ==
-                      ep?.contentUrl,
-                ),
-                Text(
-                  ep?.publicationDate?.toDate() ?? '',
-                  style: textStyleSmallGray(context),
-                ),
-                Text(
-                  ep?.title ?? '',
-                  style: textStyleHeader,
-                ),
-                Html(
-                  data: ep?.description ?? '',
-                  style: {
-                    '*': Style(
-                      maxLines: 3,
-                      margin: Margins.zero,
-                      textOverflow: TextOverflow.ellipsis,
-                      fontFamily: themeFontFamily.fontFamily,
-                    ),
-                  },
-                ),
-              ],
-            ),
-          ),
-        ],
+      itemBuilder: (context, i) => EpisodeItem(
+        vm: vm,
+        episode: vm.displayingEpisodes[i],
+        showImage: false,
+        showDesc: true,
       ),
     );
   }

@@ -5,20 +5,15 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/bottom_player.dart';
-import 'package:podcasks/ui/common/divider.dart';
-import 'package:podcasks/ui/common/episode_menu.dart';
-import 'package:podcasks/ui/common/listening_tag.dart';
 import 'package:podcasks/ui/common/themes.dart';
-import 'package:podcasks/ui/pages/episode_page.dart';
-import 'package:podcasks/ui/pages/home/podcast_list.dart';
-import 'package:podcasks/ui/pages/podcast_page.dart';
+import 'package:podcasks/ui/pages/favourites/faourites_drawer.dart';
+import 'package:podcasks/ui/pages/home/episode_item.dart';
 import 'package:podcasks/ui/pages/search/search_page.dart';
 import 'package:podcasks/ui/vms/episodes_home_vm.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcasks/ui/vms/vm.dart';
-import 'package:podcasks/utils.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   static const route = "/";
@@ -30,8 +25,6 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-  Offset _tapPos = Offset.zero;
-
   @override
   void initState() {
     final homeVm = ref.read(homeViewmodel);
@@ -122,7 +115,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
             ),
       bottomSheet: const BottomPlayer(),
-      drawer: homeVm.favourites.isNotEmpty ? _drawer(context, homeVm) : null,
+      drawer: homeVm.favourites.isNotEmpty ? const FavouritesDrawer() : null,
     );
   }
 
@@ -144,35 +137,6 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  Drawer _drawer(BuildContext context, HomeViewmodel homeVm) {
-    return Drawer(
-      child: ListView(
-        children: [
-          SizedBox(
-            height: 86,
-            child: DrawerHeader(
-              child: Row(
-                children: [
-                  const SizedBox(width: 8),
-                  Icon(
-                    Icons.favorite,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  const SizedBox(width: 16),
-                  Text(
-                    "Following",
-                    style: textStyleSubtitle(context),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          PodcastList(items: homeVm.favourites),
-        ],
-      ),
-    );
-  }
-
   Column _episodesList(EpisodesHomeViewmodel episodesVm) {
     return Column(
       children: [
@@ -181,8 +145,12 @@ class _HomePageState extends ConsumerState<HomePage> {
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
           itemCount: episodesVm.displayingEpisodes.length,
-          itemBuilder: (context, i) =>
-              _episode(context, episodesVm.displayingEpisodes[i], episodesVm),
+          itemBuilder: (context, i) => EpisodeItem(
+            vm: episodesVm,
+            episode: episodesVm.displayingEpisodes[i],
+            showImage: true,
+            showDesc: false,
+          ),
         ),
         const SizedBox(height: BottomPlayer.playerHeight),
       ],
@@ -199,7 +167,6 @@ class _HomePageState extends ConsumerState<HomePage> {
             Text('you\'re not listening to anything', style: textStyleBody),
             const SizedBox(height: 8),
             Text('¯\\_(ツ)_/¯', style: textStyleBody),
-            // Text('(╬ ಠ益ಠ)', style: textStyleBody),
             const SizedBox(height: 8),
             FilledButton(
               onPressed: () {
@@ -220,89 +187,6 @@ class _HomePageState extends ConsumerState<HomePage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _episode(BuildContext context, PodcastEpisode? ep,
-      EpisodesHomeViewmodel episodesVm) {
-    final image = ep?.podcast?.image;
-    return InkWell(
-      onTap: () =>
-          Navigator.pushNamed(context, EpisodePage.route, arguments: ep),
-      onTapDown: (details) => setState(() => _tapPos = details.globalPosition),
-      onLongPress: () async {
-        await episodesVm.getEpisodeState(ep).then((value) => {
-              showEpisodeMenu(
-                context: context,
-                value: value,
-                vm: episodesVm,
-                ep: ep,
-                tapPos: _tapPos,
-              ),
-            });
-      },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          divider(context),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pushNamed(context, PodcastPage.route,
-                      arguments: ep?.podcast),
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(4),
-                      ),
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: Row(
-                      children: [
-                        if (image != null)
-                          Image.network(
-                            image,
-                            height: 40,
-                            width: 40,
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Flexible(
-                  flex: 1,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ListeningTag(
-                        ep: ep,
-                        isFinished: episodesVm.getEpisodeState,
-                        padding: const EdgeInsets.only(bottom: 4),
-                        playing:
-                            ref.read(playerViewmodel).playing?.contentUrl ==
-                                ep?.contentUrl,
-                      ),
-                      Text(
-                        ep?.publicationDate?.toDate() ?? '',
-                        style: textStyleSmallGray(context),
-                      ),
-                      Text(
-                        ep?.title ?? '',
-                        style: textStyleHeader,
-                        overflow: TextOverflow.fade,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 ButtonStyle get buttonStyle => ButtonStyle(
@@ -51,4 +52,10 @@ TextStyle get textStyleSmall => themeFontFamily.copyWith(
       fontSize: 12,
     );
 
-  
+Style htmlStyle({Margins? margin}) => Style(
+      // maxLines: maxLines,
+      margin: margin,
+      // textOverflow: TextOverflow.ellipsis,
+      fontFamily: themeFontFamily.fontFamily,
+      lineHeight: LineHeight.em(1),
+    );

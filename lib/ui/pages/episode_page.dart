@@ -153,17 +153,14 @@ class EpisodePage extends ConsumerWidget {
   }
 }
 
-Html description(Episode? episode) {
-  return Html(
-    data: episode?.description ?? '',
-    onLinkTap: (url, attributes, element) {
-      launchUrl(Uri.parse(url!));
-    },
-    style: {
-      '*': Style(
-        margin: Margins.all(8),
-        fontFamily: themeFontFamily.fontFamily,
-      )
-    },
+Widget description(Episode? episode) {
+  return SelectionArea(
+    child: Html(
+      data: episode?.description ?? '',
+      onLinkTap: (url, attributes, element) {
+        launchUrl(Uri.parse(url!));
+      },
+      style: {'*': htmlStyle()},
+    ),
   );
 }

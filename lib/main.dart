@@ -10,7 +10,7 @@ import 'package:podcasks/manager/audio_handler.dart';
 import 'package:podcasks/ui/pages/episode_page.dart';
 import 'package:podcasks/ui/pages/home/home_page.dart';
 import 'package:podcasks/ui/pages/playing/playing_page.dart';
-import 'package:podcasks/ui/pages/podcast_page.dart';
+import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 import 'package:podcasks/ui/pages/search/search_page.dart';
 import 'package:podcasks/ui/vms/theme_vm.dart';
 
