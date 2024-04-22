@@ -28,6 +28,8 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
           controls: [
             MediaControl.pause,
             MediaControl.play,
+            MediaControl.rewind,
+            MediaControl.fastForward,
           ],
           systemActions: const {
             MediaAction.seek,
