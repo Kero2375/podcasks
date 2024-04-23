@@ -8,10 +8,12 @@ abstract class FavouriteRepo {
   Future<void> removeFromFavourite(String feedUrl);
 }
 
+// todo: replace with isar?
 class FavouriteRepoSharedPref extends FavouriteRepo {
   static const String favKey = 'favourites_sp_key';
 
-  Future<SharedPreferences> get _getSp async => await SharedPreferences.getInstance();
+  Future<SharedPreferences> get _getSp async =>
+      await SharedPreferences.getInstance();
 
   @override
   Future<void> addToFavourite(String feedUrl) async {

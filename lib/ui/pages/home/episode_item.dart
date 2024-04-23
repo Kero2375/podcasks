@@ -38,20 +38,20 @@ class _HomeEpisodeItemState extends ConsumerState<EpisodeItem> {
 
   @override
   Widget build(BuildContext context) {
+    final (episodeState, remaining) = episodesVm.getEpisodeState(episode);
+
     return InkWell(
       onTap: () =>
           Navigator.pushNamed(context, EpisodePage.route, arguments: episode),
       onTapDown: (details) => setState(() => _tapPos = details.globalPosition),
-      onLongPress: () async {
-        await episodesVm.getEpisodeState(episode).then((value) => {
-              showEpisodeMenu(
-                context: context,
-                value: value,
-                vm: episodesVm,
-                ep: episode,
-                tapPos: _tapPos,
-              ),
-            });
+      onLongPress: () {
+        showEpisodeMenu(
+          context: context,
+          value: episodeState,
+          vm: episodesVm,
+          ep: episode,
+          tapPos: _tapPos,
+        );
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,7 +73,8 @@ class _HomeEpisodeItemState extends ConsumerState<EpisodeItem> {
                     children: [
                       ListeningTag(
                         ep: episode,
-                        isFinished: episodesVm.getEpisodeState,
+                        episodeState: episodeState,
+                        remaining: remaining,
                         padding: const EdgeInsets.only(bottom: 4),
                         playing:
                             ref.read(playerViewmodel).playing?.contentUrl ==

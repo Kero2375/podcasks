@@ -12,3 +12,11 @@ extension ParsableDateTime on DateTime {
     return '${day <= 9 ? '0' : ''}$day/${month <= 9 ? '0' : ''}$month/$year';
   }
 }
+
+String parseRemainingTime(Duration time) {
+  if (time > const Duration(hours: 1)) {
+    return '-${time.inHours}h';
+  } else {
+    return '-${time.inMinutes}m';
+  }
+}

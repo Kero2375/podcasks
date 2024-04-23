@@ -10,7 +10,7 @@ abstract class HistoryRepo {
 
   Future<void> removeEpisode(PodcastEpisode episode);
 
-  Future<(Duration, bool)?> getPosition(Episode episode);
+  (Duration, bool)? getPosition(Episode episode);
 
   @Deprecated('Avoid fetching all saved episodes')
   Future<List<PodcastEpisode>> getAllSaved();
@@ -32,10 +32,10 @@ class HistoryRepoIsar extends HistoryRepo {
   }
 
   @override
-  Future<(Duration, bool)?> getPosition(Episode episode) async {
+  (Duration, bool)? getPosition(Episode episode) {
     final id = episode.contentUrl?.hashCode;
     if (id != null) {
-      final saved = await isar?.saveTracks.get(id);
+      final saved = isar?.saveTracks.getSync(id);
       if (saved != null && saved.position != null) {
         return (Duration(seconds: saved.position!), saved.finished ?? false);
       }

@@ -15,7 +15,7 @@ class HomeViewmodel extends Vm {
   final _lastPlayingRepo = locator.get<LastPlayingRepo>();
   final _historyRepo = locator.get<HistoryRepo>();
 
-  List<Podcast> get favourites => _favourites;
+  List<Podcast> get favourites => _favourites.sorted(_sortPodcastsByEpisode);
   List<Podcast> _favourites = [];
 
   PodcastEpisode? get saved => _saved;
@@ -64,9 +64,9 @@ class HomeViewmodel extends Vm {
   Future<(PodcastEpisode, Duration)?> getLastSaved() async {
     final ep = await _lastPlayingRepo.getLastPlaying();
     if (ep != null) {
-      final pos = await _historyRepo.getPosition(ep);
-      if (pos != null) {
-        return (ep, pos.$1);
+      final (rem, _) = _historyRepo.getPosition(ep) ?? (null, null);
+      if (rem != null) {
+        return (ep, rem);
       }
     }
     return null;
@@ -75,9 +75,15 @@ class HomeViewmodel extends Vm {
   Future<void> fetchListening() async {
     final last = await _lastPlayingRepo.getLastPlaying();
     if (last != null) {
-      final time = await _historyRepo.getPosition(last);
+      final time = _historyRepo.getPosition(last);
       if (time?.$1.inSeconds != 0) _saved = last;
     }
     // _saved = [];
   }
 }
+
+int _sortPodcastsByEpisode(Podcast a, Podcast b) =>
+    a.episodes.isNotEmpty && b.episodes.isNotEmpty
+        ? b.episodes.firstOrNull!.publicationDate!
+            .compareTo(a.episodes.firstOrNull!.publicationDate!)
+        : 0;

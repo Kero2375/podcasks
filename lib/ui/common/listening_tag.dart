@@ -1,52 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
+import 'package:podcasks/utils.dart';
 import 'package:podcast_search/podcast_search.dart';
 
 class ListeningTag extends StatelessWidget {
   final Episode? ep;
-  final Future<EpisodeState> Function(Episode? ep) isFinished;
+  final EpisodeState episodeState;
   final EdgeInsets padding;
   final bool playing;
+  final Duration? remaining;
 
   const ListeningTag({
     super.key,
     required this.ep,
-    required this.isFinished,
+    required this.episodeState,
     this.padding = const EdgeInsets.all(0),
     this.playing = false,
+    this.remaining,
   });
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: ep != null ? isFinished(ep) : Future.value(false),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data case EpisodeState.finished) {
-            return tag(
-              Colors.greenAccent.withOpacity(.6),
-              // Theme.of(context).colorScheme.tertiary.withOpacity(.6),
-              'FINISHED',
-              Icons.check,
-            );
-          } else if (playing) {
-            return tag(
-              Theme.of(context).colorScheme.primary.withOpacity(.8),
-              'LISTENING',
-              Icons.headphones,
-            );
-          } else if (snapshot.data case EpisodeState.started) {
-            return tag(
-              Theme.of(context).colorScheme.onBackground.withOpacity(.4),
-              'STARTED',
-              Icons.bookmark,
-            );
-          }
-        }
-        return const SizedBox.shrink();
-      },
-    );
+    if (episodeState == EpisodeState.finished) {
+      return tag(
+        Theme.of(context).colorScheme.onBackground.withOpacity(.4),
+        // Theme.of(context).colorScheme.tertiary.withOpacity(.6),
+        'FINISHED',
+        Icons.check,
+      );
+    } else if (playing) {
+      return tag(
+        Theme.of(context).colorScheme.primary.withOpacity(.8),
+        'LISTENING',
+        Icons.headphones,
+      );
+    } else if (episodeState case EpisodeState.started) {
+      return tag(
+        Theme.of(context).colorScheme.onBackground.withOpacity(.4),
+        remaining != null ? parseRemainingTime(remaining!) : 'STARTED',
+        Icons.bookmark,
+      );
+    }
+    return const SizedBox.shrink();
   }
 
   Padding tag(Color color, String text, IconData icon) {

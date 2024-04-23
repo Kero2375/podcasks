@@ -58,9 +58,9 @@ class PlayerViewmodel extends Vm {
     }
 
     if (track != null && seekPos) {
-      final pos = await _historyRepo.getPosition(track);
+      final pos = _historyRepo.getPosition(track);
       if (pos != null) {
-        await seekPosition(pos.$1);
+        await seekPosition(duration - pos.$1);
       }
     }
 
@@ -184,7 +184,7 @@ class PlayerViewmodel extends Vm {
   Future<void> saveTrack([bool finished = false]) async {
     if (audioHandler != null && playing != null) {
       print("SAVETRACK");
-      await _historyRepo.setPosition(playing!, position, finished);
+      await _historyRepo.setPosition(playing!, duration - position, finished);
     }
   }
 

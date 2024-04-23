@@ -8,6 +8,7 @@ import 'package:podcasks/ui/common/bottom_player.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/favourites/faourites_drawer.dart';
 import 'package:podcasks/ui/pages/home/episode_item.dart';
+import 'package:podcasks/ui/pages/home/favourites_row.dart';
 import 'package:podcasks/ui/pages/search/search_page.dart';
 import 'package:podcasks/ui/vms/episodes_home_vm.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
@@ -37,11 +38,12 @@ class _HomePageState extends ConsumerState<HomePage> {
   Future<void> _checkSaved(HomeViewmodel homeVm, PlayerViewmodel playerVm,
       EpisodesHomeViewmodel episodesVm) async {
     final (track, position) = await homeVm.getLastSaved() ?? (null, null);
-    final state = await episodesVm.getEpisodeState(track);
+    final (state, _) = episodesVm.getEpisodeState(track);
     if (track != null && position != null && state != EpisodeState.finished) {
       await playerVm.setupPlayer(track);
       await playerVm.pause();
-      await playerVm.seekPosition(position);
+      await playerVm.seekPosition(
+          track.duration ?? const Duration(hours: 1) - position); //fixme
     }
   }
 
@@ -79,6 +81,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     });
 
     if (episodesVm.displayingEpisodes.isEmpty) {
+      episodesVm.filterEpisodes([]);
       _initEpisodeList(episodesVm, homeVm);
     }
 
@@ -107,15 +110,34 @@ class _HomePageState extends ConsumerState<HomePage> {
                   child: ConstrainedBox(
                     constraints:
                         BoxConstraints(minHeight: constraints.maxHeight),
-                    child: episodesVm.displayingEpisodes.isEmpty
-                        ? _welcomeContent(context)
-                        : _episodesList(episodesVm),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _favRow(episodesVm, homeVm),
+                        episodesVm.displayingEpisodes.isEmpty
+                            ? _welcomeContent(context)
+                            : _episodesList(episodesVm),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
       bottomSheet: const BottomPlayer(),
       drawer: homeVm.favourites.isNotEmpty ? const FavouritesDrawer() : null,
+    );
+  }
+
+  Widget _favRow(EpisodesHomeViewmodel episodesVm, HomeViewmodel homeVm) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: FavouritesRow(
+          episodesVm: episodesVm,
+          homeVm: homeVm,
+        ),
+      ),
     );
   }
 

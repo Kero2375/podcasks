@@ -8,7 +8,7 @@ import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcast_search/podcast_search.dart';
 
 class ListViewmodel extends Vm {
-  final HistoryRepo _historyRepo = locator.get<HistoryRepo>();
+  final HistoryRepo historyRepo = locator.get<HistoryRepo>();
   int _maxItems = 10;
   int _page = 0;
 
@@ -35,6 +35,7 @@ class ListViewmodel extends Vm {
   }
 
   void initEpisodesList() {
+    if (episodes == null) return;
     _page = 0;
     if (episodes!.length < _maxItems) {
       _displayingEpisodes = episodes!;
@@ -69,19 +70,19 @@ class ListViewmodel extends Vm {
     }
   }
 
-  Future<EpisodeState> getEpisodeState(Episode? ep) async {
-    if (ep == null) return EpisodeState.none;
-    final (pos, finished) = await _historyRepo.getPosition(ep) ?? (null, null);
+  (EpisodeState, Duration?) getEpisodeState(Episode? ep) {
+    if (ep == null) return (EpisodeState.none, null);
+    final (remaining, finished) = historyRepo.getPosition(ep) ?? (null, null);
     return finished == true
-        ? EpisodeState.finished
-        : (pos != null && pos.inSeconds != 0)
-            ? EpisodeState.started
-            : EpisodeState.none;
+        ? (EpisodeState.finished, null)
+        : (remaining != null && remaining.inSeconds != 0)
+            ? (EpisodeState.started, remaining)
+            : (EpisodeState.none, null);
   }
 
   Future<void> markAsFinished(PodcastEpisode? ep) async {
     if (ep != null) {
-      await _historyRepo.setPosition(ep, Duration.zero, true);
+      await historyRepo.setPosition(ep, Duration.zero, true);
       initEpisodesList();
       update();
     }
@@ -89,7 +90,7 @@ class ListViewmodel extends Vm {
 
   Future<void> cancelProgress(PodcastEpisode? ep) async {
     if (ep != null) {
-      await _historyRepo.removeEpisode(ep);
+      await historyRepo.removeEpisode(ep);
       initEpisodesList();
       update();
     }
