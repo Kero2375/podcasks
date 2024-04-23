@@ -42,8 +42,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     if (track != null && position != null && state != EpisodeState.finished) {
       await playerVm.setupPlayer(track);
       await playerVm.pause();
-      await playerVm.seekPosition(
-          track.duration ?? const Duration(hours: 1) - position); //fixme
+      await playerVm.seekPosition(playerVm.duration - position);
     }
   }
 

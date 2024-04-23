@@ -31,7 +31,7 @@ class PlayerViewmodel extends Vm {
 
   double get speed => audioHandler?.speed ?? 1;
 
-  double get percent => (duration != Duration.zero)
+  double get percent => (duration != Duration.zero && duration >= position)
       ? position.inSeconds / duration.inSeconds
       : 0.0;
 
