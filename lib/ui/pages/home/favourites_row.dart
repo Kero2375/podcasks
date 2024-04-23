@@ -21,23 +21,17 @@ class FavouritesRow extends StatelessWidget {
     final bool isFull = episodesVm.isOfSize(favLength);
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
             HomePodcastItem(
-              icon: Icon(
-                Icons.headphones,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
+              icon: Icons.headphones,
               selected: episodesVm.isFilterEmpty(),
               onTap: () {
                 episodesVm.filterEpisodes([]);
               },
             ),
             HomePodcastItem(
-              icon: Icon(
-                Icons.rss_feed,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
+              icon: Icons.home_filled,
               selected: isFull,
               onTap: () {
                 episodesVm.filterEpisodes(homeVm.favourites);
@@ -45,9 +39,10 @@ class FavouritesRow extends StatelessWidget {
             ),
           ] +
           homeVm.favourites
+              // .where((e) => !episodesVm.isInFilter(e))
               .mapIndexed((i, p) => HomePodcastItem(
                     image: p.image,
-                    selected: episodesVm.isInFilter(p),
+                    selected: !isFull && episodesVm.isInFilter(p),
                     onTap: () {
                       if (!isFull && episodesVm.isInFilter(p)) {
                         Navigator.pushNamed(

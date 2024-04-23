@@ -75,6 +75,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final homeVm = ref.watch(homeViewmodel);
     final episodesVm = ref.watch(episodesHomeViewmodel);
 
+    final bool isFull = episodesVm.isOfSize(homeVm.favourites.length);
     homeVm.addListener(() {
       _initEpisodeList(episodesVm, homeVm);
     });
@@ -96,8 +97,8 @@ class _HomePageState extends ConsumerState<HomePage> {
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
               onRefresh: () async {
-                await homeVm.fetchFavourites();
-                await homeVm.fetchListening();
+                await Future.delayed(const Duration(seconds: 1));
+                episodesVm.initEpisodesList();
                 await episodesVm.update();
                 await homeVm.update();
                 // _initEpisodeList(episodesVm, homeVm);
@@ -110,12 +111,12 @@ class _HomePageState extends ConsumerState<HomePage> {
                     constraints:
                         BoxConstraints(minHeight: constraints.maxHeight),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         _favRow(episodesVm, homeVm),
                         episodesVm.displayingEpisodes.isEmpty
                             ? _welcomeContent(context)
-                            : _episodesList(episodesVm),
+                            : _episodesList(episodesVm, isFull),
                       ],
                     ),
                   ),
@@ -128,14 +129,11 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   Widget _favRow(EpisodesHomeViewmodel episodesVm, HomeViewmodel homeVm) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: FavouritesRow(
-          episodesVm: episodesVm,
-          homeVm: homeVm,
-        ),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: FavouritesRow(
+        episodesVm: episodesVm,
+        homeVm: homeVm,
       ),
     );
   }
@@ -158,30 +156,30 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  Column _episodesList(EpisodesHomeViewmodel episodesVm) {
-    return Column(
-      children: [
-        ListView.builder(
-          physics: const ScrollPhysics(),
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: episodesVm.displayingEpisodes.length,
-          itemBuilder: (context, i) => EpisodeItem(
-            vm: episodesVm,
-            episode: episodesVm.displayingEpisodes[i],
-            showImage: true,
-            showDesc: false,
+  Column _episodesList(EpisodesHomeViewmodel episodesVm, bool isFull) => Column(
+        children: [
+          ListView.builder(
+            physics: const ScrollPhysics(),
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemCount: episodesVm.displayingEpisodes.length,
+            itemBuilder: (context, i) {
+              return EpisodeItem(
+                vm: episodesVm,
+                episode: episodesVm.displayingEpisodes[i],
+                showImage: true,
+                showDesc: false,
+              );
+            },
           ),
-        ),
-        const SizedBox(height: BottomPlayer.playerHeight),
-      ],
-    );
-  }
+          const SizedBox(height: BottomPlayer.playerHeight),
+        ],
+      );
 
   Center _welcomeContent(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 64),
+        padding: const EdgeInsets.only(top: 64),
         child: Column(
           children: [
             Text('welcome!', style: textStyleBody),
