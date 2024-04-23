@@ -5,7 +5,6 @@ import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/repository/history_repo.dart';
 import 'package:podcasks/ui/vms/vm.dart';
-import 'package:podcast_search/podcast_search.dart';
 
 class ListViewmodel extends Vm {
   final HistoryRepo historyRepo = locator.get<HistoryRepo>();
@@ -70,7 +69,7 @@ class ListViewmodel extends Vm {
     }
   }
 
-  (EpisodeState, Duration?) getEpisodeState(Episode? ep) {
+  (EpisodeState, Duration?) getEpisodeState(PodcastEpisode? ep) {
     if (ep == null) return (EpisodeState.none, null);
     final (remaining, finished) = historyRepo.getPosition(ep) ?? (null, null);
     return finished == true

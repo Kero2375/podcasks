@@ -58,9 +58,9 @@ class PlayerViewmodel extends Vm {
     }
 
     if (track != null && seekPos) {
-      final pos = _historyRepo.getPosition(track);
+      final (pos, _) = _historyRepo.getPosition(track) ?? (null, null);
       if (pos != null) {
-        await seekPosition(duration - pos.$1);
+        await seekPosition(duration - pos);
       }
     }
 

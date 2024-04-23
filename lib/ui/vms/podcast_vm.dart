@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/ui/common/debouncer.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
 
@@ -16,7 +17,7 @@ class PodcastViewmodel extends ListViewmodel {
   final _debouncer = Debouncer(milliseconds: 500);
 
   @override
-  get episodes =>
+  List<PodcastEpisode>? get episodes =>
       ((_newerFirst) ? super.episodes : super.episodes?.reversed.toList())
           ?.where(
             (e) => (_filter != null && _filter != '')

@@ -171,12 +171,17 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
       itemCount: vm.displayingEpisodes.length,
-      itemBuilder: (context, i) => EpisodeItem(
-        vm: vm,
-        episode: vm.displayingEpisodes[i],
-        showImage: false,
-        showDesc: true,
-      ),
+      itemBuilder: (context, i) {
+        final ep = vm.displayingEpisodes[i];
+        ep.podcast ??= widget.podcast;
+
+        return EpisodeItem(
+          vm: vm,
+          episode: ep,
+          showImage: false,
+          showDesc: true,
+        );
+      },
     );
   }
 
