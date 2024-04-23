@@ -97,10 +97,10 @@ class _HomePageState extends ConsumerState<HomePage> {
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
               onRefresh: () async {
-                await Future.delayed(const Duration(seconds: 1));
                 episodesVm.initEpisodesList();
                 await episodesVm.update();
                 await homeVm.update();
+                await Future.delayed(const Duration(seconds: 1));
                 // _initEpisodeList(episodesVm, homeVm);
               },
               child: LayoutBuilder(
