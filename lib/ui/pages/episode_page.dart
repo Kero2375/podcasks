@@ -102,7 +102,7 @@ class EpisodePage extends ConsumerWidget {
                 icon: const Icon(Icons.download),
                 style: buttonStyle,
                 label: Text(
-                  "Download",
+                  context.l10n!.download,
                   style: textStyleBody,
                 ),
               ),
@@ -116,7 +116,7 @@ class EpisodePage extends ConsumerWidget {
                 icon: const Icon(Icons.share),
                 style: buttonStyle,
                 label: Text(
-                  "Share",
+                  context.l10n!.share,
                   style: textStyleBody,
                 ),
               ),

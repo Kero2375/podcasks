@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podcasks/ui/pages/search/filters_dropdown.dart';
-import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/ui/common/themes.dart';
+import 'package:podcasks/ui/pages/search/filters_dropdown.dart';
 import 'package:podcasks/ui/vms/search_vm.dart';
+import 'package:podcasks/utils.dart';
+import 'package:podcast_search/podcast_search.dart';
 
 class FiltersDialog extends ConsumerWidget {
   const FiltersDialog({super.key});
@@ -21,14 +22,14 @@ class FiltersDialog extends ConsumerWidget {
               padding: const EdgeInsets.all(32),
               child: Text(
                 textAlign: TextAlign.center,
-                "SEARCH FILTERS",
+                context.l10n!.searchFilters.toUpperCase(),
                 style: textStyleHeader,
               ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                "region:",
+                context.l10n!.region,
                 style: textStyleBody,
               ),
             ),
@@ -41,7 +42,7 @@ class FiltersDialog extends ConsumerWidget {
                         child: FilterDropdown<Country>(
                           onChanged: vm.setCountry,
                           value: snapshot.data,
-                          items: Country.values,
+                          items: Country.values.asMap().map((_, e) => MapEntry(e, e)),
                           getString: (c) => c.name,
                         ))
                     : const SizedBox.shrink();
@@ -50,7 +51,7 @@ class FiltersDialog extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                "genre:",
+                context.l10n!.genre,
                 style: textStyleBody,
               ),
             ),
@@ -63,7 +64,7 @@ class FiltersDialog extends ConsumerWidget {
                         child: FilterDropdown<String>(
                           onChanged: vm.setGenre,
                           value: snapshot.data,
-                          items: vm.genres,
+                          items: vm.genres(context),
                           getString: (c) => c,
                         ))
                     : const SizedBox.shrink();
@@ -74,7 +75,7 @@ class FiltersDialog extends ConsumerWidget {
               child: FilledButton(
                 onPressed: () => Navigator.pop(context),
                 style: buttonStyle,
-                child: const Text("OK"),
+                child: Text(context.l10n!.ok.toUpperCase()),
               ),
             )
           ],

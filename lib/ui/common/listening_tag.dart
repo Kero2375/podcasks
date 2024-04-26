@@ -26,19 +26,21 @@ class ListeningTag extends StatelessWidget {
       return tag(
         Theme.of(context).colorScheme.onBackground.withOpacity(.4),
         // Theme.of(context).colorScheme.tertiary.withOpacity(.6),
-        'FINISHED',
+        context.l10n!.finished.toUpperCase(),
         Icons.check,
       );
     } else if (playing) {
       return tag(
         Theme.of(context).colorScheme.primary.withOpacity(.8),
-        'LISTENING',
+        context.l10n!.listening.toUpperCase(),
         Icons.headphones,
       );
     } else if (episodeState case EpisodeState.started) {
       return tag(
         Theme.of(context).colorScheme.onBackground.withOpacity(.4),
-        remaining != null ? parseRemainingTime(remaining!) : 'STARTED',
+        remaining != null
+            ? parseRemainingTime(remaining!)
+            : context.l10n!.started.toUpperCase(),
         Icons.bookmark,
       );
     }

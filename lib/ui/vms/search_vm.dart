@@ -31,7 +31,8 @@ class SearchViewmodel extends Vm {
 
   Future<String> get genre async => await _prefsRepo.getGenre();
 
-  List<String> get genres => _prefsRepo.getAllGenres();
+  // <value, localized string>
+  Map<String,String> genres(BuildContext context) => _prefsRepo.getAllGenres(context);
 
   Future<void> init() async {
     loading();

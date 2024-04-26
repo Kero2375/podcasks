@@ -2,8 +2,8 @@ import 'package:audio_service/audio_service.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/manager/audio_handler.dart';
@@ -13,6 +13,8 @@ import 'package:podcasks/ui/pages/playing/playing_page.dart';
 import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 import 'package:podcasks/ui/pages/search/search_page.dart';
 import 'package:podcasks/ui/vms/theme_vm.dart';
+import 'package:podcast_search/podcast_search.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,8 +43,18 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.watch(themeViewmodel);
     return DynamicColorBuilder(
-      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) =>
-          MaterialApp(
+      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) => MaterialApp(
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en'),
+          Locale('it'),
+          Locale('es'),
+        ],
         initialRoute: HomePage.route,
         routes: {
           HomePage.route: (context) => const HomePage(),
@@ -57,16 +69,14 @@ class MyApp extends ConsumerWidget {
             );
           } else if (settings.name == EpisodePage.route) {
             return MaterialPageRoute(
-              builder: (context) =>
-                  EpisodePage(settings.arguments as PodcastEpisode?),
+              builder: (context) => EpisodePage(settings.arguments as PodcastEpisode?),
             );
           }
           return null;
         },
-        theme: vm.getAppTheme(
-            MediaQuery.of(context).platformBrightness == Brightness.light
-                ? lightDynamic
-                : darkDynamic),
+        theme: vm.getAppTheme(MediaQuery.of(context).platformBrightness == Brightness.light
+            ? lightDynamic
+            : darkDynamic),
       ),
     );
   }

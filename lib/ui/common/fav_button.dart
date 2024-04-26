@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podcasks/utils.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
@@ -17,23 +18,23 @@ class FavButton extends ConsumerWidget {
     onTap() => vm.setFavourite(podcast, !isFav);
     return vm.state == UiState.loading
         ? (!isFav)
-            ? _following(() {})
-            : _follow(() {})
+            ? _following(() {}, context)
+            : _follow(() {}, context)
         : isFav
-            ? _following(onTap)
-            : _follow(onTap);
+            ? _following(onTap, context)
+            : _follow(onTap, context);
   }
 
-  Widget _following(Function() onTap) => OutlinedButton.icon(
+  Widget _following(Function() onTap, BuildContext context) => OutlinedButton.icon(
         onPressed: onTap,
-        label: const Text("Following"),
+        label: Text(context.l10n!.following(1)),
         icon: const Icon(Icons.favorite),
         style: _style,
       );
 
-  Widget _follow(Function() onTap) => FilledButton.icon(
+  Widget _follow(Function() onTap, BuildContext context) => FilledButton.icon(
         onPressed: onTap,
-        label: const Text("Follow"),
+        label: Text(context.l10n!.follow),
         icon: const Icon(Icons.favorite_border),
         style: _style,
       );

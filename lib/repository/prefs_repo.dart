@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,7 +11,7 @@ abstract class PrefsRepo {
 
   Future<void> setGenre(String g);
 
-  List<String> getAllGenres();
+  Map<String,String> getAllGenres(BuildContext context);
 
   Future<String> getGenre();
 }
@@ -38,7 +39,7 @@ class PrefsRepoSharedPref extends PrefsRepo {
   }
 
   @override
-  List<String> getAllGenres() => itunesGenres;
+  Map<String,String> getAllGenres(BuildContext context) => itunesGenres(context);
 
   @override
   Future<String> getGenre() async {

@@ -2,13 +2,14 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:podcasks/ui/common/themes.dart';
+import 'package:podcasks/utils.dart';
 
 const int maxDropdownLength = 15;
 
 class FilterDropdown<T> extends StatelessWidget {
   final void Function(T?) onChanged;
   final T? value;
-  final List<T> items;
+  final Map<T, T> items;
   final String Function(T) getString;
 
   const FilterDropdown({
@@ -31,27 +32,29 @@ class FilterDropdown<T> extends StatelessWidget {
       menuMaxHeight: 600,
       onChanged: onChanged,
       value: value,
-      items: items
-          .map((g) => DropdownMenuItem<T>(
+      items: items.entries
+          .map((entry) => MapEntry(
+              null,
+              DropdownMenuItem<T>(
                 alignment: Alignment.center,
-                value: g,
+                value: entry.key,
                 child: Text(
-                  _formatForMenu(getString(g)),
-                  style: textStyleBody.copyWith(
-                      color: Theme.of(context).colorScheme.onBackground),
+                  _formatForMenu(getString(entry.value), context),
+                  style: textStyleBody.copyWith(color: Theme.of(context).colorScheme.onBackground),
                 ),
-              ))
+              )))
+          .map((e) => e.value)
           .toList(),
       style: textStyleBody,
     );
   }
 }
 
-String _formatForMenu(String c) {
-  final s = c
-      .split(RegExp(r"(?=[A-Z])"))
-      .map((e) => e[0].toUpperCase() + e.substring(1))
-      .join(' ');
+String _formatForMenu(String c, BuildContext context) {
+  final s = c.split(RegExp(r"(?=[A-Z])")).map((e) => e[0].toUpperCase() + e.substring(1)).join(' ');
+  if (s == 'None' || s == 'All') {
+    return context.l10n!.all;
+  }
   // return s;
   if (s.length < maxDropdownLength + 3) {
     return s;

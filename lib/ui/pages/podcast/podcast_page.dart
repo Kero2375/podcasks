@@ -11,6 +11,7 @@ import 'package:podcasks/ui/pages/search/search_text_field.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
 import 'package:podcasks/ui/vms/podcast_vm.dart';
+import 'package:podcasks/utils.dart';
 import 'package:podcast_search/podcast_search.dart';
 
 class PodcastPage extends ConsumerStatefulWidget {
@@ -49,29 +50,30 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
 
   void handleMore(int action, PodcastViewmodel vm, Podcast? podcast) {
     switch (action) {
-      case 0:showDialog(
-        context: context,
-        builder: (context) => ConfirmDialog(
-          title: 'Mark all as finished',
-          actionText: 'Confirm',
-          actionIcon: const Icon(Icons.check),
-          message: 'Mark all episodes of ${podcast?.title} as finished?',
-          // emoji: 'ಠ_ಠ',
-          onTap: () {
-            vm.markAllAsFinished(podcast);
-          },
-        ),
-      );
+      case 0:
+        showDialog(
+          context: context,
+          builder: (context) => ConfirmDialog(
+            title: context.l10n!.markAllFinished,
+            actionText: context.l10n!.confirm,
+            actionIcon: const Icon(Icons.check),
+            message: context.l10n!.markAllFinishedMessage(podcast?.title ?? ''),
+            // emoji: 'ಠ_ಠ',
+            onTap: () {
+              vm.markAllAsFinished(podcast);
+            },
+          ),
+        );
         break;
       case 1:
         showDialog(
           context: context,
           builder: (context) => ConfirmDialog(
-            title: 'Delete progress',
-            actionText: 'Delete',
+            title: context.l10n!.deleteProgress,
+            actionText: context.l10n!.delete,
             actionIcon: const Icon(Icons.warning),
-            message: 'Are you sure you want to delete all progress for ${podcast?.title}?',
-            emoji: '"ಠ_ಠ',
+            message: context.l10n!.deleteProgressMessage(podcast?.title ?? ''),
+            emoji: context.l10n!.deleteAllEmoji,
             onTap: () {
               vm.deleteAll(podcast);
             },
@@ -105,7 +107,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
           : AppBar(
               title: SearchTextField(
                 controller: vm.searchController!,
-                hint: 'Search in ${widget.podcast?.title ?? 'podcast'}',
+                hint: context.l10n!.searchIn(widget.podcast?.title ?? context.l10n!.podcast),
                 search: vm.search,
               ),
               actions: [
@@ -126,7 +128,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
         child: SingleChildScrollView(
           controller: vm.controller,
           child: (widget.podcast == null)
-              ? Center(child: Text("Error", style: textStyleBody))
+              ? Center(child: Text(context.l10n!.error, style: textStyleBody))
               : Column(
                   children: [
                     _image(widget.podcast!),
@@ -166,7 +168,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
             children: [
               const Icon(Icons.arrow_downward),
               const SizedBox(width: 8),
-              Text('Older first', style: textStyleBody),
+              Text(context.l10n!.olderFirst, style: textStyleBody),
             ],
           ),
         ),
@@ -176,7 +178,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
             children: [
               const Icon(Icons.arrow_upward),
               const SizedBox(width: 8),
-              Text('Newer first', style: textStyleBody),
+              Text(context.l10n!.newerFirst, style: textStyleBody),
             ],
           ),
         ),
@@ -198,7 +200,14 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
             children: [
               const Icon(Icons.done_all),
               const SizedBox(width: 8),
-              Text('Mark all as finished', style: textStyleBody),
+              Flexible(
+                flex: 1,
+                child: Text(
+                  context.l10n!.markAllFinished,
+                  style: textStyleBody,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
         ),
@@ -208,7 +217,14 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
             children: [
               const Icon(Icons.delete_forever),
               const SizedBox(width: 8),
-              Text('Delete progress', style: textStyleBody),
+              Flexible(
+                flex: 1,
+                child: Text(
+                  context.l10n!.deleteProgress,
+                  style: textStyleBody,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
         ),
@@ -307,7 +323,7 @@ class ConfirmDialog extends StatelessWidget {
         OutlinedButton(
           onPressed: () => Navigator.of(context).pop(),
           style: buttonStyle,
-          child: const Text('Cancel'),
+          child: Text(context.l10n!.cancel),
         ),
         FilledButton.icon(
           icon: actionIcon,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/ui/common/search_list_item.dart';
 
@@ -15,23 +14,3 @@ class SearchList extends StatelessWidget {
     );
   }
 }
-
-Widget box(context) => Padding(
-      padding: const EdgeInsets.all(16),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: Theme.of(context).colorScheme.primary,
-        ),
-        height: 80,
-        width: 80,
-        child: Center(
-          child: Text(
-            "Top 10 Italy",
-            style: textStyleBody.copyWith(
-                color: Theme.of(context).colorScheme.onPrimary),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ),
-    );

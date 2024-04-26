@@ -15,7 +15,7 @@ import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcasks/ui/vms/vm.dart';
-
+import 'package:podcasks/utils.dart';
 class HomePage extends ConsumerStatefulWidget {
   static const route = "/";
 
@@ -84,7 +84,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     return Scaffold(
       appBar: mainAppBar(
         context,
-        title: 'Podcasks',
+        title: context.l10n!.appTitle,
         leading: homeVm.favourites.isNotEmpty ? _favouritesButton() : const SizedBox.shrink(),
       ),
       body: homeVm.state == UiState.loading
@@ -176,10 +176,10 @@ class _HomePageState extends ConsumerState<HomePage> {
         padding: const EdgeInsets.only(top: 64),
         child: Column(
           children: [
-            Text('welcome!', style: textStyleBody),
-            Text('you\'re not listening to anything yet', style: textStyleBody),
+            Text(context.l10n!.welcome, style: textStyleBody),
+            Text(context.l10n!.notListeningMessage, style: textStyleBody),
             const SizedBox(height: 8),
-            Text('¯\\_(ツ)_/¯', style: textStyleBody),
+            Text(context.l10n!.bohEmoji, style: textStyleBody),
             const SizedBox(height: 8),
             FilledButton(
               onPressed: () {
@@ -189,12 +189,12 @@ class _HomePageState extends ConsumerState<HomePage> {
                 );
               },
               style: buttonStyle,
-              child: const Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.search),
-                  SizedBox(width: 8),
-                  Text('explore podcasts'),
+                  const Icon(Icons.search),
+                  const SizedBox(width: 8),
+                  Text(context.l10n!.explorePodcasts),
                 ],
               ),
             ),

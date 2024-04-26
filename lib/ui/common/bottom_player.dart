@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/playing/playing_page.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
+import 'package:podcasks/utils.dart';
 
 class BottomPlayer extends ConsumerWidget {
   static const double playerHeight = 64;
@@ -16,8 +17,7 @@ class BottomPlayer extends ConsumerWidget {
     return vm.playing == null //|| vm.position == Duration.zero
         ? const SizedBox.shrink()
         : BottomSheet(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
             enableDrag: false,
             onClosing: () {},
             builder: (context) {
@@ -35,12 +35,10 @@ class BottomPlayer extends ConsumerWidget {
                           Flexible(
                             flex: 1,
                             child: GestureDetector(
-                              onTap: () => Navigator.pushNamed(
-                                  context, PlayingPage.route),
+                              onTap: () => Navigator.pushNamed(context, PlayingPage.route),
                               onVerticalDragEnd: (details) {
                                 if (details.primaryVelocity! < 0) {
-                                  Navigator.pushNamed(
-                                      context, PlayingPage.route);
+                                  Navigator.pushNamed(context, PlayingPage.route);
                                 }
                               },
                               child: Container(
@@ -51,8 +49,7 @@ class BottomPlayer extends ConsumerWidget {
                                       Container(
                                         margin: const EdgeInsets.all(8),
                                         decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(4),
+                                          borderRadius: BorderRadius.circular(4),
                                         ),
                                         clipBehavior: Clip.antiAlias,
                                         child: Image.network(vm.image!),
@@ -64,8 +61,7 @@ class BottomPlayer extends ConsumerWidget {
                                         style: {
                                           '*': Style(
                                             margin: Margins.zero,
-                                            fontFamily:
-                                                themeFontFamily.fontFamily,
+                                            fontFamily: themeFontFamily.fontFamily,
                                             textOverflow: TextOverflow.ellipsis,
                                           ),
                                         },
@@ -78,17 +74,22 @@ class BottomPlayer extends ConsumerWidget {
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: IconButton(
-                              onPressed: () {
-                                if (playing) {
-                                  vm.pause();
-                                } else {
-                                  vm.play();
-                                }
-                              },
-                              icon: playing
-                                  ? const Icon(Icons.pause)
-                                  : const Icon(Icons.play_arrow),
+                            child: Semantics(
+                              label: playing
+                                  ? context.l10n!.pause
+                                  : context.l10n!.play,
+                              child: IconButton(
+                                onPressed: () {
+                                  if (playing) {
+                                    vm.pause();
+                                  } else {
+                                    vm.play();
+                                  }
+                                },
+                                icon: playing
+                                    ? const Icon(Icons.pause)
+                                    : const Icon(Icons.play_arrow),
+                              ),
                             ),
                           ),
                         ],

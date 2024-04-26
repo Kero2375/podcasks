@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
+import 'package:podcasks/utils.dart';
 
 Future<int?> showEpisodeMenu({
   required BuildContext context,
@@ -19,13 +20,13 @@ Future<int?> showEpisodeMenu({
     items: <PopupMenuEntry<int>>[
       if (value != EpisodeState.finished)
         episodeMenuItem<int>(
-          message: 'Mark as finished',
+          message: context.l10n!.markAsFinished,
           icon: Icons.check,
           onTap: () => vm.markAsFinished(ep),
         ),
       if (value != EpisodeState.none)
         episodeMenuItem<int>(
-          message: 'Cancel progress',
+          message: context.l10n!.cancelProgress,
           icon: Icons.delete_outline,
           onTap: () => vm.cancelProgress(ep),
         ),

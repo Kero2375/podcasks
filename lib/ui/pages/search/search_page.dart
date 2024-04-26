@@ -5,6 +5,7 @@ import 'package:podcasks/ui/pages/search/search_text_field.dart';
 import 'package:podcasks/ui/pages/search/search_list.dart';
 import 'package:podcasks/ui/vms/search_vm.dart';
 import 'package:podcasks/ui/vms/vm.dart';
+import 'package:podcasks/utils.dart';
 
 class SearchPage extends ConsumerWidget {
   static const route = "/search_page";
@@ -35,7 +36,7 @@ class SearchPage extends ConsumerWidget {
           controller: vm.searchBarController,
           search: vm.search,
           init: vm.init,
-          hint: 'Search or add RSS feed...',
+          hint: context.l10n!.searchOrRssHint,
           showFilters: true,
         ),
       ),
@@ -52,11 +53,11 @@ class SearchPage extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'sorry, I didn\'t find anything',
+                          context.l10n!.noResults,
                           style: textStyleBody,
                         ),
                         Text(
-                          '(◡︵◡)',
+                          context.l10n!.noResultsEmoji,
                           style: textStyleBody,
                         ),
                       ],

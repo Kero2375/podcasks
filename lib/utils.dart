@@ -1,3 +1,6 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 extension ParsableDuration on Duration {
   String toTime() {
     var time = toString().split('.').first.padLeft(8, "0");
@@ -19,4 +22,8 @@ String parseRemainingTime(Duration time) {
   } else {
     return '-${time.inMinutes}m';
   }
+}
+
+extension LocalizationContext on BuildContext {
+  AppLocalizations? get l10n => AppLocalizations.of(this);
 }
