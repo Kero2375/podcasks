@@ -14,6 +14,7 @@ class SearchPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.watch(searchViewmodel);
+    final bool isEmpty = vm.searchBarController.text.trim() == '';
 
     return Scaffold(
       appBar: AppBar(
@@ -21,9 +22,13 @@ class SearchPage extends ConsumerWidget {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              if (isEmpty) {
+                Navigator.pop(context);
+              } else {
+                vm.clearText();
+              }
             },
-            icon: const Icon(Icons.close),
+            icon: Icon(isEmpty ? Icons.close : Icons.backspace),
           ),
         ],
         title: SearchTextField(

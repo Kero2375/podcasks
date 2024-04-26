@@ -42,9 +42,9 @@ class FavouritesRow extends StatelessWidget {
               // .where((e) => !episodesVm.isInFilter(e))
               .mapIndexed((i, p) => HomePodcastItem(
                     image: p.image,
-                    selected: !isFull && episodesVm.isInFilter(p),
+                    selected: (favLength <= 1 || !isFull) && episodesVm.isInFilter(p),
                     onTap: () {
-                      if (!isFull && episodesVm.isInFilter(p)) {
+                      if ((favLength <= 1 || !isFull)  && episodesVm.isInFilter(p)) {
                         Navigator.pushNamed(
                           context,
                           PodcastPage.route,

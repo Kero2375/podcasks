@@ -72,16 +72,8 @@ class HomeViewmodel extends Vm {
   }
 
   Future<void> fetchListening() async {
-    // final last = await _lastPlayingRepo.getLastPlaying();
-    // if (last != null) {
-    //   final time = _historyRepo.getPosition(last);
-    //   if (time?.$1.inSeconds != 0) _saved = last;
-    // }
     final List<PodcastEpisode> list = await _historyRepo.getAllSaved();
-    print(list.length);
     _saved = list;
-
-    // _saved = [];
   }
 }
 

@@ -89,4 +89,9 @@ class SearchViewmodel extends Vm {
       await search(searchBarController.text);
     }
   }
+
+  void clearText() {
+    searchBarController.text = '';
+    _updateSearch();
+  }
 }
