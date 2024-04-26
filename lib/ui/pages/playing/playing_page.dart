@@ -159,6 +159,7 @@ class PlayingPage extends ConsumerWidget {
           child: Text(
             ep?.title ?? '',
             maxLines: 3,
+            overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
             style: textStyleTitle,
           ),
@@ -170,6 +171,8 @@ class PlayingPage extends ConsumerWidget {
           child: Text(
             podcast?.title ?? '',
             textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: textStyleSubtitle(context),
           ),
         ),

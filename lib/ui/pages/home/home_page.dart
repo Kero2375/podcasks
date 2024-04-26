@@ -35,8 +35,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     super.initState();
   }
 
-  Future<void> _checkSaved(HomeViewmodel homeVm, PlayerViewmodel playerVm,
-      EpisodesHomeViewmodel episodesVm) async {
+  Future<void> _checkSaved(
+      HomeViewmodel homeVm, PlayerViewmodel playerVm, EpisodesHomeViewmodel episodesVm) async {
     final (track, position) = await homeVm.getLastSaved() ?? (null, null);
     final (state, _) = episodesVm.getEpisodeState(track);
     if (track != null && position != null && state != EpisodeState.finished) {
@@ -46,26 +46,22 @@ class _HomePageState extends ConsumerState<HomePage> {
     }
   }
 
-  void _initEpisodeList(
-      EpisodesHomeViewmodel episodesVm, HomeViewmodel homeVm) {
-    final PodcastEpisode? saved = homeVm.saved;
+  void _initEpisodeList(EpisodesHomeViewmodel episodesVm, HomeViewmodel homeVm) {
+    final List<PodcastEpisode>? saved = homeVm.saved;
     final favourites = homeVm.favourites;
     final list = <PodcastEpisode>[];
 
-    if (saved != null &&
-        favourites.firstWhereOrNull((p) => p.url == saved.podcast?.url) ==
-            null) {
-      list.add(saved);
+    if (saved != null) {
+      list.addAll(saved);
     }
 
     list.addAll(favourites
-        .map((p) =>
-            p.episodes.map((e) => PodcastEpisode.fromEpisode(e, podcast: p)))
-        .flattened
-        .sorted((a, b) => b.publicationDate != null
-            ? a.publicationDate?.compareTo(b.publicationDate!) ?? 0
-            : 0)
-        .reversed);
+        .map(
+          (p) => p.episodes.map(
+            (e) => PodcastEpisode.fromEpisode(e, podcast: p),
+          ),
+        )
+        .flattened);
 
     episodesVm.init(list, maxItems: 30);
   }
@@ -89,18 +85,17 @@ class _HomePageState extends ConsumerState<HomePage> {
       appBar: mainAppBar(
         context,
         title: 'Podcasks',
-        leading: homeVm.favourites.isNotEmpty
-            ? _favouritesButton()
-            : const SizedBox.shrink(),
+        leading: homeVm.favourites.isNotEmpty ? _favouritesButton() : const SizedBox.shrink(),
       ),
       body: homeVm.state == UiState.loading
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
               onRefresh: () async {
+                await homeVm.fetchFavourites();
+                await homeVm.fetchListening();
                 episodesVm.initEpisodesList();
                 await episodesVm.update();
                 await homeVm.update();
-                await Future.delayed(const Duration(seconds: 1));
                 // _initEpisodeList(episodesVm, homeVm);
               },
               child: LayoutBuilder(
@@ -108,8 +103,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                   physics: const AlwaysScrollableScrollPhysics(),
                   controller: episodesVm.controller,
                   child: ConstrainedBox(
-                    constraints:
-                        BoxConstraints(minHeight: constraints.maxHeight),
+                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -183,7 +177,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         child: Column(
           children: [
             Text('welcome!', style: textStyleBody),
-            Text('you\'re not listening to anything', style: textStyleBody),
+            Text('you\'re not listening to anything yet', style: textStyleBody),
             const SizedBox(height: 8),
             Text('¯\\_(ツ)_/¯', style: textStyleBody),
             const SizedBox(height: 8),

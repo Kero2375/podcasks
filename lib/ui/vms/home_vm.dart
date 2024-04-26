@@ -5,21 +5,19 @@ import 'package:podcasks/repository/history_repo.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/repository/favourites_repo.dart';
-import 'package:podcasks/repository/last_playing_repo.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 
 final homeViewmodel = ChangeNotifierProvider((ref) => HomeViewmodel());
 
 class HomeViewmodel extends Vm {
   final _favRepo = locator.get<FavouriteRepo>();
-  final _lastPlayingRepo = locator.get<LastPlayingRepo>();
   final _historyRepo = locator.get<HistoryRepo>();
 
   List<Podcast> get favourites => _favourites.sorted(_sortPodcastsByEpisode);
   List<Podcast> _favourites = [];
 
-  PodcastEpisode? get saved => _saved;
-  PodcastEpisode? _saved;
+  List<PodcastEpisode>? get saved => _saved;
+  List<PodcastEpisode>? _saved;
 
   HomeViewmodel() {
     init();
@@ -62,7 +60,8 @@ class HomeViewmodel extends Vm {
   }
 
   Future<(PodcastEpisode, Duration)?> getLastSaved() async {
-    final ep = await _lastPlayingRepo.getLastPlaying();
+    // final ep = await _lastPlayingRepo.getLastPlaying();
+    final ep = await _historyRepo.getLast();
     if (ep != null) {
       final (rem, _) = _historyRepo.getPosition(ep) ?? (null, null);
       if (rem != null) {
@@ -73,11 +72,15 @@ class HomeViewmodel extends Vm {
   }
 
   Future<void> fetchListening() async {
-    final last = await _lastPlayingRepo.getLastPlaying();
-    if (last != null) {
-      final time = _historyRepo.getPosition(last);
-      if (time?.$1.inSeconds != 0) _saved = last;
-    }
+    // final last = await _lastPlayingRepo.getLastPlaying();
+    // if (last != null) {
+    //   final time = _historyRepo.getPosition(last);
+    //   if (time?.$1.inSeconds != 0) _saved = last;
+    // }
+    final List<PodcastEpisode> list = await _historyRepo.getAllSaved();
+    print(list.length);
+    _saved = list;
+
     // _saved = [];
   }
 }

@@ -6,6 +6,7 @@ class SaveTrack {
   Id id = Isar.autoIncrement;
   String? url;
   String? podcastUrl;
+  DateTime dateTime;
   int? position;
   bool? finished;
 
@@ -15,5 +16,6 @@ class SaveTrack {
     required this.position,
     required this.podcastUrl,
     required this.finished,
+    required this.dateTime,
   });
 }

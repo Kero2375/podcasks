@@ -1,4 +1,4 @@
-package com.kero.podcasks
+package com.kerodevs.podcasks
 
 import com.ryanheise.audioservice.AudioServiceActivity
 

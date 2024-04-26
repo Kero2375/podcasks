@@ -62,6 +62,14 @@ class PodcastEpisode extends Episode {
       persons: persons,
     );
   }
+
+  @override
+  bool operator ==(other) {
+    return other is PodcastEpisode && contentUrl == other.contentUrl;
+  }
+
+  @override
+  int get hashCode => (contentUrl).hashCode;
 }
 
 const itunesGenres = [

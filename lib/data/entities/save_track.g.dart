@@ -17,23 +17,28 @@ const SaveTrackSchema = CollectionSchema(
   name: r'SaveTrack',
   id: -3731165250737059919,
   properties: {
-    r'finished': PropertySchema(
+    r'dateTime': PropertySchema(
       id: 0,
+      name: r'dateTime',
+      type: IsarType.dateTime,
+    ),
+    r'finished': PropertySchema(
+      id: 1,
       name: r'finished',
       type: IsarType.bool,
     ),
     r'podcastUrl': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'podcastUrl',
       type: IsarType.string,
     ),
     r'position': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'position',
       type: IsarType.long,
     ),
     r'url': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'url',
       type: IsarType.string,
     )
@@ -79,10 +84,11 @@ void _saveTrackSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeBool(offsets[0], object.finished);
-  writer.writeString(offsets[1], object.podcastUrl);
-  writer.writeLong(offsets[2], object.position);
-  writer.writeString(offsets[3], object.url);
+  writer.writeDateTime(offsets[0], object.dateTime);
+  writer.writeBool(offsets[1], object.finished);
+  writer.writeString(offsets[2], object.podcastUrl);
+  writer.writeLong(offsets[3], object.position);
+  writer.writeString(offsets[4], object.url);
 }
 
 SaveTrack _saveTrackDeserialize(
@@ -92,11 +98,12 @@ SaveTrack _saveTrackDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = SaveTrack(
-    finished: reader.readBoolOrNull(offsets[0]),
+    dateTime: reader.readDateTime(offsets[0]),
+    finished: reader.readBoolOrNull(offsets[1]),
     id: id,
-    podcastUrl: reader.readStringOrNull(offsets[1]),
-    position: reader.readLongOrNull(offsets[2]),
-    url: reader.readStringOrNull(offsets[3]),
+    podcastUrl: reader.readStringOrNull(offsets[2]),
+    position: reader.readLongOrNull(offsets[3]),
+    url: reader.readStringOrNull(offsets[4]),
   );
   return object;
 }
@@ -109,12 +116,14 @@ P _saveTrackDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 1:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 2:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 3:
+      return (reader.readLongOrNull(offset)) as P;
+    case 4:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -212,6 +221,59 @@ extension SaveTrackQueryWhere
 
 extension SaveTrackQueryFilter
     on QueryBuilder<SaveTrack, SaveTrack, QFilterCondition> {
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> dateTimeEqualTo(
+      DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dateTime',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> dateTimeGreaterThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'dateTime',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> dateTimeLessThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'dateTime',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> dateTimeBetween(
+    DateTime lower,
+    DateTime upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'dateTime',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> finishedIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -667,6 +729,18 @@ extension SaveTrackQueryLinks
     on QueryBuilder<SaveTrack, SaveTrack, QFilterCondition> {}
 
 extension SaveTrackQuerySortBy on QueryBuilder<SaveTrack, SaveTrack, QSortBy> {
+  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> sortByDateTime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateTime', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> sortByDateTimeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateTime', Sort.desc);
+    });
+  }
+
   QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> sortByFinished() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'finished', Sort.asc);
@@ -718,6 +792,18 @@ extension SaveTrackQuerySortBy on QueryBuilder<SaveTrack, SaveTrack, QSortBy> {
 
 extension SaveTrackQuerySortThenBy
     on QueryBuilder<SaveTrack, SaveTrack, QSortThenBy> {
+  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> thenByDateTime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateTime', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> thenByDateTimeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateTime', Sort.desc);
+    });
+  }
+
   QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> thenByFinished() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'finished', Sort.asc);
@@ -781,6 +867,12 @@ extension SaveTrackQuerySortThenBy
 
 extension SaveTrackQueryWhereDistinct
     on QueryBuilder<SaveTrack, SaveTrack, QDistinct> {
+  QueryBuilder<SaveTrack, SaveTrack, QDistinct> distinctByDateTime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'dateTime');
+    });
+  }
+
   QueryBuilder<SaveTrack, SaveTrack, QDistinct> distinctByFinished() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'finished');
@@ -813,6 +905,12 @@ extension SaveTrackQueryProperty
   QueryBuilder<SaveTrack, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<SaveTrack, DateTime, QQueryOperations> dateTimeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'dateTime');
     });
   }
 

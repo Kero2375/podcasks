@@ -10,7 +10,6 @@ import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/manager/audio_handler.dart';
-import 'package:podcasks/repository/last_playing_repo.dart';
 import 'package:podcasks/repository/search_repo.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 
@@ -38,7 +37,6 @@ class PlayerViewmodel extends Vm {
   Timer? _positionTimer;
   Timer? _saveTimer;
 
-  final LastPlayingRepo _lastPlayingRepo = locator.get<LastPlayingRepo>();
   final HistoryRepo _historyRepo = locator.get<HistoryRepo>();
 
   @override
@@ -90,8 +88,6 @@ class PlayerViewmodel extends Vm {
         // success();
       },
     );
-
-    _lastPlayingRepo.setLastPlaying(playing);
     // success();
   }
 
