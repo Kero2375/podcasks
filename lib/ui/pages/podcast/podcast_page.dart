@@ -49,48 +49,32 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
 
   void handleMore(int action, PodcastViewmodel vm, Podcast? podcast) {
     switch (action) {
-      case 0:
-        vm.markAllAsFinished(podcast);
+      case 0:showDialog(
+        context: context,
+        builder: (context) => ConfirmDialog(
+          title: 'Mark all as finished',
+          actionText: 'Confirm',
+          actionIcon: const Icon(Icons.check),
+          message: 'Mark all episodes of ${podcast?.title} as finished?',
+          // emoji: 'ಠ_ಠ',
+          onTap: () {
+            vm.markAllAsFinished(podcast);
+          },
+        ),
+      );
         break;
       case 1:
         showDialog(
           context: context,
-          builder: (context) => AlertDialog(
-            title: Text(
-              "Delete Progress",
-              style: textStyleHeader,
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  "Are you sure you want to delete all progress for \"${podcast?.title}\"?",
-                  style: textStyleBody,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "ಠ_ಠ",
-                  style: textStyleBody,
-                ),
-              ],
-            ),
-            actionsAlignment: MainAxisAlignment.spaceBetween,
-            actions: [
-              OutlinedButton(
-                onPressed: () => Navigator.of(context).pop(),
-                style: buttonStyle,
-                child: const Text('Cancel'),
-              ),
-              FilledButton.icon(
-                icon: const Icon(Icons.warning),
-                onPressed: () {
-                  vm.deleteAll(podcast);
-                  Navigator.of(context).pop();
-                },
-                style: buttonStyle,
-                label: const Text('Delete'),
-              ),
-            ],
+          builder: (context) => ConfirmDialog(
+            title: 'Delete progress',
+            actionText: 'Delete',
+            actionIcon: const Icon(Icons.warning),
+            message: 'Are you sure you want to delete all progress for ${podcast?.title}?',
+            emoji: '"ಠ_ಠ',
+            onTap: () {
+              vm.deleteAll(podcast);
+            },
           ),
         );
         break;
@@ -279,6 +263,62 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
       width: 120,
       height: 120,
       child: Image.network(item.image ?? ''),
+    );
+  }
+}
+
+class ConfirmDialog extends StatelessWidget {
+  final String title;
+  final String message;
+  final String? emoji;
+  final String actionText;
+  final Icon actionIcon;
+  final Function()? onTap;
+
+  const ConfirmDialog({
+    super.key,
+    required this.title,
+    required this.message,
+    this.emoji,
+    required this.actionText,
+    required this.actionIcon,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(title, style: textStyleHeader),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(message, style: textStyleBody),
+          if (emoji != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              emoji!,
+              style: textStyleBody,
+            ),
+          ],
+        ],
+      ),
+      actionsAlignment: MainAxisAlignment.spaceBetween,
+      actions: [
+        OutlinedButton(
+          onPressed: () => Navigator.of(context).pop(),
+          style: buttonStyle,
+          child: const Text('Cancel'),
+        ),
+        FilledButton.icon(
+          icon: actionIcon,
+          onPressed: () {
+            onTap?.call();
+            Navigator.pop(context);
+          },
+          style: buttonStyle,
+          label: Text(actionText),
+        ),
+      ],
     );
   }
 }

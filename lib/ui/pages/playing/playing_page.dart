@@ -1,6 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/themes.dart';
@@ -8,14 +10,22 @@ import 'package:podcasks/ui/pages/episode_page.dart';
 import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcasks/utils.dart';
+import 'package:podcast_search/podcast_search.dart';
 
-class PlayingPage extends ConsumerWidget {
+class PlayingPage extends ConsumerStatefulWidget {
   static const route = '/playing_page';
 
   const PlayingPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PlayingPage> createState() => _PlayingPageState();
+}
+
+class _PlayingPageState extends ConsumerState<PlayingPage> {
+  bool wasPlayingBeforeSeek = false;
+
+  @override
+  Widget build(BuildContext context) {
     final vm = ref.watch(playerViewmodel);
     final ep = vm.playing;
     final podcast = vm.playingPodcast;
@@ -65,11 +75,10 @@ class PlayingPage extends ConsumerWidget {
         ));
   }
 
-  SizedBox _pageContent(BuildContext context, PlayerViewmodel vm,
-      PodcastEpisode? ep, Podcast? podcast) {
+  SizedBox _pageContent(
+      BuildContext context, PlayerViewmodel vm, PodcastEpisode? ep, Podcast? podcast) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height -
-          MediaQuery.of(context).viewPadding.top * 2,
+      height: MediaQuery.of(context).size.height - MediaQuery.of(context).viewPadding.top * 2,
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: Column(
@@ -92,21 +101,28 @@ class PlayingPage extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.replay_10),
             iconSize: 30,
-            onPressed: () => vm.forward(const Duration(seconds: -10)),
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              vm.forward(const Duration(seconds: -10));
+            },
             style: controlsButtonStyle(true),
           ),
           IconButton.filled(
-            icon: vm.isPlaying()
-                ? const Icon(Icons.pause)
-                : const Icon(Icons.play_arrow),
+            icon: vm.isPlaying() ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
             iconSize: 40,
-            onPressed: () => vm.isPlaying() ? vm.pause() : vm.play(),
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              vm.isPlaying() ? vm.pause() : vm.play();
+            },
             style: controlsButtonStyle(!vm.isPlaying()),
           ),
           IconButton(
             icon: const Icon(Icons.forward_30),
             iconSize: 30,
-            onPressed: () => vm.forward(const Duration(seconds: 30)),
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              vm.forward(const Duration(seconds: 30));
+            },
             style: controlsButtonStyle(true),
           ),
         ],
@@ -114,16 +130,26 @@ class PlayingPage extends ConsumerWidget {
     );
   }
 
-  Widget _bottomSection(BuildContext context, PodcastEpisode? ep,
-      Podcast? podcast, PlayerViewmodel vm) {
+  Widget _bottomSection(
+      BuildContext context, PodcastEpisode? ep, Podcast? podcast, PlayerViewmodel vm) {
     return Column(
       children: [
         _title(context, ep, podcast),
         Slider(
-          value: vm.percent,
-          onChangeStart: (value) => vm.pause(),
+          value: max(vm.percent, 0),
+          onChangeStart: (value) {
+            HapticFeedback.lightImpact();
+            wasPlayingBeforeSeek = vm.isPlaying();
+            if (wasPlayingBeforeSeek) {
+              vm.pause();
+            }
+          },
           onChanged: (value) => vm.seek(value),
-          onChangeEnd: (value) => vm.play(),
+          onChangeEnd: (value) {
+            if (wasPlayingBeforeSeek) {
+              vm.play();
+            }
+          },
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -140,7 +166,10 @@ class PlayingPage extends ConsumerWidget {
         ),
         _buttons(vm),
         IconButton(
-          onPressed: () => vm.scrollDown(),
+          onPressed: () {
+            HapticFeedback.lightImpact();
+            vm.scrollDown();
+          },
           icon: Icon(
             Icons.keyboard_arrow_down,
             color: Theme.of(context).colorScheme.onBackground.withOpacity(.5),
@@ -154,8 +183,7 @@ class PlayingPage extends ConsumerWidget {
     return Column(
       children: [
         GestureDetector(
-          onTap: () => Navigator.popAndPushNamed(context, EpisodePage.route,
-              arguments: ep),
+          onTap: () => Navigator.popAndPushNamed(context, EpisodePage.route, arguments: ep),
           child: Text(
             ep?.title ?? '',
             maxLines: 3,
@@ -166,8 +194,7 @@ class PlayingPage extends ConsumerWidget {
         ),
         const SizedBox(height: 8),
         GestureDetector(
-          onTap: () => Navigator.popAndPushNamed(context, PodcastPage.route,
-              arguments: podcast),
+          onTap: () => Navigator.popAndPushNamed(context, PodcastPage.route, arguments: podcast),
           child: Text(
             podcast?.title ?? '',
             textAlign: TextAlign.center,

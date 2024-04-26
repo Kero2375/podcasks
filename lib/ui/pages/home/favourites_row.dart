@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:podcasks/ui/pages/home/home_podcast_item.dart';
 import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 import 'package:podcasks/ui/vms/episodes_home_vm.dart';
@@ -44,7 +45,8 @@ class FavouritesRow extends StatelessWidget {
                     image: p.image,
                     selected: (favLength <= 1 || !isFull) && episodesVm.isInFilter(p),
                     onTap: () {
-                      if ((favLength <= 1 || !isFull)  && episodesVm.isInFilter(p)) {
+                      if ((favLength <= 1 || !isFull) && episodesVm.isInFilter(p)) {
+                        HapticFeedback.lightImpact();
                         Navigator.pushNamed(
                           context,
                           PodcastPage.route,
@@ -53,6 +55,14 @@ class FavouritesRow extends StatelessWidget {
                       } else {
                         episodesVm.filterEpisodes([p]);
                       }
+                    },
+                    onLongTap: () {
+                      HapticFeedback.lightImpact();
+                      return Navigator.pushNamed(
+                        context,
+                        PodcastPage.route,
+                        arguments: p,
+                      );
                     },
                   ))
               .toList(),

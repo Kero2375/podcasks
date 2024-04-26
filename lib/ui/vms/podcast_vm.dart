@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/ui/common/debouncer.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
-import 'package:podcast_search/src/model/podcast.dart';
+import 'package:podcast_search/podcast_search.dart';
 
 final podcastViewmodel = ChangeNotifierProvider((ref) => PodcastViewmodel());
 

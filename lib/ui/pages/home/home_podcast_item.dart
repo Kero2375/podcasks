@@ -4,6 +4,7 @@ class HomePodcastItem extends StatelessWidget {
   final String? image;
   final IconData? icon;
   final Function() onTap;
+  final Function()? onLongTap;
   final bool selected;
 
   const HomePodcastItem({
@@ -12,6 +13,7 @@ class HomePodcastItem extends StatelessWidget {
     this.image,
     this.icon,
     required this.onTap,
+    this.onLongTap,
   });
 
   double get size => 70;
@@ -22,14 +24,14 @@ class HomePodcastItem extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4),
       child: GestureDetector(
         onTap: onTap,
+        onLongPress: onLongTap,
         child: Column(
           // crossAxisAlignment:CrossAxisAlignment.start,
           children: [
             AnimatedContainer(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                color:
-                    Theme.of(context).colorScheme.onBackground.withOpacity(.1),
+                color: Theme.of(context).colorScheme.onBackground.withOpacity(.1),
               ),
               clipBehavior: Clip.antiAlias,
               width: size,
