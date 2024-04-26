@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/ui/common/debouncer.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
+import 'package:podcast_search/src/model/podcast.dart';
 
 final podcastViewmodel = ChangeNotifierProvider((ref) => PodcastViewmodel());
 
@@ -69,5 +70,21 @@ class PodcastViewmodel extends ListViewmodel {
       initEpisodesList();
       notifyListeners();
     });
+  }
+
+  Future<void> markAllAsFinished(Podcast? p) async {
+    loading();
+    if (p != null) {
+      await historyRepo.setAllPositions(p, Duration.zero, true);
+      initEpisodesList();
+    }
+    success();
+  }
+
+  deleteAll(Podcast? p) async {
+    loading();
+    await historyRepo.removeAll(p);
+    initEpisodesList();
+    success();
   }
 }

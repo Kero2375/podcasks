@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podcasks/ui/pages/home/episode_item.dart';
-import 'package:podcasks/ui/pages/search/search_text_field.dart';
-import 'package:podcasks/ui/vms/home_vm.dart';
-import 'package:podcasks/ui/vms/list_vm.dart';
-import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/bottom_player.dart';
 import 'package:podcasks/ui/common/fav_button.dart';
 import 'package:podcasks/ui/common/themes.dart';
+import 'package:podcasks/ui/pages/home/episode_item.dart';
+import 'package:podcasks/ui/pages/search/search_text_field.dart';
+import 'package:podcasks/ui/vms/home_vm.dart';
+import 'package:podcasks/ui/vms/list_vm.dart';
 import 'package:podcasks/ui/vms/podcast_vm.dart';
+import 'package:podcast_search/podcast_search.dart';
 
 class PodcastPage extends ConsumerStatefulWidget {
   static const route = '/podcast_page';
@@ -28,9 +28,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
   _initEpisodeList(ListViewmodel vm) {
     if (vm.displayingEpisodes.isEmpty) {
       vm.init(
-        widget.podcast?.episodes
-            .map((e) => PodcastEpisode.fromEpisode(e))
-            .toList(),
+        widget.podcast?.episodes.map((e) => PodcastEpisode.fromEpisode(e)).toList(),
       );
     }
     // super.initState();
@@ -45,8 +43,58 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
     super.initState();
   }
 
-  void handleClick(bool item, PodcastViewmodel vm) {
+  void handleSort(bool item, PodcastViewmodel vm) {
     vm.setNewerFirst(item);
+  }
+
+  void handleMore(int action, PodcastViewmodel vm, Podcast? podcast) {
+    switch (action) {
+      case 0:
+        vm.markAllAsFinished(podcast);
+        break;
+      case 1:
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(
+              "Delete Progress",
+              style: textStyleHeader,
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "Are you sure you want to delete all progress for \"${podcast?.title}\"?",
+                  style: textStyleBody,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "ಠ_ಠ",
+                  style: textStyleBody,
+                ),
+              ],
+            ),
+            actionsAlignment: MainAxisAlignment.spaceBetween,
+            actions: [
+              OutlinedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: buttonStyle,
+                child: const Text('Cancel'),
+              ),
+              FilledButton.icon(
+                icon: const Icon(Icons.warning),
+                onPressed: () {
+                  vm.deleteAll(podcast);
+                  Navigator.of(context).pop();
+                },
+                style: buttonStyle,
+                label: const Text('Delete'),
+              ),
+            ],
+          ),
+        );
+        break;
+    }
   }
 
   @override
@@ -123,7 +171,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
   PopupMenuButton<bool> _sortMenuButton(PodcastViewmodel vm) {
     return PopupMenuButton(
       icon: const Icon(Icons.sort),
-      onSelected: (item) => handleClick(item, vm),
+      onSelected: (item) => handleSort(item, vm),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
       ),
@@ -152,6 +200,38 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
     );
   }
 
+  PopupMenuButton<int> _moreMenuButton(PodcastViewmodel vm) {
+    return PopupMenuButton(
+      icon: const Icon(Icons.more_vert),
+      onSelected: (item) => handleMore(item, vm, widget.podcast),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: 0,
+          child: Row(
+            children: [
+              const Icon(Icons.done_all),
+              const SizedBox(width: 8),
+              Text('Mark all as finished', style: textStyleBody),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 1,
+          child: Row(
+            children: [
+              const Icon(Icons.delete_forever),
+              const SizedBox(width: 8),
+              Text('Delete progress', style: textStyleBody),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buttons(PodcastViewmodel vm) {
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -159,7 +239,13 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           FavButton(widget.podcast!),
-          _sortMenuButton(vm),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _sortMenuButton(vm),
+              _moreMenuButton(vm),
+            ],
+          ),
         ],
       ),
     );
