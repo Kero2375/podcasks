@@ -21,7 +21,7 @@ class PlayingPage extends ConsumerStatefulWidget {
   ConsumerState<PlayingPage> createState() => _PlayingPageState();
 }
 
-class _PlayingPageState extends ConsumerState<PlayingPage> {
+class _PlayingPageState extends ConsumerState<PlayingPage> with TickerProviderStateMixin {
   bool wasPlayingBeforeSeek = false;
 
   @override
@@ -34,24 +34,7 @@ class _PlayingPageState extends ConsumerState<PlayingPage> {
       appBar: mainAppBar(context,
           actions: Padding(
             padding: const EdgeInsets.only(right: 8.0),
-            child: PopupMenuButton<double>(
-              onSelected: vm.setSpeed,
-              icon: Text(
-                '⚡️ ${vm.speed}x',
-                style: textStyleBody,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              itemBuilder: (context) => [
-                _speedMenuItem(0.5),
-                _speedMenuItem(0.75),
-                _speedMenuItem(1),
-                _speedMenuItem(1.25),
-                _speedMenuItem(1.5),
-                _speedMenuItem(2),
-              ],
-            ),
+            // child: _speedButton(vm),
           )),
       body: SingleChildScrollView(
         controller: vm.scrollController,
@@ -62,6 +45,28 @@ class _PlayingPageState extends ConsumerState<PlayingPage> {
           ],
         ),
       ),
+    );
+  }
+
+  PopupMenuButton<double> _speedButton(BuildContext context, PlayerViewmodel vm) {
+    return PopupMenuButton<double>(
+      onSelected: vm.setSpeed,
+      icon: Text(
+        '⚡ ${vm.speed}x',
+        style: textStyleBody.copyWith(
+            color: Theme.of(context).colorScheme.onBackground.withOpacity(.8)),
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      itemBuilder: (context) => [
+        _speedMenuItem(0.5),
+        _speedMenuItem(0.75),
+        _speedMenuItem(1),
+        _speedMenuItem(1.25),
+        _speedMenuItem(1.5),
+        _speedMenuItem(2),
+      ],
     );
   }
 
@@ -165,17 +170,60 @@ class _PlayingPageState extends ConsumerState<PlayingPage> {
           ],
         ),
         _buttons(vm),
-        IconButton(
-          onPressed: () {
-            HapticFeedback.lightImpact();
-            vm.scrollDown();
-          },
-          icon: Icon(
-            Icons.keyboard_arrow_down,
-            color: Theme.of(context).colorScheme.onBackground.withOpacity(.5),
-          ),
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            Align(alignment: Alignment.centerLeft, child: _speedButton(context, vm)),
+            _showDescriptionButton(vm, context),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Builder(
+                  builder: (context) => IconButton( // TODO: move to new widget?
+                        onPressed: () {
+                          showModalBottomSheet(
+                            enableDrag: true,
+                            showDragHandle: true,
+                            builder: (context) => SizedBox(
+                              height: MediaQuery.of(context).size.height - 400,
+                              child: ListView(
+                                children: vm.queue // TODO: create queue
+                                    .map((e) => Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                            children: [
+                                              if (e.image != null) Image.network(e.image!),
+                                              Text(e.title ?? '??'),
+                                            ],
+                                          ),
+                                    ))
+                                    .toList(),
+                              ),
+                            ),
+                            context: context,
+                          );
+                        },
+                        icon: Icon(
+                          Icons.playlist_play,
+                          color: Theme.of(context).colorScheme.onBackground.withOpacity(.8),
+                        ),
+                      )),
+            )
+          ],
         ),
       ],
+    );
+  }
+
+  IconButton _showDescriptionButton(PlayerViewmodel vm, BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        HapticFeedback.lightImpact();
+        vm.scrollDown();
+      },
+      icon: Icon(
+        Icons.keyboard_arrow_down,
+        color: Theme.of(context).colorScheme.onBackground.withOpacity(.5),
+      ),
     );
   }
 

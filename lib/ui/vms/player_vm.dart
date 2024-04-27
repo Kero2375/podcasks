@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podcasks/data/entities/queue_track.dart';
 import 'package:podcasks/repository/history_repo.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/data/podcast_episode.dart';
@@ -38,6 +39,28 @@ class PlayerViewmodel extends Vm {
   Timer? _saveTimer;
 
   final HistoryRepo _historyRepo = locator.get<HistoryRepo>();
+
+  List<QueueTrack> get queue => _queue;
+  final List<QueueTrack> _queue = [ // TODO: get from db
+    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
+    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
+    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
+    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
+    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
+    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
+    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
+    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
+    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
+    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
+    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
+    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
+    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
+    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
+    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
+    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
+    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
+    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
+  ];
 
   @override
   void dispose() {
