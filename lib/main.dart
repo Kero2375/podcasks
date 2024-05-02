@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar/isar.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:podcasks/data/entities/queue_track.dart';
+import 'package:podcasks/data/entities/save_track.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/manager/audio_handler.dart';
@@ -19,6 +23,12 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setup();
+
+  final dir = await getApplicationSupportDirectory();
+  Isar.open(
+    [SaveTrackSchema, QueueTrackSchema],
+    directory: dir.path,
+  );
   audioHandler = await AudioService.init(
     builder: () => MyAudioHandler(),
     config: const AudioServiceConfig(
@@ -43,7 +53,8 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.watch(themeViewmodel);
     return DynamicColorBuilder(
-      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) => MaterialApp(
+      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) =>
+          MaterialApp(
         localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
@@ -69,14 +80,16 @@ class MyApp extends ConsumerWidget {
             );
           } else if (settings.name == EpisodePage.route) {
             return MaterialPageRoute(
-              builder: (context) => EpisodePage(settings.arguments as PodcastEpisode?),
+              builder: (context) =>
+                  EpisodePage(settings.arguments as PodcastEpisode?),
             );
           }
           return null;
         },
-        theme: vm.getAppTheme(MediaQuery.of(context).platformBrightness == Brightness.light
-            ? lightDynamic
-            : darkDynamic),
+        theme: vm.getAppTheme(
+            MediaQuery.of(context).platformBrightness == Brightness.light
+                ? lightDynamic
+                : darkDynamic),
       ),
     );
   }

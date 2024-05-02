@@ -55,5 +55,12 @@
   "sports": "Sport",
   "tvFilm": "TV & Film",
   "technology": "Tecnologia",
-  "trueCrime": "True Crime"
+  "trueCrime": "True Crime",
+  "addToQueue": "Aggiungi alla coda",
+  "removeFromQueue": "Rimuovi dalla coda",
+  "addedToQueue": "aggiunto alla coda",
+  "alreadyInQueue": "già presente nella coda",
+  "clearAll": "cancella",
+  "nextInQueue": "Prossimi in coda:",
+  "emptyQueue": "coda vuota"
 }

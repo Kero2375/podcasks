@@ -7,6 +7,7 @@ import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/episode_page.dart';
+import 'package:podcasks/ui/pages/queue/queue_button.dart';
 import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcasks/utils.dart';
@@ -21,7 +22,8 @@ class PlayingPage extends ConsumerStatefulWidget {
   ConsumerState<PlayingPage> createState() => _PlayingPageState();
 }
 
-class _PlayingPageState extends ConsumerState<PlayingPage> with TickerProviderStateMixin {
+class _PlayingPageState extends ConsumerState<PlayingPage>
+    with TickerProviderStateMixin {
   bool wasPlayingBeforeSeek = false;
 
   @override
@@ -48,7 +50,8 @@ class _PlayingPageState extends ConsumerState<PlayingPage> with TickerProviderSt
     );
   }
 
-  PopupMenuButton<double> _speedButton(BuildContext context, PlayerViewmodel vm) {
+  PopupMenuButton<double> _speedButton(
+      BuildContext context, PlayerViewmodel vm) {
     return PopupMenuButton<double>(
       onSelected: vm.setSpeed,
       icon: Text(
@@ -80,10 +83,11 @@ class _PlayingPageState extends ConsumerState<PlayingPage> with TickerProviderSt
         ));
   }
 
-  SizedBox _pageContent(
-      BuildContext context, PlayerViewmodel vm, PodcastEpisode? ep, Podcast? podcast) {
+  SizedBox _pageContent(BuildContext context, PlayerViewmodel vm,
+      PodcastEpisode? ep, Podcast? podcast) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height - MediaQuery.of(context).viewPadding.top * 2,
+      height: MediaQuery.of(context).size.height -
+          MediaQuery.of(context).viewPadding.top * 2,
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: Column(
@@ -113,7 +117,9 @@ class _PlayingPageState extends ConsumerState<PlayingPage> with TickerProviderSt
             style: controlsButtonStyle(true),
           ),
           IconButton.filled(
-            icon: vm.isPlaying() ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
+            icon: vm.isPlaying()
+                ? const Icon(Icons.pause)
+                : const Icon(Icons.play_arrow),
             iconSize: 40,
             onPressed: () {
               HapticFeedback.lightImpact();
@@ -135,8 +141,8 @@ class _PlayingPageState extends ConsumerState<PlayingPage> with TickerProviderSt
     );
   }
 
-  Widget _bottomSection(
-      BuildContext context, PodcastEpisode? ep, Podcast? podcast, PlayerViewmodel vm) {
+  Widget _bottomSection(BuildContext context, PodcastEpisode? ep,
+      Podcast? podcast, PlayerViewmodel vm) {
     return Column(
       children: [
         _title(context, ep, podcast),
@@ -173,40 +179,15 @@ class _PlayingPageState extends ConsumerState<PlayingPage> with TickerProviderSt
         Stack(
           alignment: Alignment.center,
           children: [
-            Align(alignment: Alignment.centerLeft, child: _speedButton(context, vm)),
+            Align(
+                alignment: Alignment.centerLeft,
+                child: _speedButton(context, vm)),
             _showDescriptionButton(vm, context),
             Align(
               alignment: Alignment.centerRight,
               child: Builder(
-                  builder: (context) => IconButton( // TODO: move to new widget?
-                        onPressed: () {
-                          showModalBottomSheet(
-                            enableDrag: true,
-                            showDragHandle: true,
-                            builder: (context) => SizedBox(
-                              height: MediaQuery.of(context).size.height - 400,
-                              child: ListView(
-                                children: vm.queue // TODO: create queue
-                                    .map((e) => Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
-                                            children: [
-                                              if (e.image != null) Image.network(e.image!),
-                                              Text(e.title ?? '??'),
-                                            ],
-                                          ),
-                                    ))
-                                    .toList(),
-                              ),
-                            ),
-                            context: context,
-                          );
-                        },
-                        icon: Icon(
-                          Icons.playlist_play,
-                          color: Theme.of(context).colorScheme.onBackground.withOpacity(.8),
-                        ),
-                      )),
+                builder: (context) => QueueButton(vm: vm),
+              ),
             )
           ],
         ),
@@ -231,7 +212,8 @@ class _PlayingPageState extends ConsumerState<PlayingPage> with TickerProviderSt
     return Column(
       children: [
         GestureDetector(
-          onTap: () => Navigator.popAndPushNamed(context, EpisodePage.route, arguments: ep),
+          onTap: () => Navigator.popAndPushNamed(context, EpisodePage.route,
+              arguments: ep),
           child: Text(
             ep?.title ?? '',
             maxLines: 3,
@@ -242,7 +224,8 @@ class _PlayingPageState extends ConsumerState<PlayingPage> with TickerProviderSt
         ),
         const SizedBox(height: 8),
         GestureDetector(
-          onTap: () => Navigator.popAndPushNamed(context, PodcastPage.route, arguments: podcast),
+          onTap: () => Navigator.popAndPushNamed(context, PodcastPage.route,
+              arguments: podcast),
           child: Text(
             podcast?.title ?? '',
             textAlign: TextAlign.center,

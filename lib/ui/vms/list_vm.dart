@@ -1,13 +1,17 @@
 import 'dart:developer' as dev;
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
+import 'package:podcasks/data/entities/queue_track.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/repository/history_repo.dart';
+import 'package:podcasks/repository/queue_repo.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 
 class ListViewmodel extends Vm {
   final HistoryRepo historyRepo = locator.get<HistoryRepo>();
+  final QueueRepo _queueRepo = locator.get<QueueRepo>();
+
   int _maxItems = 10;
   int _page = 0;
 
@@ -93,6 +97,24 @@ class ListViewmodel extends Vm {
       initEpisodesList();
       update();
     }
+  }
+
+  Future<bool> addToQueue(PodcastEpisode? ep) async {
+    if (ep != null) {
+      await _queueRepo.addItem(ep);
+      return true;
+    }
+    return false;
+  }
+
+  Future<void> removeFromQueue(QueueTrack track) async {
+    await _queueRepo.removeItem(track);
+    notifyListeners();
+  }
+
+  void clearQueue() async {
+    await _queueRepo.clearAll();
+    notifyListeners();
   }
 }
 

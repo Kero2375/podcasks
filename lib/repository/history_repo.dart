@@ -5,7 +5,8 @@ import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcast_search/podcast_search.dart';
 
 abstract class HistoryRepo {
-  Future<void> setPosition(PodcastEpisode episode, Duration? position, bool finished);
+  Future<void> setPosition(
+      PodcastEpisode episode, Duration? position, bool finished);
 
   Future<void> removeEpisode(PodcastEpisode episode);
 
@@ -16,25 +17,14 @@ abstract class HistoryRepo {
 
   Future<PodcastEpisode?> getLast();
 
-  Future<void> setAllPositions(Podcast podcast, Duration position, bool finished);
+  Future<void> setAllPositions(
+      Podcast podcast, Duration position, bool finished);
 
   Future<void> removeAll(Podcast? podcast);
 }
 
 class HistoryRepoIsar extends HistoryRepo {
-  Isar? isar;
-
-  HistoryRepoIsar() {
-    init();
-  }
-
-  Future<void> init() async {
-    final dir = await getApplicationSupportDirectory();
-    isar = await Isar.open(
-      [SaveTrackSchema],
-      directory: dir.path,
-    );
-  }
+  Isar? get isar => Isar.getInstance();
 
   @override
   (Duration, bool)? getPosition(Episode episode) {
@@ -49,7 +39,8 @@ class HistoryRepoIsar extends HistoryRepo {
   }
 
   @override
-  Future<void> setPosition(PodcastEpisode episode, Duration? position, bool finished) async {
+  Future<void> setPosition(
+      PodcastEpisode episode, Duration? position, bool finished) async {
     final id = episode.contentUrl?.hashCode;
     if (id != null && position != null) {
       await isar?.writeTxn(
@@ -99,26 +90,26 @@ class HistoryRepoIsar extends HistoryRepo {
 
   @override
   Future<PodcastEpisode?> getLast() async {
-    final tracks = await isar?.saveTracks.where(sort: Sort.asc).sortByDateTime().findAll();
+    final tracks =
+        await isar?.saveTracks.where(sort: Sort.asc).sortByDateTime().findAll();
     final t = tracks?.last;
-    if (t != null && t.podcastUrl != null && t.url != null) {
-      final pod = await Podcast.loadFeed(url: t.podcastUrl!);
-      final ep = pod.episodes.firstWhere((e) => e.contentUrl == t.url);
-      return PodcastEpisode.fromEpisode(ep, podcast: pod);
-    }
-    return null;
+    return PodcastEpisode.fromUrl(
+      podcastUrl: t?.podcastUrl,
+      episodeUrl: t?.url,
+    );
   }
 
   @override
   Future<void> removeAll(Podcast? podcast) async {
     if (podcast != null) {
-      await isar?.writeTxn(
-          () async => isar?.saveTracks.filter().podcastUrlEqualTo(podcast.url).deleteAll());
+      await isar?.writeTxn(() async =>
+          isar?.saveTracks.filter().podcastUrlEqualTo(podcast.url).deleteAll());
     }
   }
 
   @override
-  Future<void> setAllPositions(Podcast podcast, Duration position, bool finished) async {
+  Future<void> setAllPositions(
+      Podcast podcast, Duration position, bool finished) async {
     List<SaveTrack> tracks = [];
     final now = DateTime.now();
     for (var ep in podcast.episodes) {

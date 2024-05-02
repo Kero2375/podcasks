@@ -15,7 +15,7 @@ class QueueTrack {
     required this.url,
     required this.podcastUrl,
     required this.title,
-    this.image,
-    this.next,
+    required this.image,
+    required this.next,
   });
 }

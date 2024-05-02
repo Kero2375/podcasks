@@ -55,5 +55,12 @@
   "sports": "Sports",
   "tvFilm": "TV & Film",
   "technology": "Technology",
-  "trueCrime": "True Crime"
+  "trueCrime": "True Crime",
+  "addToQueue": "Add to queue",
+  "removeFromQueue": "Remove from queue",
+  "addedToQueue": "added to queue",
+  "alreadyInQueue": "already in queue",
+  "clearAll": "clear all",
+  "nextInQueue": "Next in queue:",
+  "emptyQueue": "empty queue"
 }

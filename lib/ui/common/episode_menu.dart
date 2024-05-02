@@ -30,20 +30,31 @@ Future<int?> showEpisodeMenu({
           icon: Icons.delete_outline,
           onTap: () => vm.cancelProgress(ep),
         ),
-      // episodeMenuItem<int>(
-      //   message: 'Add to queue',
-      //   icon: Icons.queue_outlined,
-      //   onTap: () {
-      //     ScaffoldMessenger.of(context).showSnackBar(
-      //       SnackBar(
-      //         content: Text(
-      //           "Queue is yet WIP :)",
-      //           style: textStyleBody,
-      //         ),
-      //       ),
-      //     );
-      //   },
-      // ),
+      episodeMenuItem<int>(
+        message: context.l10n!.addToQueue,
+        icon: Icons.queue_outlined,
+        onTap: () async {
+          bool res = await vm.addToQueue(ep);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              duration: const Duration(seconds: 2),
+              content: Row(
+                children: [
+                  Icon(
+                    res ? Icons.check : Icons.warning,
+                    color: Theme.of(context).colorScheme.background,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    res ? context.l10n!.addedToQueue : context.l10n!.error,
+                    style: textStyleBody,
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     ],
     position: RelativeRect.fromRect(
         tapPos & const Size(40, 40), // smaller rect, the touch area

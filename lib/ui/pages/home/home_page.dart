@@ -7,7 +7,7 @@ import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/bottom_player.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/favourites/faourites_drawer.dart';
-import 'package:podcasks/ui/pages/home/episode_item.dart';
+import 'package:podcasks/ui/common/episode_item.dart';
 import 'package:podcasks/ui/pages/home/favourites_row.dart';
 import 'package:podcasks/ui/pages/search/search_page.dart';
 import 'package:podcasks/ui/vms/episodes_home_vm.dart';

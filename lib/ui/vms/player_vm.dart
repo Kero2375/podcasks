@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/entities/queue_track.dart';
 import 'package:podcasks/repository/history_repo.dart';
+import 'package:podcasks/repository/queue_repo.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/locator.dart';
@@ -39,28 +40,9 @@ class PlayerViewmodel extends Vm {
   Timer? _saveTimer;
 
   final HistoryRepo _historyRepo = locator.get<HistoryRepo>();
+  final QueueRepo _queueRepo = locator.get<QueueRepo>();
 
-  List<QueueTrack> get queue => _queue;
-  final List<QueueTrack> _queue = [ // TODO: get from db
-    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
-    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
-    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
-    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
-    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
-    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
-    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
-    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
-    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
-    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
-    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
-    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
-    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
-    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
-    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
-    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
-    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
-    QueueTrack(id: 0, url: '', podcastUrl: '', title: 'Podcast X'),
-  ];
+  Future<List<QueueTrack>> get queue async => await _queueRepo.getAll();
 
   @override
   void dispose() {
@@ -158,6 +140,23 @@ class PlayerViewmodel extends Vm {
       // finished episode
       if (position.inSeconds == duration.inSeconds &&
           duration != Duration.zero) {
+        // if there is something in queue
+        final next = (await queue).firstOrNull;
+        if (next != null) {
+          final ep = await PodcastEpisode.fromUrl(
+            podcastUrl: next.podcastUrl,
+            episodeUrl: next.url,
+          );
+          if (ep != null) {
+            _queueRepo.removeItem(next);
+            await saveTrack(true);
+            await setupPlayer(ep);
+            await play();
+            notifyListeners();
+            return;
+          }
+        }
+        // empty queue
         await seekPosition(Duration.zero);
         await saveTrack(true);
         await pause();

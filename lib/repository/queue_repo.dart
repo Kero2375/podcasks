@@ -8,28 +8,20 @@ abstract class QueueRepo {
 
   Future<QueueTrack?> getItem(int id);
 
+  Future<void> removeItem(QueueTrack track);
+
   Future<List<QueueTrack>> getAll();
+
+  Future<void> clearAll();
 }
 
 class QueueRepoIsar extends QueueRepo {
-  Isar? isar;
-
-  QueueRepoIsar() {
-    init();
-  }
-
-  Future<void> init() async {
-    final dir = await getApplicationSupportDirectory();
-    isar = await Isar.open(
-      [QueueTrackSchema],
-      directory: dir.path,
-    );
-  }
+  Isar? get isar => Isar.getInstance();
 
   @override
   Future<void> addItem(PodcastEpisode episode) async {
     await isar?.writeTxn(() async => isar?.queueTracks.put(QueueTrack(
-          id: episode.hashCode,
+          id: episode.contentUrl.hashCode,
           url: episode.contentUrl,
           podcastUrl: episode.podcast?.url,
           title: episode.title,
@@ -46,5 +38,15 @@ class QueueRepoIsar extends QueueRepo {
   @override
   Future<QueueTrack?> getItem(int id) async {
     return await isar?.queueTracks.get(id);
+  }
+
+  @override
+  Future<void> removeItem(QueueTrack track) async {
+    await isar?.writeTxn(() async => isar?.queueTracks.delete(track.id));
+  }
+
+  @override
+  Future<void> clearAll() async {
+    await isar?.writeTxn(() async => isar?.queueTracks.clear());
   }
 }
