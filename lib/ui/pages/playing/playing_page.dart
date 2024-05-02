@@ -34,8 +34,8 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
 
     return Scaffold(
       appBar: mainAppBar(context,
-          actions: Padding(
-            padding: const EdgeInsets.only(right: 8.0),
+          actions: const Padding(
+            padding: EdgeInsets.only(right: 8.0),
             // child: _speedButton(vm),
           )),
       body: SingleChildScrollView(

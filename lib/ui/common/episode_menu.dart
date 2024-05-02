@@ -35,24 +35,26 @@ Future<int?> showEpisodeMenu({
         icon: Icons.queue_outlined,
         onTap: () async {
           bool res = await vm.addToQueue(ep);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              duration: const Duration(seconds: 2),
-              content: Row(
-                children: [
-                  Icon(
-                    res ? Icons.check : Icons.warning,
-                    color: Theme.of(context).colorScheme.background,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    res ? context.l10n!.addedToQueue : context.l10n!.error,
-                    style: textStyleBody,
-                  ),
-                ],
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                duration: const Duration(seconds: 2),
+                content: Row(
+                  children: [
+                    Icon(
+                      res ? Icons.check : Icons.warning,
+                      color: Theme.of(context).colorScheme.background,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      res ? context.l10n!.addedToQueue : context.l10n!.error,
+                      style: textStyleBody,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
+            );
+          }
         },
       ),
     ],
