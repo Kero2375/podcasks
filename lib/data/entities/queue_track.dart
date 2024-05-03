@@ -11,7 +11,6 @@ class QueueTrack {
   int? next;
 
   QueueTrack({
-    required this.id,
     required this.url,
     required this.podcastUrl,
     required this.title,

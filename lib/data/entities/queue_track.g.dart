@@ -110,13 +110,13 @@ QueueTrack _queueTrackDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = QueueTrack(
-    id: id,
     image: reader.readStringOrNull(offsets[0]),
     next: reader.readLongOrNull(offsets[1]),
     podcastUrl: reader.readStringOrNull(offsets[2]),
     title: reader.readStringOrNull(offsets[3]),
     url: reader.readStringOrNull(offsets[4]),
   );
+  object.id = id;
   return object;
 }
 

@@ -19,14 +19,17 @@ class QueueRepoIsar extends QueueRepo {
 
   @override
   Future<void> addItem(PodcastEpisode episode) async {
-    await isar?.writeTxn(() async => isar?.queueTracks.put(QueueTrack(
-          id: episode.contentUrl.hashCode,
+    await isar?.writeTxn(
+      () async => isar?.queueTracks.put(
+        QueueTrack(
           url: episode.contentUrl,
           podcastUrl: episode.podcast?.url,
           title: episode.title,
           image: episode.imageUrl ?? episode.podcast?.image,
           next: null,
-        )));
+        ),
+      ),
+    );
   }
 
   @override
