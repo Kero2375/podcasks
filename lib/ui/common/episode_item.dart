@@ -49,6 +49,7 @@ class _HomeEpisodeItemState extends ConsumerState<EpisodeItem> {
           context: context,
           value: episodeState,
           vm: episodesVm,
+          playerVm: ref.read(playerViewmodel),
           ep: episode,
           tapPos: _tapPos,
         );

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/ui/vms/vm.dart';
@@ -26,6 +25,7 @@ class EpisodePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.watch(playerViewmodel);
+
     return Scaffold(
       appBar: mainAppBar(context, title: podcast?.title),
       body: SingleChildScrollView(
@@ -109,9 +109,7 @@ class EpisodePage extends ConsumerWidget {
               const SizedBox(width: 8),
               OutlinedButton.icon(
                 onPressed: () {
-                  if (episode?.link != null) {
-                    Clipboard.setData(ClipboardData(text: episode!.link!));
-                  }
+                  vm.share(episode);
                 },
                 icon: const Icon(Icons.share),
                 style: buttonStyle,

@@ -28,3 +28,10 @@ Sun May 05 2024 [09:37:28 GMT+0200 (Central European Summer Time)] Log file star
 [9:43:44 AM] [FlutterDaemon] [Info] <== [{"id":"4","result":{"platforms":["linux","macos","windows","ios","android","web"]}}]
 [9:43:44 AM] [FlutterDaemon] [Info] ==> [{"id":"5","method":"daemon.getSupportedPlatforms","params":{"projectRoot":"/home/kero/flutter/podcasts"}}]
 [9:43:44 AM] [FlutterDaemon] [Info] <== [{"id":"5","result":{"platforms":["linux","macos","windows","ios","android","web"]}}]
+[10:03:58 AM] [FlutterDaemon] [Info] ==> [{"id":"6","method":"daemon.getSupportedPlatforms","params":{"projectRoot":"/home/kero/flutter/podcasts"}}]
+[10:03:58 AM] [FlutterDaemon] [Info] <== [{"id":"6","result":{"platforms":["linux","macos","windows","ios","android","web"]}}]
+[10:03:58 AM] [FlutterDaemon] [Info] ==> [{"id":"7","method":"daemon.getSupportedPlatforms","params":{"projectRoot":"/home/kero/flutter/podcasts"}}]
+[10:03:58 AM] [FlutterDaemon] [Info] <== [{"id":"7","result":{"platforms":["linux","macos","windows","ios","android","web"]}}]
+[10:03:58 AM] [General] [Warn] Project has errors, prompting user
+[10:03:58 AM] [General] [Warn]     /home/kero/flutter/podcasts/lib/ui/pages/episode_page.dart:101:36
+[10:03:58 AM] [General] [Warn]     The method 'download' isn't defined for the type 'PlayerViewmodel'.
