@@ -2,12 +2,16 @@
 
 import 'dart:async';
 
+import 'package:app_settings/app_settings.dart';
 import 'package:audio_service/audio_service.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:podcasks/data/entities/queue_track.dart';
 import 'package:podcasks/repository/history_repo.dart';
 import 'package:podcasks/repository/queue_repo.dart';
+import 'package:podcasks/ui/common/themes.dart';
+import 'package:podcasks/utils.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/locator.dart';
@@ -220,7 +224,39 @@ class PlayerViewmodel extends Vm {
     }
   }
 
-  download(Episode? episode) => _searchRepo.download(episode);
+  download(Episode? episode, BuildContext context) async {
+    if (episode?.contentUrl == null) {
+      _showSnack(context, context.l10n!.error);
+      return;
+    }
+    WidgetsFlutterBinding.ensureInitialized();
+    bool granted = await Permission.notification.isGranted;
+    print('granted: $granted');
+    if (!granted) {
+      granted = (await Permission.notification.request()).isGranted;
+      if (!granted && context.mounted) {
+        _showSnack(context, "Notification permission not granted");
+        return;
+      } else if (granted) {
+        _searchRepo.download(episode);
+      }
+    } else {
+      _searchRepo.download(episode);
+    }
+  }
+
+  void _showSnack(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message, style: textStyleBody),
+        action: SnackBarAction(
+            label: "Settings",
+            onPressed: () {
+              AppSettings.openAppSettings(type: AppSettingsType.notification);
+            }),
+      ),
+    );
+  }
 
   Future<void> setSpeed(double speed) async {
     await audioHandler?.setSpeed(speed);

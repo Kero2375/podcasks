@@ -98,7 +98,7 @@ class EpisodePage extends ConsumerWidget {
             direction: Axis.horizontal,
             children: [
               OutlinedButton.icon(
-                onPressed: () => vm.download(episode),
+                onPressed: () => vm.download(episode, context),
                 icon: const Icon(Icons.download),
                 style: buttonStyle,
                 label: Text(
