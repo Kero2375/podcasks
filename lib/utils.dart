@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 extension ParsableDuration on Duration {
@@ -27,3 +27,22 @@ String parseRemainingTime(Duration time) {
 extension LocalizationContext on BuildContext {
   AppLocalizations? get l10n => AppLocalizations.of(this);
 }
+
+// Future<void> checkNotificationPermission({
+//   required Function() then,
+//   required BuildContext context,
+// }) async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   bool granted = await Permission.notification.isGranted;
+//   if (!granted) {
+//     granted = (await Permission.notification.request()).isGranted;
+//     if (!granted && context.mounted) {
+//       _showSnack(context, "Notification permission not granted");
+//       return;
+//     } else if (granted) {
+//       then();
+//     }
+//   } else {
+//     then();
+//   }
+// }

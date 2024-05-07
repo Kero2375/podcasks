@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:podcasks/data/podcast_episode.dart';
+import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/bottom_player.dart';
 import 'package:podcasks/ui/common/themes.dart';
@@ -16,6 +17,7 @@ import 'package:podcasks/ui/vms/list_vm.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcasks/utils.dart';
+
 class HomePage extends ConsumerStatefulWidget {
   static const route = "/";
 
@@ -35,8 +37,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     super.initState();
   }
 
-  Future<void> _checkSaved(
-      HomeViewmodel homeVm, PlayerViewmodel playerVm, EpisodesHomeViewmodel episodesVm) async {
+  Future<void> _checkSaved(HomeViewmodel homeVm, PlayerViewmodel playerVm,
+      EpisodesHomeViewmodel episodesVm) async {
     final (track, position) = await homeVm.getLastSaved() ?? (null, null);
     final (state, _) = episodesVm.getEpisodeState(track);
     if (track != null && position != null && state != EpisodeState.finished) {
@@ -46,7 +48,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     }
   }
 
-  void _initEpisodeList(EpisodesHomeViewmodel episodesVm, HomeViewmodel homeVm) {
+  void _initEpisodeList(
+      EpisodesHomeViewmodel episodesVm, HomeViewmodel homeVm) {
     final List<PodcastEpisode>? saved = homeVm.saved;
     final favourites = homeVm.favourites;
     final list = <PodcastEpisode>[];
@@ -70,6 +73,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     final homeVm = ref.watch(homeViewmodel);
     final episodesVm = ref.watch(episodesHomeViewmodel);
+    final dm = ref.watch(downloadManager);
 
     final bool isFull = episodesVm.isOfSize(homeVm.favourites.length);
     homeVm.addListener(() {
@@ -85,7 +89,9 @@ class _HomePageState extends ConsumerState<HomePage> {
       appBar: mainAppBar(
         context,
         title: context.l10n!.appTitle,
-        leading: homeVm.favourites.isNotEmpty ? _favouritesButton() : const SizedBox.shrink(),
+        leading: homeVm.favourites.isNotEmpty
+            ? _favouritesButton()
+            : const SizedBox.shrink(),
       ),
       body: homeVm.state == UiState.loading
           ? const Center(child: CircularProgressIndicator())
@@ -103,14 +109,15 @@ class _HomePageState extends ConsumerState<HomePage> {
                   physics: const AlwaysScrollableScrollPhysics(),
                   controller: episodesVm.controller,
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    constraints:
+                        BoxConstraints(minHeight: constraints.maxHeight),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         _favRow(episodesVm, homeVm),
                         episodesVm.displayingEpisodes.isEmpty
                             ? _welcomeContent(context)
-                            : _episodesList(episodesVm, isFull),
+                            : _episodesList(episodesVm, dm, isFull),
                       ],
                     ),
                   ),
@@ -150,7 +157,9 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  Column _episodesList(EpisodesHomeViewmodel episodesVm, bool isFull) => Column(
+  Column _episodesList(
+          EpisodesHomeViewmodel episodesVm, DownloadManager dm, bool isFull) =>
+      Column(
         children: [
           ListView.builder(
             physics: const ScrollPhysics(),
@@ -160,6 +169,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             itemBuilder: (context, i) {
               return EpisodeItem(
                 vm: episodesVm,
+                dm: dm,
                 episode: episodesVm.displayingEpisodes[i],
                 showImage: true,
                 showDesc: false,

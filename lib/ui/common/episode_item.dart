@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/podcast_episode.dart';
+import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/divider.dart';
 import 'package:podcasks/ui/common/episode_menu.dart';
 import 'package:podcasks/ui/common/listening_tag.dart';
@@ -17,6 +18,7 @@ class EpisodeItem extends ConsumerStatefulWidget {
   final bool showDesc;
   final PodcastEpisode? episode;
   final ListViewmodel vm;
+  final DownloadManager dm;
 
   const EpisodeItem({
     super.key,
@@ -24,6 +26,7 @@ class EpisodeItem extends ConsumerStatefulWidget {
     required this.showImage,
     required this.showDesc,
     required this.vm,
+    required this.dm,
   });
 
   @override
@@ -35,6 +38,7 @@ class _HomeEpisodeItemState extends ConsumerState<EpisodeItem> {
   PodcastEpisode? get episode => widget.episode;
   String? get image => episode?.podcast?.image;
   ListViewmodel get episodesVm => widget.vm;
+  DownloadManager get downloadManager => widget.dm;
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +53,7 @@ class _HomeEpisodeItemState extends ConsumerState<EpisodeItem> {
           context: context,
           value: episodeState,
           vm: episodesVm,
+          dm: downloadManager,
           playerVm: ref.read(playerViewmodel),
           ep: episode,
           tapPos: _tapPos,

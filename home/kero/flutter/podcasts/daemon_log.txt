@@ -10,28 +10,20 @@ Version: linux 1.89.0
 Logging Categories:
     FlutterDaemon
 
-Sun May 05 2024 [09:37:28 GMT+0200 (Central European Summer Time)] Log file started
-[9:37:28 AM] [FlutterDaemon] [Info] Spawning /home/kero/fvm/versions/3.13.2/bin/flutter with args ["daemon"]
-[9:37:28 AM] [FlutterDaemon] [Info] ..  in /home/kero/fvm/versions/3.13.2
-[9:37:28 AM] [FlutterDaemon] [Info] ..  with {"toolEnv":{"FLUTTER_HOST":"VSCode","PUB_ENVIRONMENT":"vscode.dart-code","FLUTTER_ROOT":"/home/kero/fvm/versions/3.13.2"}}
-[9:37:28 AM] [FlutterDaemon] [Info]     PID: 30008
-[9:37:30 AM] [FlutterDaemon] [Info] <== [{"event":"daemon.connected","params":{"version":"0.6.1","pid":30243}}]
-[9:37:30 AM] [FlutterDaemon] [Info] ==> [{"id":"1","method":"device.enable"}]
-[9:37:30 AM] [FlutterDaemon] [Info] ==> [{"id":"2","method":"emulator.getEmulators"}]
-[9:37:30 AM] [FlutterDaemon] [Info] ==> [{"id":"3","method":"daemon.getSupportedPlatforms","params":{"projectRoot":"/home/kero/flutter/podcasts"}}]
-[9:37:30 AM] [FlutterDaemon] [Info] <== [{"event":"daemon.logMessage","params":{"level":"status","message":"Starting device daemon..."}}]
-[9:37:30 AM] [FlutterDaemon] [Info] <== [{"id":"1"}]
-[9:37:30 AM] [FlutterDaemon] [Info] <== [{"id":"2","result":[]}]
-[9:37:30 AM] [FlutterDaemon] [Info] <== [{"id":"3","result":{"platforms":["linux","macos","windows","ios","android","web"]}}]
-[9:37:34 AM] [FlutterDaemon] [Info] <== [{"event":"device.added","params":{"id":"linux","name":"Linux","platform":"linux-x64","emulator":false,"category":"desktop","platformType":"linux","ephemeral":false,"emulatorId":null,"sdk":"Manjaro Linux 6.5.13-7-MANJARO","capabilities":{"hotReload":true,"hotRestart":true,"screenshot":false,"fastStart":false,"flutterExit":true,"hardwareRendering":true,"startPaused":true}}}]
-[9:43:44 AM] [FlutterDaemon] [Info] ==> [{"id":"4","method":"daemon.getSupportedPlatforms","params":{"projectRoot":"/home/kero/flutter/podcasts"}}]
-[9:43:44 AM] [FlutterDaemon] [Info] <== [{"id":"4","result":{"platforms":["linux","macos","windows","ios","android","web"]}}]
-[9:43:44 AM] [FlutterDaemon] [Info] ==> [{"id":"5","method":"daemon.getSupportedPlatforms","params":{"projectRoot":"/home/kero/flutter/podcasts"}}]
-[9:43:44 AM] [FlutterDaemon] [Info] <== [{"id":"5","result":{"platforms":["linux","macos","windows","ios","android","web"]}}]
-[10:03:58 AM] [FlutterDaemon] [Info] ==> [{"id":"6","method":"daemon.getSupportedPlatforms","params":{"projectRoot":"/home/kero/flutter/podcasts"}}]
-[10:03:58 AM] [FlutterDaemon] [Info] <== [{"id":"6","result":{"platforms":["linux","macos","windows","ios","android","web"]}}]
-[10:03:58 AM] [FlutterDaemon] [Info] ==> [{"id":"7","method":"daemon.getSupportedPlatforms","params":{"projectRoot":"/home/kero/flutter/podcasts"}}]
-[10:03:58 AM] [FlutterDaemon] [Info] <== [{"id":"7","result":{"platforms":["linux","macos","windows","ios","android","web"]}}]
-[10:03:58 AM] [General] [Warn] Project has errors, prompting user
-[10:03:58 AM] [General] [Warn]     /home/kero/flutter/podcasts/lib/ui/pages/episode_page.dart:101:36
-[10:03:58 AM] [General] [Warn]     The method 'download' isn't defined for the type 'PlayerViewmodel'.
+Sun May 05 2024 [11:43:12 GMT+0200 (Central European Summer Time)] Log file started
+[11:43:12 AM] [FlutterDaemon] [Info] Spawning /home/kero/fvm/versions/3.13.2/bin/flutter with args ["daemon"]
+[11:43:12 AM] [FlutterDaemon] [Info] ..  in /home/kero/fvm/versions/3.13.2
+[11:43:12 AM] [FlutterDaemon] [Info] ..  with {"toolEnv":{"FLUTTER_HOST":"VSCode","PUB_ENVIRONMENT":"vscode.dart-code","FLUTTER_ROOT":"/home/kero/fvm/versions/3.13.2"}}
+[11:43:12 AM] [FlutterDaemon] [Info]     PID: 48497
+[11:43:13 AM] [FlutterDaemon] [Info] <== [{"event":"daemon.connected","params":{"version":"0.6.1","pid":48639}}]
+[11:43:13 AM] [FlutterDaemon] [Info] ==> [{"id":"1","method":"device.enable"}]
+[11:43:13 AM] [FlutterDaemon] [Info] ==> [{"id":"2","method":"emulator.getEmulators"}]
+[11:43:13 AM] [FlutterDaemon] [Info] ==> [{"id":"3","method":"daemon.getSupportedPlatforms","params":{"projectRoot":"/home/kero/flutter/podcasts"}}]
+[11:43:14 AM] [FlutterDaemon] [Info] <== [{"event":"daemon.logMessage","params":{"level":"status","message":"Starting device daemon..."}}]
+[11:43:14 AM] [FlutterDaemon] [Info] <== [{"id":"1"}]
+[11:43:14 AM] [FlutterDaemon] [Info] <== [{"id":"2","result":[]}]
+[11:43:14 AM] [FlutterDaemon] [Info] <== [{"id":"3","result":{"platforms":["linux","macos","windows","ios","android","web"]}}]
+[11:43:18 AM] [FlutterDaemon] [Info] <== [{"event":"device.added","params":{"id":"linux","name":"Linux","platform":"linux-x64","emulator":false,"category":"desktop","platformType":"linux","ephemeral":false,"emulatorId":null,"sdk":"Manjaro Linux 6.5.13-7-MANJARO","capabilities":{"hotReload":true,"hotRestart":true,"screenshot":false,"fastStart":false,"flutterExit":true,"hardwareRendering":true,"startPaused":true}}}]
+[9:07:20 PM] [FlutterDaemon] [Info] ==> [{"id":"4","method":"daemon.shutdown"}]
+[9:07:20 PM] [FlutterDaemon] [Info] <== [{"id":"4"}]
+Sun May 05 2024 [21:07:20 GMT+0200 (Central European Summer Time)] Log file ended

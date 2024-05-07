@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/podcast_episode.dart';
+import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/bottom_player.dart';
 import 'package:podcasks/ui/common/fav_button.dart';
@@ -29,7 +31,9 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
   _initEpisodeList(ListViewmodel vm) {
     if (vm.displayingEpisodes.isEmpty) {
       vm.init(
-        widget.podcast?.episodes.map((e) => PodcastEpisode.fromEpisode(e)).toList(),
+        widget.podcast?.episodes
+            .map((e) => PodcastEpisode.fromEpisode(e))
+            .toList(),
       );
     }
     // super.initState();
@@ -48,7 +52,8 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
     vm.setNewerFirst(item);
   }
 
-  void handleMore(int action, PodcastViewmodel vm, Podcast? podcast) {
+  void handleMore(
+      int action, Podcast? podcast, PodcastViewmodel vm, DownloadManager dm) {
     switch (action) {
       case 0:
         showDialog(
@@ -80,12 +85,44 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
           ),
         );
         break;
+      case 2:
+        showDialog(
+          context: context,
+          builder: (context) => ConfirmDialog(
+            title: 'Download all',
+            actionText: 'Download',
+            actionIcon: const Icon(Icons.file_download_outlined),
+            message:
+                'Are you sure you want to download these ${vm.episodes?.length} episodes?',
+            // emoji: context.l10n!.deleteAllEmoji,
+            onTap: () {
+              dm.downloadAll(vm.episodes ?? [], context);
+            },
+          ),
+        );
+        break;
+      case 3:
+        showDialog(
+          context: context,
+          builder: (context) => ConfirmDialog(
+            title: 'Stop downloads',
+            actionText: 'Stop',
+            actionIcon: const Icon(Icons.file_download_off_outlined),
+            message: 'Are you sure you want to stop all the current downloads?',
+            // emoji: context.l10n!.deleteAllEmoji,
+            onTap: () {
+              dm.cancelDownloads();
+            },
+          ),
+        );
+        break;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final vm = ref.watch(podcastViewmodel);
+    final dm = ref.watch(downloadManager);
 
     vm.addListener(() => _initEpisodeList(vm));
 
@@ -107,7 +144,8 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
           : AppBar(
               title: SearchTextField(
                 controller: vm.searchController!,
-                hint: context.l10n!.searchIn(widget.podcast?.title ?? context.l10n!.podcast),
+                hint: context.l10n!
+                    .searchIn(widget.podcast?.title ?? context.l10n!.podcast),
                 search: vm.search,
               ),
               actions: [
@@ -141,8 +179,8 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
                         ),
                       },
                     ),
-                    _buttons(vm),
-                    _episodes(vm),
+                    _buttons(vm, dm),
+                    _episodes(vm, dm),
                     // if (vm.displayingEpisodes.length < (vm.podcast?.episodes.length ?? 0))
                     //   const CircularProgressIndicator(),
                     const SizedBox(height: BottomPlayer.playerHeight),
@@ -186,10 +224,11 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
     );
   }
 
-  PopupMenuButton<int> _moreMenuButton(PodcastViewmodel vm) {
+  PopupMenuButton<int> _moreMenuButton(
+      PodcastViewmodel vm, DownloadManager dm) {
     return PopupMenuButton(
       icon: const Icon(Icons.more_vert),
-      onSelected: (item) => handleMore(item, vm, widget.podcast),
+      onSelected: (item) => handleMore(item, widget.podcast, vm, dm),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
       ),
@@ -228,11 +267,47 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
             ],
           ),
         ),
+        if (dm.status != DownloadTaskStatus.running.index)
+          PopupMenuItem(
+            value: 2,
+            child: Row(
+              children: [
+                const Icon(Icons.file_download_outlined),
+                const SizedBox(width: 8),
+                Flexible(
+                  flex: 1,
+                  child: Text(
+                    'Download all',
+                    style: textStyleBody,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        if (dm.status == DownloadTaskStatus.running.index)
+          PopupMenuItem(
+            value: 3,
+            child: Row(
+              children: [
+                const Icon(Icons.file_download_off_outlined),
+                const SizedBox(width: 8),
+                Flexible(
+                  flex: 1,
+                  child: Text(
+                    'Stop downloads',
+                    style: textStyleBody,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
       ],
     );
   }
 
-  Widget _buttons(PodcastViewmodel vm) {
+  Widget _buttons(PodcastViewmodel vm, DownloadManager dm) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Row(
@@ -243,7 +318,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               _sortMenuButton(vm),
-              _moreMenuButton(vm),
+              _moreMenuButton(vm, dm),
             ],
           ),
         ],
@@ -251,7 +326,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
     );
   }
 
-  Widget _episodes(PodcastViewmodel vm) {
+  Widget _episodes(PodcastViewmodel vm, DownloadManager dm) {
     return ListView.builder(
       physics: const PageScrollPhysics(),
       scrollDirection: Axis.vertical,
@@ -263,6 +338,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
 
         return EpisodeItem(
           vm: vm,
+          dm: dm,
           episode: ep,
           showImage: false,
           showDesc: true,

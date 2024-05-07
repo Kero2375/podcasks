@@ -87,4 +87,5 @@ class PodcastViewmodel extends ListViewmodel {
     initEpisodesList();
     success();
   }
+
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/data/podcast_episode.dart';
@@ -25,6 +26,7 @@ class EpisodePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.watch(playerViewmodel);
+    final dm = ref.watch(downloadManager);
 
     return Scaffold(
       appBar: mainAppBar(context, title: podcast?.title),
@@ -32,7 +34,7 @@ class EpisodePage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _title(context, vm),
+            _title(context, vm, dm),
             description(episode),
             const SizedBox(height: BottomPlayer.playerHeight),
           ],
@@ -70,7 +72,7 @@ class EpisodePage extends ConsumerWidget {
     );
   }
 
-  Widget _title(BuildContext context, PlayerViewmodel vm) {
+  Widget _title(BuildContext context, PlayerViewmodel vm, DownloadManager dm) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -98,7 +100,7 @@ class EpisodePage extends ConsumerWidget {
             direction: Axis.horizontal,
             children: [
               OutlinedButton.icon(
-                onPressed: () => vm.download(episode, context),
+                onPressed: () => dm.download(episode, context),
                 icon: const Icon(Icons.download),
                 style: buttonStyle,
                 label: Text(

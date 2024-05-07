@@ -1,5 +1,3 @@
-import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:podcast_search/podcast_search.dart';
 
 abstract class SearchRepo {
@@ -8,8 +6,6 @@ abstract class SearchRepo {
   Future<Podcast?> fetchPodcast(String? feedUrl);
 
   Future<List<Item>> charts(Country country, String genre);
-
-  download(Episode? episode);
 }
 
 class SearchRepoPodcastSearch extends SearchRepo {
@@ -33,19 +29,5 @@ class SearchRepoPodcastSearch extends SearchRepo {
       country: country,
     );
     return result.items;
-  }
-
-  @override
-  download(Episode? episode) async {
-    if (episode?.contentUrl != null) {
-      await FlutterDownloader.enqueue(
-        url: episode!.contentUrl!,
-        headers: {},
-        savedDir: (await getExternalStorageDirectory())?.path ?? '',
-        showNotification: true,
-        openFileFromNotification: true,
-        saveInPublicStorage: true,
-      );
-    }
   }
 }

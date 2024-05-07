@@ -25,10 +25,6 @@ class ListViewmodel extends Vm {
   ScrollController get controller => _controller;
   ScrollController _controller = ScrollController();
 
-  ListViewmodel() {
-    // _ref.watch(playerViewmodel);
-  }
-
   init(List<PodcastEpisode>? eps, {int? maxItems}) {
     if (maxItems != null) _maxItems = maxItems;
     _episodes = eps;
