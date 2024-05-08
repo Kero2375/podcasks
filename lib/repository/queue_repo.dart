@@ -1,5 +1,5 @@
 import 'package:isar/isar.dart';
-import 'package:podcasks/data/entities/queue_track.dart';
+import 'package:podcasks/data/entities/queue/queue_track.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 
 abstract class QueueRepo {

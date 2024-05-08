@@ -1,4 +1,5 @@
-import 'package:collection/collection.dart';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -10,6 +11,7 @@ import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/favourites/faourites_drawer.dart';
 import 'package:podcasks/ui/common/episode_item.dart';
 import 'package:podcasks/ui/pages/home/favourites_row.dart';
+import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 import 'package:podcasks/ui/pages/search/search_page.dart';
 import 'package:podcasks/ui/vms/episodes_home_vm.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
@@ -51,20 +53,21 @@ class _HomePageState extends ConsumerState<HomePage> {
   void _initEpisodeList(
       EpisodesHomeViewmodel episodesVm, HomeViewmodel homeVm) {
     final List<PodcastEpisode>? saved = homeVm.saved;
-    final favourites = homeVm.favourites;
+    // final favourites = homeVm.favourites;
     final list = <PodcastEpisode>[];
 
     if (saved != null) {
       list.addAll(saved);
     }
 
-    list.addAll(favourites
-        .map(
-          (p) => p.episodes.map(
-            (e) => PodcastEpisode.fromEpisode(e, podcast: p),
-          ),
-        )
-        .flattened);
+    // // FIXME: get episodes?
+    // list.addAll(favourites
+    //     .map(
+    //       (p) => p.episodes.map(
+    //         (e) => PodcastEpisode.fromEpisode(e, podcast: p),
+    //       ),
+    //     )
+    //     .flattened);
 
     episodesVm.init(list, maxItems: 30);
   }
@@ -75,13 +78,13 @@ class _HomePageState extends ConsumerState<HomePage> {
     final episodesVm = ref.watch(episodesHomeViewmodel);
     final dm = ref.watch(downloadManager);
 
-    final bool isFull = episodesVm.isOfSize(homeVm.favourites.length);
+    // final bool isFull = episodesVm.isOfSize(homeVm.favourites.length);
     homeVm.addListener(() {
       _initEpisodeList(episodesVm, homeVm);
     });
 
     if (episodesVm.displayingEpisodes.isEmpty) {
-      episodesVm.filterEpisodes([]);
+      // episodesVm.filterEpisodes([]);
       _initEpisodeList(episodesVm, homeVm);
     }
 
@@ -93,7 +96,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             ? _favouritesButton()
             : const SizedBox.shrink(),
         updateHome: () async {
-          // await homeVm.fetchFavourites();
+          await homeVm.fetchFavourites();
         },
       ),
       body: homeVm.state == UiState.loading
@@ -118,9 +121,25 @@ class _HomePageState extends ConsumerState<HomePage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         _favRow(episodesVm, homeVm),
-                        episodesVm.displayingEpisodes.isEmpty
-                            ? _welcomeContent(context)
-                            : _episodesList(episodesVm, dm, isFull),
+                        episodesVm.state == UiState.loading
+                            ? Padding(
+                                padding: const EdgeInsets.only(top: 0),
+                                child: LinearProgressIndicator(
+                                  minHeight: 2,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(.5),
+                                  borderRadius: BorderRadius.circular(12),
+                                  // backgroundColor: Theme.of(context)
+                                  //     .colorScheme
+                                  //     .onBackground
+                                  //     .withOpacity(.3),
+                                ),
+                              )
+                            : episodesVm.displayingEpisodes.isEmpty
+                                ? _welcomeContent(context)
+                                : _episodesList(episodesVm, dm),
                       ],
                     ),
                   ),
@@ -160,8 +179,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  Column _episodesList(
-          EpisodesHomeViewmodel episodesVm, DownloadManager dm, bool isFull) =>
+  Column _episodesList(EpisodesHomeViewmodel episodesVm, DownloadManager dm) =>
       Column(
         children: [
           ListView.builder(

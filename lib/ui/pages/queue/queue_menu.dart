@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:podcasks/data/entities/queue_track.dart';
+import 'package:podcasks/data/entities/queue/queue_track.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/vms/podcast_vm.dart';
 import 'package:podcasks/utils.dart';

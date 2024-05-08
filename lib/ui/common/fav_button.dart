@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/utils.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/ui/common/themes.dart';
@@ -15,7 +16,7 @@ class FavButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.watch(homeViewmodel);
     final bool isFav = vm.isFavourite(podcast);
-    onTap() => vm.setFavourite(podcast, !isFav);
+    onTap() => vm.setFavourite(PodcastEntity.fromPodcast(podcast), !isFav);
     return vm.state == UiState.loading
         ? (!isFav)
             ? _following(() {}, context)

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/divider.dart';

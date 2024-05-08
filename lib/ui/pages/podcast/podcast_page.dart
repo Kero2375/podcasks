@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
@@ -13,14 +14,14 @@ import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/common/episode_item.dart';
 import 'package:podcasks/ui/pages/search/search_text_field.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
-import 'package:podcasks/ui/vms/list_vm.dart';
 import 'package:podcasks/ui/vms/podcast_vm.dart';
+import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcasks/utils.dart';
 import 'package:podcast_search/podcast_search.dart';
 
 class PodcastPage extends ConsumerStatefulWidget {
   static const route = '/podcast_page';
-  final Podcast? podcast;
+  final Object? podcast;
 
   const PodcastPage(this.podcast, {super.key});
 
@@ -29,24 +30,28 @@ class PodcastPage extends ConsumerStatefulWidget {
 }
 
 class _PodcastPageState extends ConsumerState<PodcastPage> {
+  String? get title => widget.podcast is Podcast?
+      ? (widget.podcast as Podcast?)?.title
+      : (widget.podcast as PodcastEntity?)?.title;
+
   // @override
-  _initEpisodeList(ListViewmodel vm) {
+  _initEpisodeList(PodcastViewmodel vm) async {
     if (vm.displayingEpisodes.isEmpty) {
-      vm.init(
-        widget.podcast?.episodes
-            .map((e) => PodcastEpisode.fromEpisode(e))
-            .toList(),
-      );
+      vm.initPodcast(widget.podcast);
     }
     // super.initState();
   }
 
-  @override
-  void initState() {
+  _firstInit() async {
     final vm = ref.read(podcastViewmodel);
-    vm.init(widget.podcast?.episodes
-        .map((e) => PodcastEpisode.fromEpisode(e, podcast: widget.podcast))
-        .toList());
+    vm.loading();
+    await vm.initPodcast(widget.podcast);
+    vm.success();
+  }
+
+  @override
+  initState() {
+    _firstInit();
     super.initState();
   }
 
@@ -133,7 +138,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
       appBar: vm.searchController == null
           ? mainAppBar(
               context,
-              title: widget.podcast?.title,
+              title: title,
               actions: IconButton(
                 onPressed: () {
                   vm.showSearch();
@@ -145,8 +150,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
           : AppBar(
               title: SearchTextField(
                 controller: vm.searchController!,
-                hint: context.l10n!
-                    .searchIn(widget.podcast?.title ?? context.l10n!.podcast),
+                hint: context.l10n!.searchIn(title ?? context.l10n!.podcast),
                 search: vm.search,
               ),
               actions: [
@@ -164,30 +168,33 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
           await ref.read(homeViewmodel).fetchListening();
           await vm.update();
         },
-        child: SingleChildScrollView(
-          controller: vm.controller,
-          child: (widget.podcast == null)
-              ? Center(child: Text(context.l10n!.error, style: textStyleBody))
-              : Column(
-                  children: [
-                    _image(widget.podcast!),
-                    Html(
-                      data: widget.podcast!.description ?? '',
-                      style: {
-                        '*': Style(
-                          margin: Margins.all(8),
-                          fontFamily: themeFontFamily.fontFamily,
-                        ),
-                      },
-                    ),
-                    _buttons(vm, dm),
-                    _episodes(vm, dm),
-                    // if (vm.displayingEpisodes.length < (vm.podcast?.episodes.length ?? 0))
-                    //   const CircularProgressIndicator(),
-                    const SizedBox(height: BottomPlayer.playerHeight),
-                  ],
-                ),
-        ),
+        child: vm.state == UiState.loading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                controller: vm.controller,
+                child: (vm.podcast == null)
+                    ? Center(
+                        child: Text(context.l10n!.error, style: textStyleBody))
+                    : Column(
+                        children: [
+                          _image(vm.podcast!),
+                          Html(
+                            data: vm.podcast!.description ?? '',
+                            style: {
+                              '*': Style(
+                                margin: Margins.all(8),
+                                fontFamily: themeFontFamily.fontFamily,
+                              ),
+                            },
+                          ),
+                          _buttons(vm, dm),
+                          _episodes(vm, dm),
+                          // if (vm.displayingEpisodes.length < (vm.podcast?.episodes.length ?? 0))
+                          //   const CircularProgressIndicator(),
+                          const SizedBox(height: BottomPlayer.playerHeight),
+                        ],
+                      ),
+              ),
       ),
       bottomSheet: const BottomPlayer(),
     );
@@ -229,7 +236,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
       PodcastViewmodel vm, DownloadManager dm) {
     return PopupMenuButton(
       icon: const Icon(Icons.more_vert),
-      onSelected: (item) => handleMore(item, widget.podcast, vm, dm),
+      onSelected: (item) => handleMore(item, vm.podcast, vm, dm),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
       ),
@@ -266,7 +273,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          FavButton(widget.podcast!),
+          FavButton(vm.podcast!),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -287,7 +294,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
       itemCount: vm.displayingEpisodes.length,
       itemBuilder: (context, i) {
         final ep = vm.displayingEpisodes[i];
-        ep.podcast ??= widget.podcast;
+        ep.podcast ??= vm.podcast;
 
         return EpisodeItem(
           vm: vm,

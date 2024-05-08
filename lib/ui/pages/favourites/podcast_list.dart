@@ -1,11 +1,11 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:podcast_search/podcast_search.dart';
+import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/ui/common/bottom_player.dart';
 import 'package:podcasks/ui/pages/favourites/podcast_list_item.dart';
 
 class PodcastList extends StatelessWidget {
-  final List<Podcast> items;
+  final List<PodcastEntity> items;
 
   const PodcastList({super.key, required this.items});
 

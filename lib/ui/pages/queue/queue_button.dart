@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podcasks/data/entities/queue_track.dart';
+import 'package:podcasks/data/entities/queue/queue_track.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/queue/queue_menu.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';

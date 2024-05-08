@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/repository/favourites_repo.dart';
 import 'package:podcasks/ui/common/confirm_dialog.dart';
@@ -93,14 +94,19 @@ _pickFile(BuildContext context, Function()? updateHome) async {
         actionText: context.l10n!.import,
         actionIcon: const Icon(Icons.upload_file_outlined),
         onTap: () async {
+          final favRepo = locator.get<FavouriteRepo>();
           for (var item in feeds) {
-            bool added = await locator.get<FavouriteRepo>().addToFavourite(item);
+            bool added = await favRepo.addToFavourite(
+              await PodcastEntity.fromUrl(item),
+            );
+            // TODO: check
             if (added && context.mounted) {
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text("Added $item")));
             }
             // updateHome?.call();
           }
+          updateHome?.call();
         },
       ),
     );

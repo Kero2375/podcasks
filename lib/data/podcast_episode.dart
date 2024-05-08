@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:podcasks/utils.dart';
 import 'package:podcast_search/podcast_search.dart';
@@ -79,8 +80,10 @@ class PodcastEpisode extends Episode {
   }) async {
     if (podcastUrl != null && episodeUrl != null) {
       final pod = await Podcast.loadFeed(url: podcastUrl);
-      final ep = pod.episodes.firstWhere((e) => e.contentUrl == episodeUrl);
-      return PodcastEpisode.fromEpisode(ep, podcast: pod);
+      final ep = pod.episodes.firstWhereOrNull((e) => e.contentUrl == episodeUrl);
+      if (ep != null) {
+        return PodcastEpisode.fromEpisode(ep, podcast: pod);
+      }
     }
     return null;
   }

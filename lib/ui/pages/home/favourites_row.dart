@@ -18,54 +18,58 @@ class FavouritesRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final int favLength = homeVm.favourites.length;
-    final bool isFull = episodesVm.isOfSize(favLength);
+    // final int favLength = homeVm.favourites.length;
+    // final bool isFull = episodesVm.isOfSize(favLength);
+    final selectedPod = episodesVm.tempPodcast; // TODO: fix later
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
             HomePodcastItem(
               icon: Icons.headphones,
-              selected: episodesVm.isFilterEmpty(),
+              selected: episodesVm.tempPodcast == null,
               onTap: () {
-                episodesVm.filterEpisodes([]);
+                episodesVm.showListening(homeVm);
               },
             ),
-            HomePodcastItem(
-              icon: Icons.home_filled,
-              selected: isFull,
-              onTap: () {
-                episodesVm.filterEpisodes(homeVm.favourites);
-              },
-            ),
+            // HomePodcastItem(
+            //   icon: Icons.home_filled,
+            //   selected: isFull,
+            //   onTap: () {
+            //     episodesVm.filterEpisodes(homeVm.favourites);
+            //   },
+            // ),
           ] +
           homeVm.favourites
               // .where((e) => !episodesVm.isInFilter(e))
-              .mapIndexed((i, p) => HomePodcastItem(
-                    image: p.image,
-                    selected: (favLength <= 1 || !isFull) && episodesVm.isInFilter(p),
-                    onTap: () {
-                      if ((favLength <= 1 || !isFull) && episodesVm.isInFilter(p)) {
-                        HapticFeedback.lightImpact();
-                        Navigator.pushNamed(
-                          context,
-                          PodcastPage.route,
-                          arguments: p,
-                        );
-                      } else {
-                        episodesVm.filterEpisodes([p]);
-                      }
-                    },
-                    onLongTap: () {
-                      HapticFeedback.lightImpact();
-                      return Navigator.pushNamed(
-                        context,
-                        PodcastPage.route,
-                        arguments: p,
-                      );
-                    },
-                  ))
-              .toList(),
+              .mapIndexed((i, p) {
+            final isSelected = selectedPod?.url == p.url;
+            return HomePodcastItem(
+              image: p.image,
+              selected: isSelected,
+              onTap: () async {
+                if (!isSelected) {
+                  await episodesVm.initPodcast(p, maxItems: 30);
+                  episodesVm.update();
+                } else {
+                  HapticFeedback.lightImpact();
+                  return Navigator.pushNamed(
+                    context,
+                    PodcastPage.route,
+                    arguments: selectedPod,
+                  );
+                }
+              },
+              onLongTap: () {
+                HapticFeedback.lightImpact();
+                return Navigator.pushNamed(
+                  context,
+                  PodcastPage.route,
+                  arguments: isSelected ? selectedPod : p,
+                );
+              },
+            );
+          }).toList(),
     );
   }
 }

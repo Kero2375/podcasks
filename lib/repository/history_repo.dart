@@ -1,5 +1,6 @@
+import 'package:collection/collection.dart';
 import 'package:isar/isar.dart';
-import 'package:podcasks/data/entities/save_track.dart';
+import 'package:podcasks/data/entities/save/save_track.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcast_search/podcast_search.dart';
 
@@ -70,8 +71,10 @@ class HistoryRepoIsar extends HistoryRepo {
     for (SaveTrack t in track ?? []) {
       if (t.podcastUrl != null && t.url != null) {
         final pod = await Podcast.loadFeed(url: t.podcastUrl!);
-        final ep = pod.episodes.firstWhere((e) => e.contentUrl == t.url);
-        episodes.add(PodcastEpisode.fromEpisode(ep, podcast: pod));
+        final ep = pod.episodes.firstWhereOrNull((e) => e.contentUrl == t.url);
+        if(ep != null) {
+          episodes.add(PodcastEpisode.fromEpisode(ep, podcast: pod));
+        }
       }
     }
     return episodes;

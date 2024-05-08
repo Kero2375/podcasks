@@ -6,7 +6,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podcasks/data/entities/queue_track.dart';
+import 'package:podcasks/data/entities/queue/queue_track.dart';
 import 'package:podcasks/repository/history_repo.dart';
 import 'package:podcasks/repository/queue_repo.dart';
 import 'package:podcast_search/podcast_search.dart';

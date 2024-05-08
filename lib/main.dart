@@ -6,9 +6,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:podcasks/data/entities/fav_item.dart';
-import 'package:podcasks/data/entities/queue_track.dart';
-import 'package:podcasks/data/entities/save_track.dart';
+import 'package:podcasks/data/entities/favourites/fav_item.dart';
+import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
+import 'package:podcasks/data/entities/queue/queue_track.dart';
+import 'package:podcasks/data/entities/save/save_track.dart';
 import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/manager/audio_handler.dart';
@@ -77,7 +78,7 @@ class MyApp extends ConsumerWidget {
         onGenerateRoute: (settings) {
           if (settings.name == PodcastPage.route) {
             return MaterialPageRoute(
-              builder: (context) => PodcastPage(settings.arguments as Podcast?),
+              builder: (context) => PodcastPage(settings.arguments),
             );
           } else if (settings.name == EpisodePage.route) {
             return MaterialPageRoute(
