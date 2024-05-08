@@ -6,7 +6,9 @@ import 'package:podcasks/data/podcast_episode.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/bottom_player.dart';
+import 'package:podcasks/ui/common/confirm_dialog.dart';
 import 'package:podcasks/ui/common/fav_button.dart';
+import 'package:podcasks/ui/common/popup_menu_item.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/common/episode_item.dart';
 import 'package:podcasks/ui/pages/search/search_text_field.dart';
@@ -89,11 +91,10 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
         showDialog(
           context: context,
           builder: (context) => ConfirmDialog(
-            title: 'Download all',
-            actionText: 'Download',
+            title: context.l10n!.downloadAll,
+            actionText: context.l10n!.download,
             actionIcon: const Icon(Icons.file_download_outlined),
-            message:
-                'Are you sure you want to download these ${vm.episodes?.length} episodes?',
+            message: context.l10n!.downloadMessage(vm.episodes?.length ?? 0),
             // emoji: context.l10n!.deleteAllEmoji,
             onTap: () {
               dm.downloadAll(vm.episodes ?? [], context);
@@ -105,10 +106,10 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
         showDialog(
           context: context,
           builder: (context) => ConfirmDialog(
-            title: 'Stop downloads',
-            actionText: 'Stop',
+            title: context.l10n!.stopDownloads,
+            actionText: context.l10n!.stop,
             actionIcon: const Icon(Icons.file_download_off_outlined),
-            message: 'Are you sure you want to stop all the current downloads?',
+            message: context.l10n!.stopMessage,
             // emoji: context.l10n!.deleteAllEmoji,
             onTap: () {
               dm.cancelDownloads();
@@ -233,75 +234,27 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
         borderRadius: BorderRadius.circular(8),
       ),
       itemBuilder: (context) => [
-        PopupMenuItem(
+        popupMenuItem(
           value: 0,
-          child: Row(
-            children: [
-              const Icon(Icons.done_all),
-              const SizedBox(width: 8),
-              Flexible(
-                flex: 1,
-                child: Text(
-                  context.l10n!.markAllFinished,
-                  style: textStyleBody,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
+          icon: const Icon(Icons.done_all),
+          text: context.l10n!.markAllFinished,
         ),
-        PopupMenuItem(
+        popupMenuItem(
           value: 1,
-          child: Row(
-            children: [
-              const Icon(Icons.delete_forever),
-              const SizedBox(width: 8),
-              Flexible(
-                flex: 1,
-                child: Text(
-                  context.l10n!.deleteProgress,
-                  style: textStyleBody,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
+          icon: const Icon(Icons.delete_forever),
+          text: context.l10n!.deleteProgress,
         ),
         if (dm.status != DownloadTaskStatus.running.index)
-          PopupMenuItem(
+          popupMenuItem(
             value: 2,
-            child: Row(
-              children: [
-                const Icon(Icons.file_download_outlined),
-                const SizedBox(width: 8),
-                Flexible(
-                  flex: 1,
-                  child: Text(
-                    'Download all',
-                    style: textStyleBody,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
+            icon: const Icon(Icons.file_download_outlined),
+            text: context.l10n!.downloadAll,
           ),
         if (dm.status == DownloadTaskStatus.running.index)
-          PopupMenuItem(
+          popupMenuItem(
             value: 3,
-            child: Row(
-              children: [
-                const Icon(Icons.file_download_off_outlined),
-                const SizedBox(width: 8),
-                Flexible(
-                  flex: 1,
-                  child: Text(
-                    'Stop downloads',
-                    style: textStyleBody,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
+            icon: const Icon(Icons.file_download_off_outlined),
+            text: context.l10n!.stopDownloads,
           ),
       ],
     );
@@ -355,62 +308,6 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
       width: 120,
       height: 120,
       child: Image.network(item.image ?? ''),
-    );
-  }
-}
-
-class ConfirmDialog extends StatelessWidget {
-  final String title;
-  final String message;
-  final String? emoji;
-  final String actionText;
-  final Icon actionIcon;
-  final Function()? onTap;
-
-  const ConfirmDialog({
-    super.key,
-    required this.title,
-    required this.message,
-    this.emoji,
-    required this.actionText,
-    required this.actionIcon,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(title, style: textStyleHeader),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(message, style: textStyleBody),
-          if (emoji != null) ...[
-            const SizedBox(height: 8),
-            Text(
-              emoji!,
-              style: textStyleBody,
-            ),
-          ],
-        ],
-      ),
-      actionsAlignment: MainAxisAlignment.spaceBetween,
-      actions: [
-        OutlinedButton(
-          onPressed: () => Navigator.of(context).pop(),
-          style: buttonStyle,
-          child: Text(context.l10n!.cancel),
-        ),
-        FilledButton.icon(
-          icon: actionIcon,
-          onPressed: () {
-            onTap?.call();
-            Navigator.pop(context);
-          },
-          style: buttonStyle,
-          label: Text(actionText),
-        ),
-      ],
     );
   }
 }

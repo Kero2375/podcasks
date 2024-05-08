@@ -30,14 +30,14 @@ class HomeViewmodel extends Vm {
     success();
   }
 
-  Future<List<Podcast>> fetchFavourites() async {
+  Future<void> fetchFavourites() async {
     final favFeeds = await _favRepo.getAllFavourites();
     List<Podcast> list = [];
     for (var value in favFeeds) {
       list.add(await Podcast.loadFeed(url: value));
     }
     _favourites = list;
-    return _favourites;
+    // return _favourites;
   }
 
   Future<void> setFavourite(Podcast podcast, bool setFavourite) async {

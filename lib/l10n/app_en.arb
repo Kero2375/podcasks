@@ -62,5 +62,16 @@
   "alreadyInQueue": "already in queue",
   "clearAll": "clear all",
   "nextInQueue": "Next in queue:",
-  "emptyQueue": "empty queue"
+  "emptyQueue": "empty queue",
+  "search": "Search",
+  "importOpml": "Import OPML",
+  "importTitle": "Confirm import OMPL",
+  "import": "Import",
+  "importMessage": "Do you really want to add {count, plural, =1{{count} item} other{{count} items}} to you favorites?",
+  "settings": "Settings",
+  "downloadAll": "Download all",
+  "stopDownloads": "Stop downloads",
+  "stop": "Stop",
+  "downloadMessage": "Are you sure you want to download {count, plural, =1{{count} episode} other{{count} episodes}}?",
+  "stopMessage": "Are you sure you want to stop all the current downloads?"
 }

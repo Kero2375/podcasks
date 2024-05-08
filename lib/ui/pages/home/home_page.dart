@@ -92,6 +92,9 @@ class _HomePageState extends ConsumerState<HomePage> {
         leading: homeVm.favourites.isNotEmpty
             ? _favouritesButton()
             : const SizedBox.shrink(),
+        updateHome: () async {
+          // await homeVm.fetchFavourites();
+        },
       ),
       body: homeVm.state == UiState.loading
           ? const Center(child: CircularProgressIndicator())

@@ -60,6 +60,8 @@ dependencies:
   intl: any
   permission_handler: ^11.0.1
   app_settings: any
+  file_picker: any
+  xml: any
 
 dev_dependencies:
   flutter_test:

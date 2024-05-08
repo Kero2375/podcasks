@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/vms/vm.dart';
+import 'package:podcasks/utils.dart';
 import 'package:podcast_search/podcast_search.dart';
 
 final downloadManager = ChangeNotifierProvider((ref) => DownloadManager());
@@ -47,7 +48,6 @@ class DownloadManager extends Vm {
     final status = await Permission.notification.request();
 
     final dir = (await getExternalStorageDirectory())?.path;
-    print("download in $dir");
     if (status.isGranted && episode?.contentUrl != null && dir != null) {
       await FlutterDownloader.enqueue(
         url: episode!.contentUrl!,
@@ -59,7 +59,7 @@ class DownloadManager extends Vm {
         saveInPublicStorage: true,
       );
     } else if (context.mounted) {
-      _showSnack(context, "error");
+      _showSnack(context, context.l10n!.error);
     }
   }
 
@@ -78,7 +78,7 @@ class DownloadManager extends Vm {
       SnackBar(
         content: Text(message, style: textStyleBody),
         action: SnackBarAction(
-            label: "Settings",
+            label: context.l10n!.settings,
             onPressed: () {
               AppSettings.openAppSettings(type: AppSettingsType.notification);
             }),

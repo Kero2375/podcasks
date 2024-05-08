@@ -9,7 +9,7 @@ final locator = GetIt.instance;
 
 void setup() {
   locator.registerSingleton<SearchRepo>(SearchRepoPodcastSearch());
-  locator.registerSingleton<FavouriteRepo>(FavouriteRepoSharedPref());
+  locator.registerSingleton<FavouriteRepo>(FavouriteRepoIsar());
   locator.registerSingleton<PrefsRepo>(PrefsRepoSharedPref());
   locator.registerSingleton<HistoryRepo>(HistoryRepoIsar());
   locator.registerSingleton<QueueRepo>(QueueRepoIsar());

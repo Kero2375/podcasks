@@ -1,7 +1,8 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:isar/isar.dart';
+import 'package:podcasks/data/entities/fav_item.dart';
 
 abstract class FavouriteRepo {
-  Future<void> addToFavourite(String feedUrl);
+  Future<bool> addToFavourite(String feedUrl);
 
   Future<List<String>> getAllFavourites();
 
@@ -9,30 +10,28 @@ abstract class FavouriteRepo {
 }
 
 // todo: replace with isar?
-class FavouriteRepoSharedPref extends FavouriteRepo {
-  static const String favKey = 'favourites_sp_key';
-
-  Future<SharedPreferences> get _getSp async =>
-      await SharedPreferences.getInstance();
+class FavouriteRepoIsar extends FavouriteRepo {
+  Isar? get isar => Isar.getInstance();
 
   @override
-  Future<void> addToFavourite(String feedUrl) async {
-    final sp = await _getSp;
-    final list = ((sp.getStringList(favKey)) ?? []) + [feedUrl];
-    await sp.setStringList(favKey, list);
+  Future<bool> addToFavourite(String feedUrl) async {
+    if (isar?.favourites.get(feedUrl.hashCode) != null) return false;
+    isar?.writeTxn(
+      () async => isar?.favourites.put(
+        Favourite(id: feedUrl.hashCode, url: feedUrl),
+      ),
+    );
+    return true;
   }
 
   @override
   Future<List<String>> getAllFavourites() async {
-    final sp = await _getSp;
-    return sp.getStringList(favKey) ?? [];
+    final all = await isar?.favourites.where().findAll();
+    return all?.where((e) => e.url != null).map((e) => e.url!).toList() ?? [];
   }
 
   @override
   Future<void> removeFromFavourite(String feedUrl) async {
-    final sp = await _getSp;
-    final list = sp.getStringList(favKey) ?? [];
-    list.remove(feedUrl);
-    await sp.setStringList(favKey, list);
+    isar?.writeTxn(() async => isar?.favourites.delete(feedUrl.hashCode));
   }
 }

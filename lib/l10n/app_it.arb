@@ -62,5 +62,16 @@
   "alreadyInQueue": "già presente nella coda",
   "clearAll": "cancella",
   "nextInQueue": "Prossimi in coda:",
-  "emptyQueue": "coda vuota"
+  "emptyQueue": "coda vuota",
+  "search": "Cerca",
+  "importOpml": "Importa OPML",
+  "importTitle": "Conferma importazione OMPL",
+  "import": "Importa",
+  "importMessage": "Vuoi veramente aggiungere {count, plural, =1{{count} elementi} other{{count} elementi}} ai preferiti?",
+  "settings": "Impostazioni",
+  "downloadAll": "Scarica tutti",
+  "stopDownloads": "Interrompi download",
+  "stop": "Interrompi",
+  "downloadMessage": "Vuoi veramente scaricare {count, plural, =1{{count} episoio} other{{count} episodi}}?",
+  "stopMessage": "Vuoi veramente interrompere tutti i download in corso?"
 }

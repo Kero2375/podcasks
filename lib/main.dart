@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:podcasks/data/entities/fav_item.dart';
 import 'package:podcasks/data/entities/queue_track.dart';
 import 'package:podcasks/data/entities/save_track.dart';
 import 'package:podcasks/data/podcast_episode.dart';
@@ -26,7 +27,7 @@ Future<void> main() async {
 
   final dir = await getApplicationSupportDirectory();
   Isar.open(
-    [SaveTrackSchema, QueueTrackSchema],
+    [SaveTrackSchema, QueueTrackSchema, FavouriteSchema],
     directory: dir.path,
   );
   audioHandler = await AudioService.init(
