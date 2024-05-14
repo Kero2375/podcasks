@@ -33,11 +33,11 @@ AppBar mainAppBar(
             icon: const Icon(Icons.more_vert),
             onSelected: (item) => _checkValue(context, item, updateHome),
             itemBuilder: (BuildContext context) => [
-              popupMenuItem(
-                value: 0,
-                icon: const Icon(Icons.search),
-                text: context.l10n!.search,
-              ),
+              // popupMenuItem(
+              //   value: 0,
+              //   icon: const Icon(Icons.search),
+              //   text: context.l10n!.search,
+              // ),
               popupMenuItem(
                 value: 1,
                 icon: const Icon(Icons.upload_file_outlined),

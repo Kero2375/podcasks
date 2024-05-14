@@ -10,6 +10,13 @@ import 'package:podcasks/ui/vms/vm.dart';
 
 final homeViewmodel = ChangeNotifierProvider((ref) => HomeViewmodel());
 
+enum Pages {
+  home,
+  search,
+  listening,
+  favourites,
+}
+
 class HomeViewmodel extends Vm {
   final _favRepo = locator.get<FavouriteRepo>();
   final _historyRepo = locator.get<HistoryRepo>();
@@ -24,6 +31,9 @@ class HomeViewmodel extends Vm {
   HomeViewmodel() {
     init();
   }
+
+  Pages get page => _page;
+  Pages _page = Pages.home;
 
   init() async {
     loading();
@@ -72,6 +82,11 @@ class HomeViewmodel extends Vm {
   Future<void> fetchListening() async {
     final List<PodcastEpisode> list = await _historyRepo.getAllSaved();
     _saved = list;
+  }
+
+  void setPage(Pages newPage) {
+    _page = newPage;
+    notifyListeners();
   }
 }
 

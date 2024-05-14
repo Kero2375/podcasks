@@ -8,6 +8,7 @@ class SearchTextField extends StatelessWidget {
   final Function? init;
   final bool showFilters;
   final String hint;
+  final Function? clear;
 
   const SearchTextField({
     super.key,
@@ -16,31 +17,51 @@ class SearchTextField extends StatelessWidget {
     this.search,
     this.init,
     this.showFilters = false,
+    required this.clear,
   });
 
   @override
   Widget build(BuildContext context) {
+    final bool isEmpty = controller.text.trim() == '';
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(10),
         color: Theme.of(context).colorScheme.secondaryContainer,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: TextField(
-        autofocus: true,
+        // autofocus: true,
         decoration: InputDecoration(
           focusedBorder: InputBorder.none,
           border: InputBorder.none,
           hintText: hint,
-          suffixIcon: showFilters
-              ? IconButton(
-                  onPressed: () => showDialog(
-                    context: context,
-                    builder: (context) => const FiltersDialog(),
+          // icon: Icon(
+          //   Icons.search,
+          //   color: Theme.of(context).colorScheme.onBackground.withOpacity(.5),
+          // ),
+          suffixIcon: SizedBox(
+            width: 100,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                if (showFilters)
+                  IconButton(
+                    onPressed: () => showDialog(
+                      context: context,
+                      builder: (context) => const FiltersDialog(),
+                    ),
+                    icon: const Icon(Icons.manage_search_sharp),
                   ),
-                  icon: const Icon(Icons.filter_alt),
-                )
-              : null,
+                if (!isEmpty)
+                  IconButton(
+                    onPressed: () {
+                      clear?.call();
+                    },
+                    icon: const Icon(Icons.backspace),
+                  ),
+              ],
+            ),
+          ),
         ),
         style: textStyleBody,
         controller: controller,

@@ -103,4 +103,9 @@ class PodcastViewmodel extends ListViewmodel {
     initEpisodesList();
     success();
   }
+
+  clearText() {
+    _searchController?.clear();
+    notifyListeners();
+  }
 }

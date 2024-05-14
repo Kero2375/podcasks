@@ -152,6 +152,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
                 controller: vm.searchController!,
                 hint: context.l10n!.searchIn(title ?? context.l10n!.podcast),
                 search: vm.search,
+                  clear: vm.clearText,
               ),
               actions: [
                 IconButton(
