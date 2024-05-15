@@ -21,7 +21,7 @@ const FavouriteSchema = CollectionSchema(
       id: 0,
       name: r'podcast',
       type: IsarType.object,
-      target: r'PodcastEntity',
+      target: r'MPodcast',
     )
   },
   estimateSize: _favouriteEstimateSize,
@@ -31,7 +31,7 @@ const FavouriteSchema = CollectionSchema(
   idName: r'id',
   indexes: {},
   links: {},
-  embeddedSchemas: {r'PodcastEntity': PodcastEntitySchema},
+  embeddedSchemas: {r'MPodcast': MPodcastSchema, r'MEpisode': MEpisodeSchema},
   getId: _favouriteGetId,
   getLinks: _favouriteGetLinks,
   attach: _favouriteAttach,
@@ -44,14 +44,9 @@ int _favouriteEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  {
-    final value = object.podcast;
-    if (value != null) {
-      bytesCount += 3 +
-          PodcastEntitySchema.estimateSize(
-              value, allOffsets[PodcastEntity]!, allOffsets);
-    }
-  }
+  bytesCount += 3 +
+      MPodcastSchema.estimateSize(
+          object.podcast, allOffsets[MPodcast]!, allOffsets);
   return bytesCount;
 }
 
@@ -61,10 +56,10 @@ void _favouriteSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeObject<PodcastEntity>(
+  writer.writeObject<MPodcast>(
     offsets[0],
     allOffsets,
-    PodcastEntitySchema.serialize,
+    MPodcastSchema.serialize,
     object.podcast,
   );
 }
@@ -77,11 +72,12 @@ Favourite _favouriteDeserialize(
 ) {
   final object = Favourite(
     id: id,
-    podcast: reader.readObjectOrNull<PodcastEntity>(
-      offsets[0],
-      PodcastEntitySchema.deserialize,
-      allOffsets,
-    ),
+    podcast: reader.readObjectOrNull<MPodcast>(
+          offsets[0],
+          MPodcastSchema.deserialize,
+          allOffsets,
+        ) ??
+        MPodcast(),
   );
   return object;
 }
@@ -94,11 +90,12 @@ P _favouriteDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readObjectOrNull<PodcastEntity>(
-        offset,
-        PodcastEntitySchema.deserialize,
-        allOffsets,
-      )) as P;
+      return (reader.readObjectOrNull<MPodcast>(
+            offset,
+            MPodcastSchema.deserialize,
+            allOffsets,
+          ) ??
+          MPodcast()) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -247,28 +244,12 @@ extension FavouriteQueryFilter
       ));
     });
   }
-
-  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> podcastIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'podcast',
-      ));
-    });
-  }
-
-  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> podcastIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'podcast',
-      ));
-    });
-  }
 }
 
 extension FavouriteQueryObject
     on QueryBuilder<Favourite, Favourite, QFilterCondition> {
   QueryBuilder<Favourite, Favourite, QAfterFilterCondition> podcast(
-      FilterQuery<PodcastEntity> q) {
+      FilterQuery<MPodcast> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'podcast');
     });
@@ -306,7 +287,7 @@ extension FavouriteQueryProperty
     });
   }
 
-  QueryBuilder<Favourite, PodcastEntity?, QQueryOperations> podcastProperty() {
+  QueryBuilder<Favourite, MPodcast, QQueryOperations> podcastProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'podcast');
     });

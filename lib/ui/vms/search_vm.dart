@@ -32,7 +32,8 @@ class SearchViewmodel extends Vm {
   Future<String> get genre async => await _prefsRepo.getGenre();
 
   // <value, localized string>
-  Map<String,String> genres(BuildContext context) => _prefsRepo.getAllGenres(context);
+  Map<String, String> genres(BuildContext context) =>
+      _prefsRepo.getAllGenres(context);
 
   Future<void> init() async {
     loading();
@@ -63,7 +64,7 @@ class SearchViewmodel extends Vm {
   }
 
   Future<void> fetchPodcast(String? feedUrl) async {
-    loading();
+    // loading();
     _selected = await _searchRepo.fetchPodcast(feedUrl);
     success();
   }

@@ -97,7 +97,7 @@ _pickFile(BuildContext context, Function()? updateHome) async {
           final favRepo = locator.get<FavouriteRepo>();
           for (var item in feeds) {
             bool added = await favRepo.addToFavourite(
-              await PodcastEntity.fromUrl(item),
+              await MPodcast.fromUrl(item),
             );
             // TODO: check
             if (added && context.mounted) {

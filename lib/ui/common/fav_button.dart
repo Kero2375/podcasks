@@ -8,7 +8,7 @@ import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 
 class FavButton extends ConsumerWidget {
-  final Podcast podcast;
+  final MPodcast podcast;
 
   const FavButton(this.podcast, {super.key});
 
@@ -16,7 +16,7 @@ class FavButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.watch(homeViewmodel);
     final bool isFav = vm.isFavourite(podcast);
-    onTap() => vm.setFavourite(PodcastEntity.fromPodcast(podcast), !isFav);
+    onTap() => vm.setFavourite(podcast, !isFav);
     return vm.state == UiState.loading
         ? (!isFav)
             ? _following(() {}, context)
@@ -26,7 +26,8 @@ class FavButton extends ConsumerWidget {
             : _follow(onTap, context);
   }
 
-  Widget _following(Function() onTap, BuildContext context) => OutlinedButton.icon(
+  Widget _following(Function() onTap, BuildContext context) =>
+      OutlinedButton.icon(
         onPressed: onTap,
         label: Text(context.l10n!.following(1)),
         icon: const Icon(Icons.favorite),

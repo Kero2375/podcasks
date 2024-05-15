@@ -1,48 +1,74 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:isar/isar.dart';
+import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/utils.dart';
 import 'package:podcast_search/podcast_search.dart';
 
-class PodcastEpisode extends Episode {
-  Podcast? podcast;
+part 'podcast_episode.g.dart';
 
-  PodcastEpisode({
-    required super.guid,
-    required super.title,
-    required super.description,
-    super.link = '',
-    super.publicationDate,
-    super.author = '',
-    super.duration,
-    super.contentUrl,
-    super.imageUrl,
-    super.season,
-    super.episode,
-    super.content,
-    super.chapters,
-    super.transcripts,
-    super.persons,
-    this.podcast,
+@embedded
+class MEpisode {
+  // MPodcast? podcast;
+  final String guid;
+  final String title;
+  final String description;
+  String? link;
+  final DateTime? publicationDate;
+  String? contentUrl;
+  String? imageUrl;
+  String? author;
+  int? season;
+  int? episode;
+  String? content;
+  final int? durationSec;
+  // final Chapters? chapters;
+  // final List<TranscriptUrl> transcripts;
+  // final List<Person> persons;
+
+  @ignore
+  Duration get duration => Duration(seconds: durationSec ?? 0);
+
+  // MPodcast? podcast(List<MPodcast> choices) =>
+  //     choices.firstWhereOrNull((e) => e.episodes.contains(this));
+
+  MEpisode({
+    this.guid = '',
+    this.title = '',
+    this.description = '',
+    this.link = '',
+    this.publicationDate,
+    this.author = '',
+    this.durationSec,
+    this.contentUrl,
+    this.imageUrl,
+    this.season,
+    this.episode,
+    this.content,
+    // this.chapters,
+    // this.transcripts = const [],
+    // this.persons = const [],
+    // this.podcast,
   });
 
-  factory PodcastEpisode.fromEpisode(Episode ep, {Podcast? podcast}) {
-    return PodcastEpisode(
+  factory MEpisode.fromEpisode(Episode ep) {
+    return MEpisode(
       guid: ep.guid,
       title: ep.title,
       description: ep.description,
       link: ep.link,
       publicationDate: ep.publicationDate,
       author: ep.author,
-      duration: ep.duration,
+      durationSec: ep.duration?.inSeconds ?? 0,
       contentUrl: ep.contentUrl,
       imageUrl: ep.imageUrl,
       season: ep.season,
       episode: ep.episode,
       content: ep.content,
-      chapters: ep.chapters,
-      transcripts: ep.transcripts,
-      persons: ep.persons,
-      podcast: podcast,
+      // chapters: ep.chapters,
+      // transcripts: ep.transcripts,
+      // persons: ep.persons,
+      // podcast: podcast,
     );
   }
 
@@ -60,29 +86,31 @@ class PodcastEpisode extends Episode {
       season: season,
       episode: episode,
       content: content,
-      chapters: chapters,
-      transcripts: transcripts,
-      persons: persons,
+      // chapters: chapters,
+      // transcripts: transcripts,
+      // persons: persons,
     );
   }
 
   @override
   bool operator ==(other) {
-    return other is PodcastEpisode && contentUrl == other.contentUrl;
+    return other is MEpisode && contentUrl == other.contentUrl;
   }
 
   @override
   int get hashCode => (contentUrl).hashCode;
 
-  static Future<PodcastEpisode?> fromUrl({
+  static Future<(MEpisode, MPodcast)?> fromUrl({
     String? podcastUrl,
     String? episodeUrl,
   }) async {
     if (podcastUrl != null && episodeUrl != null) {
       final pod = await Podcast.loadFeed(url: podcastUrl);
-      final ep = pod.episodes.firstWhereOrNull((e) => e.contentUrl == episodeUrl);
+      final mPod = MPodcast.fromPodcast(pod);
+      final ep =
+          pod.episodes.firstWhereOrNull((e) => e.contentUrl == episodeUrl);
       if (ep != null) {
-        return PodcastEpisode.fromEpisode(ep, podcast: pod);
+        return (MEpisode.fromEpisode(ep), mPod);
       }
     }
     return null;

@@ -2,8 +2,9 @@ import 'dart:developer' as dev;
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/data/entities/queue/queue_track.dart';
-import 'package:podcasks/data/podcast_episode.dart';
+import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/repository/history_repo.dart';
 import 'package:podcasks/repository/queue_repo.dart';
@@ -16,16 +17,16 @@ class ListViewmodel extends Vm {
   int _maxItems = 10;
   int _page = 0;
 
-  List<PodcastEpisode>? get episodes => _episodes;
-  List<PodcastEpisode>? _episodes;
+  List<MEpisode>? get episodes => _episodes;
+  List<MEpisode>? _episodes;
 
-  List<PodcastEpisode> get displayingEpisodes => _displayingEpisodes;
-  List<PodcastEpisode> _displayingEpisodes = [];
+  List<MEpisode> get displayingEpisodes => _displayingEpisodes;
+  List<MEpisode> _displayingEpisodes = [];
 
   ScrollController get controller => _controller;
   ScrollController _controller = ScrollController();
 
-  init(List<PodcastEpisode>? eps, {int? maxItems}) {
+  init(List<MEpisode>? eps, {int? maxItems}) {
     if (maxItems != null) _maxItems = maxItems;
     _episodes = eps;
     _page = 0;
@@ -70,7 +71,7 @@ class ListViewmodel extends Vm {
     }
   }
 
-  (EpisodeState, Duration?) getEpisodeState(PodcastEpisode? ep) {
+  (EpisodeState, Duration?) getEpisodeState(MEpisode? ep) {
     if (ep == null) return (EpisodeState.none, null);
     final (remaining, finished) = historyRepo.getPosition(ep) ?? (null, null);
     return finished == true
@@ -80,15 +81,15 @@ class ListViewmodel extends Vm {
             : (EpisodeState.none, null);
   }
 
-  Future<void> markAsFinished(PodcastEpisode? ep) async {
-    if (ep != null) {
-      await historyRepo.setPosition(ep, Duration.zero, true);
+  Future<void> markAsFinished(MEpisode? ep, MPodcast? pd) async {
+    if (ep != null && pd != null) {
+      await historyRepo.setPosition(ep, pd, Duration.zero, true);
       initEpisodesList();
       update();
     }
   }
 
-  Future<void> cancelProgress(PodcastEpisode? ep) async {
+  Future<void> cancelProgress(MEpisode? ep) async {
     if (ep != null) {
       await historyRepo.removeEpisode(ep);
       initEpisodesList();
@@ -96,9 +97,9 @@ class ListViewmodel extends Vm {
     }
   }
 
-  Future<bool> addToQueue(PodcastEpisode? ep) async {
-    if (ep != null) {
-      await _queueRepo.addItem(ep);
+  Future<bool> addToQueue(MEpisode? ep, MPodcast? pd) async {
+    if (ep != null && pd != null) {
+      await _queueRepo.addItem(ep, pd);
       return true;
     }
     return false;

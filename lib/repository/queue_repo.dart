@@ -1,9 +1,10 @@
 import 'package:isar/isar.dart';
+import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/data/entities/queue/queue_track.dart';
-import 'package:podcasks/data/podcast_episode.dart';
+import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 
 abstract class QueueRepo {
-  Future<void> addItem(PodcastEpisode episode);
+  Future<void> addItem(MEpisode episode, MPodcast podcast);
 
   Future<QueueTrack?> getItem(int id);
 
@@ -18,14 +19,14 @@ class QueueRepoIsar extends QueueRepo {
   Isar? get isar => Isar.getInstance();
 
   @override
-  Future<void> addItem(PodcastEpisode episode) async {
+  Future<void> addItem(MEpisode episode, MPodcast podcast) async {
     await isar?.writeTxn(
       () async => isar?.queueTracks.put(
         QueueTrack(
           url: episode.contentUrl,
-          podcastUrl: episode.podcast?.url,
+          podcastUrl: podcast.url,
           title: episode.title,
-          image: episode.imageUrl ?? episode.podcast?.image,
+          image: episode.imageUrl ?? podcast.image,
           next: null,
         ),
       ),

@@ -6,11 +6,12 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/data/entities/queue/queue_track.dart';
 import 'package:podcasks/repository/history_repo.dart';
 import 'package:podcasks/repository/queue_repo.dart';
 import 'package:podcast_search/podcast_search.dart';
-import 'package:podcasks/data/podcast_episode.dart';
+import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/manager/audio_handler.dart';
 // import 'package:podcasks/repository/search_repo.dart';
@@ -24,8 +25,8 @@ class PlayerViewmodel extends Vm {
 
   final int _scrollOffset = 300;
 
-  PodcastEpisode? get playing => _playing;
-  PodcastEpisode? _playing;
+  MEpisode? get playing => _playing;
+  MEpisode? _playing;
 
   Duration get position => audioHandler?.position ?? Duration.zero;
 
@@ -53,11 +54,12 @@ class PlayerViewmodel extends Vm {
     super.dispose();
   }
 
-  Future<void> play({PodcastEpisode? track, bool seekPos = false}) async {
+  Future<void> play(
+      {MEpisode? track, MPodcast? pod, bool seekPos = false}) async {
     loading();
-    if (track?.podcast != null) {
+    if (pod != null) {
       if (track!.contentUrl != _playing?.contentUrl) {
-        await setupPlayer(track);
+        await setupPlayer(track, pod);
       }
     }
 
@@ -74,14 +76,15 @@ class PlayerViewmodel extends Vm {
     success();
   }
 
-  Future<void> setupPlayer(PodcastEpisode track) async {
+  Future<void> setupPlayer(MEpisode track, MPodcast pod) async {
     // loading();
+    _playingPodcast = pod;
     _playing = track;
     await audioHandler?.setMediaUrl(
       MediaItem(
         id: track.contentUrl ?? '',
         title: track.title,
-        artist: track.podcast?.title,
+        artist: pod.title,
         artUri: Uri.parse(image ?? ''),
         duration: track.duration,
       ),
@@ -128,9 +131,10 @@ class PlayerViewmodel extends Vm {
     return (audioHandler?.playing == true);
   }
 
-  Podcast? get playingPodcast => _playing?.podcast;
+  MPodcast? get playingPodcast => _playingPodcast;
+  MPodcast? _playingPodcast;
 
-  String? get image => _playing?.imageUrl ?? _playing?.podcast?.image;
+  String? get image => _playing?.imageUrl ?? _playingPodcast?.image;
 
   Future<void> updatePosition() async {
     if (audioHandler != null) {
@@ -144,14 +148,14 @@ class PlayerViewmodel extends Vm {
         // if there is something in queue
         final next = (await queue).firstOrNull;
         if (next != null) {
-          final ep = await PodcastEpisode.fromUrl(
+          final (ep, pod) = await MEpisode.fromUrl(
             podcastUrl: next.podcastUrl,
             episodeUrl: next.url,
-          );
-          if (ep != null) {
+          ) ?? (null, null);
+          if (ep != null && pod != null) {
             _queueRepo.removeItem(next);
             await saveTrack(true);
-            await setupPlayer(ep);
+            await setupPlayer(ep, pod);
             await play();
             notifyListeners();
             return;
@@ -201,9 +205,9 @@ class PlayerViewmodel extends Vm {
   }
 
   Future<void> saveTrack([bool finished = false]) async {
-    if (audioHandler != null && playing != null) {
+    if (audioHandler != null && playing != null && playingPodcast != null) {
       print("SAVETRACK");
-      await _historyRepo.setPosition(playing!, duration - position, finished);
+      await _historyRepo.setPosition(playing!, playingPodcast!, duration - position, finished);
     }
   }
 
@@ -228,7 +232,7 @@ class PlayerViewmodel extends Vm {
     notifyListeners();
   }
 
-  void share(Episode? episode) {
+  void share(MEpisode? episode) {
     if (episode?.link != null) {
       Clipboard.setData(ClipboardData(text: episode!.link!));
     }

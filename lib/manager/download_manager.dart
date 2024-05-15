@@ -6,6 +6,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcasks/utils.dart';
@@ -44,7 +45,7 @@ class DownloadManager extends Vm {
     send.send([id, status, progress]);
   }
 
-  Future<void> download(Episode? episode, BuildContext context) async {
+  Future<void> download(MEpisode? episode, BuildContext context) async {
     final status = await Permission.notification.request();
 
     final dir = (await getExternalStorageDirectory())?.path;
@@ -63,8 +64,8 @@ class DownloadManager extends Vm {
     }
   }
 
-  Future<void> downloadAll(List<Episode> episodes, BuildContext context) async {
-    for (Episode ep in episodes) {
+  Future<void> downloadAll(List<MEpisode> episodes, BuildContext context) async {
+    for (MEpisode ep in episodes) {
       download(ep, context);
     }
   }

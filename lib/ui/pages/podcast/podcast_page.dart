@@ -3,7 +3,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
-import 'package:podcasks/data/podcast_episode.dart';
+import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/bottom_player.dart';
@@ -21,7 +21,7 @@ import 'package:podcast_search/podcast_search.dart';
 
 class PodcastPage extends ConsumerStatefulWidget {
   static const route = '/podcast_page';
-  final Object? podcast;
+  final MPodcast? podcast;
 
   const PodcastPage(this.podcast, {super.key});
 
@@ -30,9 +30,7 @@ class PodcastPage extends ConsumerStatefulWidget {
 }
 
 class _PodcastPageState extends ConsumerState<PodcastPage> {
-  String? get title => widget.podcast is Podcast?
-      ? (widget.podcast as Podcast?)?.title
-      : (widget.podcast as PodcastEntity?)?.title;
+  String? get title => widget.podcast?.title;
 
   // @override
   _initEpisodeList(PodcastViewmodel vm) async {
@@ -60,7 +58,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
   }
 
   void handleMore(
-      int action, Podcast? podcast, PodcastViewmodel vm, DownloadManager dm) {
+      int action, MPodcast? podcast, PodcastViewmodel vm, DownloadManager dm) {
     switch (action) {
       case 0:
         showDialog(
@@ -152,7 +150,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
                 controller: vm.searchController!,
                 hint: context.l10n!.searchIn(title ?? context.l10n!.podcast),
                 search: vm.search,
-                  clear: vm.clearText,
+                clear: vm.clearText,
               ),
               actions: [
                 IconButton(
@@ -295,12 +293,12 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
       itemCount: vm.displayingEpisodes.length,
       itemBuilder: (context, i) {
         final ep = vm.displayingEpisodes[i];
-        ep.podcast ??= vm.podcast;
 
         return EpisodeItem(
           vm: vm,
           dm: dm,
           episode: ep,
+          podcast: widget.podcast,
           showImage: false,
           showDesc: true,
         );
@@ -308,7 +306,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
     );
   }
 
-  Widget _image(Podcast item) {
+  Widget _image(MPodcast item) {
     return Container(
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(6)),

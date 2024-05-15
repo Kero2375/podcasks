@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
-import 'package:podcasks/data/podcast_episode.dart';
+import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/divider.dart';
 import 'package:podcasks/ui/common/episode_menu.dart';
@@ -17,13 +17,15 @@ import 'package:podcasks/utils.dart';
 class EpisodeItem extends ConsumerStatefulWidget {
   final bool showImage;
   final bool showDesc;
-  final PodcastEpisode? episode;
+  final MEpisode? episode;
+  final MPodcast? podcast;
   final ListViewmodel vm;
   final DownloadManager dm;
 
   const EpisodeItem({
     super.key,
     this.episode,
+    this.podcast,
     required this.showImage,
     required this.showDesc,
     required this.vm,
@@ -36,8 +38,9 @@ class EpisodeItem extends ConsumerStatefulWidget {
 
 class _HomeEpisodeItemState extends ConsumerState<EpisodeItem> {
   Offset _tapPos = Offset.zero;
-  PodcastEpisode? get episode => widget.episode;
-  String? get image => episode?.podcast?.image;
+  MEpisode? get episode => widget.episode;
+  MPodcast? get podcast => widget.podcast;
+  String? get image => podcast?.image;
   ListViewmodel get episodesVm => widget.vm;
   DownloadManager get downloadManager => widget.dm;
 
@@ -47,7 +50,7 @@ class _HomeEpisodeItemState extends ConsumerState<EpisodeItem> {
 
     return InkWell(
       onTap: () =>
-          Navigator.pushNamed(context, EpisodePage.route, arguments: episode),
+          Navigator.pushNamed(context, EpisodePage.route, arguments: (episode, podcast)),
       onTapDown: (details) => setState(() => _tapPos = details.globalPosition),
       onLongPress: () {
         showEpisodeMenu(
@@ -57,6 +60,7 @@ class _HomeEpisodeItemState extends ConsumerState<EpisodeItem> {
           dm: downloadManager,
           playerVm: ref.read(playerViewmodel),
           ep: episode,
+          pd: podcast,
           tapPos: _tapPos,
         );
       },
@@ -125,7 +129,7 @@ class _HomeEpisodeItemState extends ConsumerState<EpisodeItem> {
   GestureDetector _podcastImage(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.pushNamed(context, PodcastPage.route,
-          arguments: episode?.podcast),
+          arguments: podcast),
       child: Container(
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(

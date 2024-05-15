@@ -3,9 +3,9 @@ import 'package:podcasks/data/entities/favourites/fav_item.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 
 abstract class FavouriteRepo {
-  Future<bool> addToFavourite(PodcastEntity podcast);
+  Future<bool> addToFavourite(MPodcast podcast);
 
-  Future<List<PodcastEntity>> getAllFavourites();
+  Future<List<MPodcast>> getAllFavourites();
 
   Future<void> removeFromFavourite(String feedUrl);
 }
@@ -15,8 +15,8 @@ class FavouriteRepoIsar extends FavouriteRepo {
   Isar? get isar => Isar.getInstance();
 
   @override
-  Future<bool> addToFavourite(PodcastEntity podcast) async {
-    if (isar?.favourites.get(podcast.url.hashCode) != null) return false;
+  Future<bool> addToFavourite(MPodcast podcast) async {
+    // if ((await isar?.favourites.get(podcast.url.hashCode)) != null) return false;
     await isar?.writeTxn(
       () async => isar?.favourites.put(
         Favourite(
@@ -29,11 +29,11 @@ class FavouriteRepoIsar extends FavouriteRepo {
   }
 
   @override
-  Future<List<PodcastEntity>> getAllFavourites() async {
+  Future<List<MPodcast>> getAllFavourites() async {
     final all = await isar?.favourites.where().findAll();
     return all
-            ?.where((e) => e.podcast != null)
-            .map((e) => e.podcast!)
+            // ?.where((e) => e.podcast != null)
+            ?.map((e) => e.podcast)
             .toList() ??
         [];
   }

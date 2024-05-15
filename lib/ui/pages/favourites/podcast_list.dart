@@ -5,7 +5,7 @@ import 'package:podcasks/ui/common/bottom_player.dart';
 import 'package:podcasks/ui/pages/favourites/podcast_list_item.dart';
 
 class PodcastList extends StatelessWidget {
-  final List<PodcastEntity> items;
+  final List<MPodcast> items;
 
   const PodcastList({super.key, required this.items});
 

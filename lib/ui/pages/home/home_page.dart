@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:podcasks/data/podcast_episode.dart';
+import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/bottom_player.dart';
@@ -30,14 +30,14 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-  @override
-  void initState() {
-    // final homeVm = ref.read(homeViewmodel);
-    // final playerVm = ref.read(playerViewmodel);
-    // final episodesVm = ref.read(episodesHomeViewmodel);
-    // _checkSaved(homeVm, playerVm, episodesVm);
-    // super.initState();
-  }
+  // @override
+  // void initState() {
+  //   final homeVm = ref.read(homeViewmodel);
+  //   final playerVm = ref.read(playerViewmodel);
+  //   final episodesVm = ref.read(episodesHomeViewmodel);
+  //   _checkSaved(homeVm, playerVm, episodesVm);
+  //   super.initState();
+  // }
 
   // Future<void> _checkSaved(HomeViewmodel homeVm, PlayerViewmodel playerVm,
   //     EpisodesHomeViewmodel episodesVm) async {
@@ -109,8 +109,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                   child: switch (homeVm.page) {
                     Pages.home => const HomeContentPage(),
                     Pages.search => const SearchPage(),
-                    Pages.listening =>
-                      const Placeholder(color: Colors.red,),
+                    Pages.listening => const Placeholder(
+                        color: Colors.red,
+                      ),
                     Pages.favourites => const SizedBox.shrink(),
                   },
                 ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:podcasks/data/podcast_episode.dart';
+import 'package:podcasks/data/entities/episode/podcast_episode.dart';
+import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
@@ -12,8 +13,9 @@ Future<int?> showEpisodeMenu({
   required ListViewmodel vm,
   required PlayerViewmodel playerVm,
   required DownloadManager dm,
-  required PodcastEpisode? ep,
-  required Offset tapPos,
+  required MEpisode? ep,
+  required MPodcast? pd,
+  required Offset tapPos, 
 }) {
   final screenSize = MediaQuery.of(context).size;
   return showMenu(
@@ -27,7 +29,7 @@ Future<int?> showEpisodeMenu({
         episodeMenuItem<int>(
           message: context.l10n!.markAsFinished,
           icon: Icons.check,
-          onTap: () => vm.markAsFinished(ep),
+          onTap: () => vm.markAsFinished(ep, pd),
         ),
       if (value != EpisodeState.none)
         episodeMenuItem<int>(
@@ -49,7 +51,7 @@ Future<int?> showEpisodeMenu({
         message: context.l10n!.addToQueue,
         icon: Icons.queue,
         onTap: () async {
-          bool res = await vm.addToQueue(ep);
+          bool res = await vm.addToQueue(ep, pd);
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(

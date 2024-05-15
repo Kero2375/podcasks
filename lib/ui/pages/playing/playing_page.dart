@@ -3,7 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podcasks/data/podcast_episode.dart';
+import 'package:podcasks/data/entities/episode/podcast_episode.dart';
+import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/episode_page.dart';
@@ -83,8 +84,8 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
         ));
   }
 
-  SizedBox _pageContent(BuildContext context, PlayerViewmodel vm,
-      PodcastEpisode? ep, Podcast? podcast) {
+  SizedBox _pageContent(BuildContext context, PlayerViewmodel vm, MEpisode? ep,
+      MPodcast? podcast) {
     return SizedBox(
       height: MediaQuery.of(context).size.height -
           MediaQuery.of(context).viewPadding.top * 2,
@@ -141,8 +142,8 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
     );
   }
 
-  Widget _bottomSection(BuildContext context, PodcastEpisode? ep,
-      Podcast? podcast, PlayerViewmodel vm) {
+  Widget _bottomSection(BuildContext context, MEpisode? ep, MPodcast? podcast,
+      PlayerViewmodel vm) {
     return Column(
       children: [
         _title(context, ep, podcast),
@@ -208,12 +209,12 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
     );
   }
 
-  Widget _title(BuildContext context, PodcastEpisode? ep, Podcast? podcast) {
+  Widget _title(BuildContext context, MEpisode? ep, MPodcast? podcast) {
     return Column(
       children: [
         GestureDetector(
           onTap: () => Navigator.popAndPushNamed(context, EpisodePage.route,
-              arguments: ep),
+              arguments: (ep, podcast)),
           child: Text(
             ep?.title ?? '',
             maxLines: 3,

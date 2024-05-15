@@ -5,7 +5,7 @@ import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 
 class PodcastListItem extends ConsumerWidget {
-  final PodcastEntity podcast;
+  final MPodcast podcast;
   final bool isLast;
 
   const PodcastListItem({
@@ -34,7 +34,7 @@ class PodcastListItem extends ConsumerWidget {
                     width: 45,
                     clipBehavior: Clip.antiAlias,
                     child: Image.network(
-                      podcast.image!,
+                      podcast.image ?? '',
                     ),
                   ),
                   const SizedBox(

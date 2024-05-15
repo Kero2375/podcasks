@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
-import 'package:podcasks/data/podcast_episode.dart';
+import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/repository/history_repo.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/locator.dart';
@@ -21,12 +21,11 @@ class HomeViewmodel extends Vm {
   final _favRepo = locator.get<FavouriteRepo>();
   final _historyRepo = locator.get<HistoryRepo>();
 
-  List<PodcastEntity> get favourites =>
-      _favourites.sorted(_sortPodcastsByEpisode);
-  List<PodcastEntity> _favourites = [];
+  List<MPodcast> get favourites => _favourites.sorted(_sortPodcastsByEpisode);
+  List<MPodcast> _favourites = [];
 
-  List<PodcastEpisode>? get saved => _saved;
-  List<PodcastEpisode>? _saved;
+  List<MEpisode>? get saved => _saved;
+  List<MEpisode>? _saved;
 
   HomeViewmodel() {
     init();
@@ -48,8 +47,8 @@ class HomeViewmodel extends Vm {
     success();
   }
 
-  Future<void> setFavourite(PodcastEntity podcast, bool setFavourite) async {
-    loading();
+  Future<void> setFavourite(MPodcast podcast, bool setFavourite) async {
+    // loading();
     if (podcast.url != null) {
       if (setFavourite) {
         await _favRepo.addToFavourite(podcast);
@@ -61,16 +60,16 @@ class HomeViewmodel extends Vm {
     success();
   }
 
-  bool isFavourite(Podcast? podcast) {
+  bool isFavourite(MPodcast? podcast) {
     return _favourites
             .firstWhereOrNull((element) => element.url == podcast?.url) !=
         null;
   }
 
-  Future<(PodcastEpisode, Duration)?> getLastSaved() async {
+  Future<(MEpisode, Duration)?> getLastSaved() async {
     // final ep = await _lastPlayingRepo.getLastPlaying();
-    final ep = await _historyRepo.getLast();
-    if (ep != null) {
+    final (ep, pod) = await _historyRepo.getLast() ?? (null, null);
+    if (ep != null && pod != null) {
       final (rem, _) = _historyRepo.getPosition(ep) ?? (null, null);
       if (rem != null) {
         return (ep, rem);
@@ -80,7 +79,7 @@ class HomeViewmodel extends Vm {
   }
 
   Future<void> fetchListening() async {
-    final List<PodcastEpisode> list = await _historyRepo.getAllSaved();
+    final List<MEpisode> list = await _historyRepo.getAllSaved();
     _saved = list;
   }
 
@@ -90,7 +89,7 @@ class HomeViewmodel extends Vm {
   }
 }
 
-int _sortPodcastsByEpisode(PodcastEntity a, PodcastEntity b) =>
+int _sortPodcastsByEpisode(MPodcast a, MPodcast b) =>
     // a.episodes.isNotEmpty && b.episodes.isNotEmpty
     //     ? b.episodes.firstOrNull!.publicationDate!
     //         .compareTo(a.episodes.firstOrNull!.publicationDate!)

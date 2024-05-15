@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:podcasks/data/podcast_episode.dart';
+import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
