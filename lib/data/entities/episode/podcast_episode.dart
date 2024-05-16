@@ -105,7 +105,7 @@ class MEpisode {
     String? episodeUrl,
   }) async {
     if (podcastUrl != null && episodeUrl != null) {
-      final pod = await Podcast.loadFeed(url: podcastUrl);
+      final pod = await Podcast.loadFeed(url: podcastUrl); // TODO?
       final mPod = MPodcast.fromPodcast(pod);
       final ep =
           pod.episodes.firstWhereOrNull((e) => e.contentUrl == episodeUrl);

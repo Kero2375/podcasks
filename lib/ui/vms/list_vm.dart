@@ -17,16 +17,16 @@ class ListViewmodel extends Vm {
   int _maxItems = 10;
   int _page = 0;
 
-  List<MEpisode>? get episodes => _episodes;
-  List<MEpisode>? _episodes;
+  List<(MEpisode, MPodcast)>? get episodes => _episodes;
+  List<(MEpisode, MPodcast)>? _episodes;
 
-  List<MEpisode> get displayingEpisodes => _displayingEpisodes;
-  List<MEpisode> _displayingEpisodes = [];
+  List<(MEpisode, MPodcast)> get displayingEpisodes => _displayingEpisodes;
+  List<(MEpisode, MPodcast)> _displayingEpisodes = [];
 
   ScrollController get controller => _controller;
   ScrollController _controller = ScrollController();
 
-  init(List<MEpisode>? eps, {int? maxItems}) {
+  init(List<(MEpisode, MPodcast)>? eps, {int? maxItems}) {
     if (maxItems != null) _maxItems = maxItems;
     _episodes = eps;
     _page = 0;

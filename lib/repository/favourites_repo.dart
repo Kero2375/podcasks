@@ -1,6 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:podcasks/data/entities/favourites/fav_item.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
+import 'package:podcast_search/podcast_search.dart';
 
 abstract class FavouriteRepo {
   Future<bool> addToFavourite(MPodcast podcast);
@@ -8,9 +9,10 @@ abstract class FavouriteRepo {
   Future<List<MPodcast>> getAllFavourites();
 
   Future<void> removeFromFavourite(String feedUrl);
+
+  Future<void> syncFavourites();
 }
 
-// todo: replace with isar?
 class FavouriteRepoIsar extends FavouriteRepo {
   Isar? get isar => Isar.getInstance();
 
@@ -43,5 +45,19 @@ class FavouriteRepoIsar extends FavouriteRepo {
     await isar?.writeTxn(
       () async => isar?.favourites.delete(feedUrl.hashCode),
     );
+  }
+
+  @override
+  Future<void> syncFavourites() async {
+    final fav = await getAllFavourites();
+
+    for (MPodcast p in fav) {
+      final url = p.url;
+      if (url == null) continue;
+      final newPod = await Podcast.loadFeed(url: url);
+      if (newPod.episodes.length != p.episodes.length) {
+        await addToFavourite(MPodcast.fromPodcast(newPod));
+      }
+    }
   }
 }

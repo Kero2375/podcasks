@@ -14,7 +14,7 @@ abstract class HistoryRepo {
   (Duration, bool)? getPosition(MEpisode episode);
 
   // @Deprecated('Avoid fetching all saved episodes')
-  Future<List<MEpisode>> getAllSaved();
+  Future<List<(MEpisode, MPodcast)>> getAllSaved();
 
   Future<(MEpisode, MPodcast)?> getLast();
 
@@ -64,22 +64,22 @@ class HistoryRepoIsar extends HistoryRepo {
   }
 
   @override
-  Future<List<MEpisode>> getAllSaved() async {
+  Future<List<(MEpisode, MPodcast)>> getAllSaved() async {
     final track = await isar?.saveTracks
         .where(sort: Sort.asc)
         .filter()
         .positionGreaterThan(0)
         .sortByDateTimeDesc()
         .findAll();
-    List<MEpisode> episodes = [];
+    List<(MEpisode, MPodcast)> episodes = [];
 
     for (SaveTrack t in track ?? []) {
       if (t.podcastUrl != null && t.url != null) {
         // FIXME
-        final pod = await Podcast.loadFeed(url: t.podcastUrl!);
+        final pod = await Podcast.loadFeed(url: t.podcastUrl!); //FIXME?
         final ep = pod.episodes.firstWhereOrNull((e) => e.contentUrl == t.url);
         if (ep != null) {
-          episodes.add(MEpisode.fromEpisode(ep));
+          episodes.add((MEpisode.fromEpisode(ep), MPodcast.fromPodcast(pod)));
         }
       }
     }

@@ -100,7 +100,8 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
             message: context.l10n!.downloadMessage(vm.episodes?.length ?? 0),
             // emoji: context.l10n!.deleteAllEmoji,
             onTap: () {
-              dm.downloadAll(vm.episodes ?? [], context);
+              dm.downloadAll(
+                  vm.episodes?.map((e) => e.$1).toList() ?? [], context);
             },
           ),
         );
@@ -297,7 +298,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
         return EpisodeItem(
           vm: vm,
           dm: dm,
-          episode: ep,
+          episode: ep.$1,
           podcast: widget.podcast,
           showImage: false,
           showDesc: true,

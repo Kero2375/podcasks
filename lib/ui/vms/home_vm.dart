@@ -24,8 +24,8 @@ class HomeViewmodel extends Vm {
   List<MPodcast> get favourites => _favourites.sorted(_sortPodcastsByEpisode);
   List<MPodcast> _favourites = [];
 
-  List<MEpisode>? get saved => _saved;
-  List<MEpisode>? _saved;
+  List<(MEpisode, MPodcast)>? get saved => _saved;
+  List<(MEpisode, MPodcast)>? _saved;
 
   HomeViewmodel() {
     init();
@@ -66,20 +66,20 @@ class HomeViewmodel extends Vm {
         null;
   }
 
-  Future<(MEpisode, Duration)?> getLastSaved() async {
+  Future<(MEpisode, MPodcast, Duration)?> getLastSaved() async {
     // final ep = await _lastPlayingRepo.getLastPlaying();
     final (ep, pod) = await _historyRepo.getLast() ?? (null, null);
     if (ep != null && pod != null) {
       final (rem, _) = _historyRepo.getPosition(ep) ?? (null, null);
       if (rem != null) {
-        return (ep, rem);
+        return (ep, pod, rem);
       }
     }
     return null;
   }
 
   Future<void> fetchListening() async {
-    final List<MEpisode> list = await _historyRepo.getAllSaved();
+    final List<(MEpisode, MPodcast)> list = await _historyRepo.getAllSaved();
     _saved = list;
   }
 
@@ -87,11 +87,15 @@ class HomeViewmodel extends Vm {
     _page = newPage;
     notifyListeners();
   }
+
+  Future<void> syncFavourites() async {
+    await _favRepo.syncFavourites();
+  }
 }
 
 int _sortPodcastsByEpisode(MPodcast a, MPodcast b) =>
-    // a.episodes.isNotEmpty && b.episodes.isNotEmpty
-    //     ? b.episodes.firstOrNull!.publicationDate!
-    //         .compareTo(a.episodes.firstOrNull!.publicationDate!)
-    //     : 0;
-    (a.title != null && b.title != null) ? a.title!.compareTo(b.title!) : 0;
+    a.episodes.isNotEmpty && b.episodes.isNotEmpty
+        ? b.episodes.firstOrNull!.publicationDate!
+            .compareTo(a.episodes.firstOrNull!.publicationDate!)
+        : 0;
+    // (a.title != null && b.title != null) ? a.title!.compareTo(b.title!) : 0;

@@ -78,7 +78,7 @@ class MyApp extends ConsumerWidget {
         onGenerateRoute: (settings) {
           if (settings.name == PodcastPage.route) {
             return MaterialPageRoute(
-              builder: (context) => PodcastPage(settings.arguments as MPodcast),
+              builder: (context) => PodcastPage(settings.arguments as MPodcast?),
             );
           } else if (settings.name == EpisodePage.route) {
             return MaterialPageRoute(

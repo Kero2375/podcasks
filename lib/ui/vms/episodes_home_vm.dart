@@ -17,10 +17,12 @@ class EpisodesHomeViewmodel extends ListViewmodel {
 
   MPodcast? tempPodcast;
 
-  initPodcast(MPodcast? podcastEntity, {int? maxItems}) async {
+  initPodcast(MPodcast? podcast, {int? maxItems}) async {
+    if (podcast == null) return;
     loading();
-    tempPodcast = podcastEntity;
+    tempPodcast = podcast;
     final episodes = tempPodcast?.episodes
+        .map((e) => (e, podcast))
         // .map((e) => MEpisode.fromEpisode(e, podcast: tempPodcast))
         .toList();
     await super.init(episodes, maxItems: maxItems);
@@ -28,7 +30,7 @@ class EpisodesHomeViewmodel extends ListViewmodel {
   }
 
   @override
-  List<MEpisode>? get episodes => super.episodes?.toSet().toList();
+  List<(MEpisode, MPodcast)>? get episodes => super.episodes?.toSet().toList();
 
   showListening(HomeViewmodel homeVm) async {
     tempPodcast = null;

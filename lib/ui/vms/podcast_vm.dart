@@ -21,23 +21,25 @@ class PodcastViewmodel extends ListViewmodel {
   MPodcast? get podcast => _podcast;
   MPodcast? _podcast;
 
-  initPodcast(Object? pod, {int? maxItems}) async {
-    if (pod is MPodcast?) {
-      _podcast = pod as MPodcast?;
-    }
+  initPodcast(MPodcast? pod, {int? maxItems}) async {
+    if (pod == null) return;
+    _podcast = pod;
     final episodes = podcast?.episodes
         // .map((e) => MEpisode.fromEpisode(e, podcast: podcast))
         .toList();
-    await super.init(episodes, maxItems: maxItems);
+    await super
+        .init(episodes?.map((e) => (e, podcast!)).toList(), maxItems: maxItems);
   }
 
   @override
-  List<MEpisode>? get episodes =>
+  List<(MEpisode, MPodcast)>? get episodes =>
       ((_newerFirst) ? super.episodes : super.episodes?.reversed.toList())
           ?.where(
             (e) => (_filter != null && _filter != '')
-                ? e.title.toLowerCase().contains(_filter!.toLowerCase()) ||
-                    e.description.toLowerCase().contains(_filter!.toLowerCase())
+                ? e.$1.title.toLowerCase().contains(_filter!.toLowerCase()) ||
+                    e.$1.description
+                        .toLowerCase()
+                        .contains(_filter!.toLowerCase())
                 : true,
           )
           .toList();

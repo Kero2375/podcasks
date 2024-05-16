@@ -30,25 +30,25 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-  // @override
-  // void initState() {
-  //   final homeVm = ref.read(homeViewmodel);
-  //   final playerVm = ref.read(playerViewmodel);
-  //   final episodesVm = ref.read(episodesHomeViewmodel);
-  //   _checkSaved(homeVm, playerVm, episodesVm);
-  //   super.initState();
-  // }
+  @override
+  void initState() {
+    final homeVm = ref.read(homeViewmodel);
+    final playerVm = ref.read(playerViewmodel);
+    final episodesVm = ref.read(episodesHomeViewmodel);
+    _checkSaved(homeVm, playerVm, episodesVm);
+    super.initState();
+  }
 
-  // Future<void> _checkSaved(HomeViewmodel homeVm, PlayerViewmodel playerVm,
-  //     EpisodesHomeViewmodel episodesVm) async {
-  //   final (track, position) = await homeVm.getLastSaved() ?? (null, null);
-  //   final (state, _) = episodesVm.getEpisodeState(track);
-  //   if (track != null && position != null && state != EpisodeState.finished) {
-  //     await playerVm.setupPlayer(track);
-  //     await playerVm.pause();
-  //     await playerVm.seekPosition(playerVm.duration - position);
-  //   }
-  // }
+  Future<void> _checkSaved(HomeViewmodel homeVm, PlayerViewmodel playerVm,
+      EpisodesHomeViewmodel episodesVm) async {
+    final (track, pod, position) = await homeVm.getLastSaved() ?? (null, null, null);
+    final (state, _) = episodesVm.getEpisodeState(track);
+    if (track != null && pod != null && position != null && state != EpisodeState.finished) {
+      await playerVm.setupPlayer(track, pod);
+      await playerVm.pause();
+      await playerVm.seekPosition(playerVm.duration - position);
+    }
+  }
 
   // void _initEpisodeList(
   //     EpisodesHomeViewmodel episodesVm, HomeViewmodel homeVm) {

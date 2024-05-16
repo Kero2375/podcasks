@@ -27,7 +27,9 @@ class SearchListItem extends ConsumerWidget {
           }
         } else {
           await vm.fetchPodcast(item.feedUrl);
-          nav.pushNamed(PodcastPage.route, arguments: MPodcast.fromPodcast(vm.selected));
+          nav.pushNamed(PodcastPage.route,
+              arguments:
+                  MPodcast.fromPodcast(vm.selected)); // TODO: fix loading
         }
       },
       child: Padding(
