@@ -73,5 +73,7 @@
   "stopDownloads": "Stop downloads",
   "stop": "Stop",
   "downloadMessage": "Are you sure you want to download {count, plural, =1{{count} episode} other{{count} episodes}}?",
-  "stopMessage": "Are you sure you want to stop all the current downloads?"
+  "stopMessage": "Are you sure you want to stop all the current downloads?",
+  "hide": "hide",
+  "readMore": "read more"
 }

@@ -3,6 +3,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/manager/download_manager.dart';
+import 'package:podcasks/ui/common/episode_play_button.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/data/entities/episode/podcast_episode.dart';
@@ -47,35 +48,6 @@ class EpisodePage extends ConsumerWidget {
     );
   }
 
-  Widget _playButton(PlayerViewmodel vm, BuildContext context) {
-    return Center(
-      child: IconButton.filled(
-        onPressed: () async {
-          vm.isPlaying(url: episode?.contentUrl)
-              ? vm.pause()
-              : vm.play(
-                  track: episode,
-                  pod: podcast,
-                  seekPos: true,
-                );
-        },
-        icon: vm.state == UiState.loading
-            ? SizedBox(
-                width: 15,
-                height: 15,
-                child: CircularProgressIndicator(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-              )
-            : vm.isPlaying(url: episode?.contentUrl)
-                ? const Icon(Icons.pause)
-                : const Icon(Icons.play_arrow),
-        // label: vm.isPlaying(url: episode?.contentUrl) ? const Text('PAUSE') : const Text('PLAY'),
-        style: controlsButtonStyle(!vm.isPlaying(url: episode?.contentUrl)),
-      ),
-    );
-  }
-
   Widget _title(BuildContext context, PlayerViewmodel vm, DownloadManager dm) {
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -85,7 +57,11 @@ class EpisodePage extends ConsumerWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _playButton(vm, context),
+              EpisodePlayButton(
+                episode: episode,
+                podcast: podcast,
+                vm: vm,
+              ),
               const SizedBox(width: 8),
               Flexible(
                 flex: 1,

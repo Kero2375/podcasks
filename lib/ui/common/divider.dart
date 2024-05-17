@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget divider(BuildContext context) => Container(
-      color: Theme.of(context).colorScheme.onBackground.withOpacity(.2),
-      width: double.infinity,
+Widget divider(BuildContext context) => Divider(
+      color: Theme.of(context).colorScheme.primary.withOpacity(.1),
       height: 1,
     );

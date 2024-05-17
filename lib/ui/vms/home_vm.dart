@@ -1,14 +1,24 @@
+import 'dart:isolate';
+
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar/isar.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:podcasks/data/entities/favourites/fav_item.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/data/entities/episode/podcast_episode.dart';
+import 'package:podcasks/data/entities/queue/queue_track.dart';
+import 'package:podcasks/data/entities/save/save_track.dart';
 import 'package:podcasks/repository/history_repo.dart';
+import 'package:podcasks/ui/vms/episodes_home_vm.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/repository/favourites_repo.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 
-final homeViewmodel = ChangeNotifierProvider((ref) => HomeViewmodel());
+final homeViewmodel = ChangeNotifierProvider((ref) => HomeViewmodel(ref));
 
 enum Pages {
   home,
@@ -21,13 +31,15 @@ class HomeViewmodel extends Vm {
   final _favRepo = locator.get<FavouriteRepo>();
   final _historyRepo = locator.get<HistoryRepo>();
 
+  ChangeNotifierProviderRef<Object?> ref;
+
   List<MPodcast> get favourites => _favourites.sorted(_sortPodcastsByEpisode);
   List<MPodcast> _favourites = [];
 
   List<(MEpisode, MPodcast)>? get saved => _saved;
   List<(MEpisode, MPodcast)>? _saved;
 
-  HomeViewmodel() {
+  HomeViewmodel(this.ref) {
     init();
   }
 
@@ -89,7 +101,27 @@ class HomeViewmodel extends Vm {
   }
 
   Future<void> syncFavourites() async {
-    await _favRepo.syncFavourites();
+    final token = RootIsolateToken.instance;
+    await compute((message) => _sync(token), token);
+    _notifyAll();
+  }
+
+  static Future<void> _sync(token) async {
+    BackgroundIsolateBinaryMessenger.ensureInitialized(token);
+    final dir = await getApplicationSupportDirectory();
+    await Isar.open(
+      [SaveTrackSchema, QueueTrackSchema, FavouriteSchema],
+      directory: dir.path,
+    );
+    await FavouriteRepoIsar().syncFavourites();
+  }
+
+  void _notifyAll() {
+    update();
+    ref.read(episodesHomeViewmodel).update();
+    // ref.read(homeViewmodel).update();
+    // ref.read(episodesHomeViewmodel).update();
+    // ref.read(episodesHomeViewmodel).update();
   }
 }
 

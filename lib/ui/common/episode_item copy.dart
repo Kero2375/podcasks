@@ -6,14 +6,12 @@ import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/divider.dart';
 import 'package:podcasks/ui/common/episode_menu.dart';
-import 'package:podcasks/ui/common/episode_play_button.dart';
 import 'package:podcasks/ui/common/listening_tag.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/episode_page.dart';
 import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
-import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcasks/utils.dart';
 
 class EpisodeItem extends ConsumerStatefulWidget {
@@ -51,8 +49,8 @@ class _HomeEpisodeItemState extends ConsumerState<EpisodeItem> {
     final (episodeState, remaining) = episodesVm.getEpisodeState(episode);
 
     return InkWell(
-      onTap: () => Navigator.pushNamed(context, EpisodePage.route,
-          arguments: (episode, podcast)),
+      onTap: () =>
+          Navigator.pushNamed(context, EpisodePage.route, arguments: (episode, podcast)),
       onTapDown: (details) => setState(() => _tapPos = details.globalPosition),
       onLongPress: () {
         showEpisodeMenu(
@@ -67,25 +65,16 @@ class _HomeEpisodeItemState extends ConsumerState<EpisodeItem> {
         );
       },
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           divider(context),
           Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ...[
-                  (widget.showImage)
-                      ? _podcastImage(context)
-                      : Consumer(builder:
-                          (BuildContext context, WidgetRef ref, Widget? child) {
-                          final vm = ref.watch(playerViewmodel);
-                          return EpisodePlayButton(
-                            episode: episode,
-                            podcast: podcast,
-                            vm: vm,
-                          );
-                        }),
+                if (widget.showImage) ...[
+                  _podcastImage(context),
                   const SizedBox(width: 8),
                 ],
                 Flexible(
@@ -139,8 +128,8 @@ class _HomeEpisodeItemState extends ConsumerState<EpisodeItem> {
 
   GestureDetector _podcastImage(BuildContext context) {
     return GestureDetector(
-      onTap: () =>
-          Navigator.pushNamed(context, PodcastPage.route, arguments: podcast),
+      onTap: () => Navigator.pushNamed(context, PodcastPage.route,
+          arguments: podcast),
       child: Container(
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(

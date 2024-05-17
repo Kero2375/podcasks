@@ -73,5 +73,7 @@
   "stopDownloads": "Interrompi download",
   "stop": "Interrompi",
   "downloadMessage": "Vuoi veramente scaricare {count, plural, =1{{count} episoio} other{{count} episodi}}?",
-  "stopMessage": "Vuoi veramente interrompere tutti i download in corso?"
+  "stopMessage": "Vuoi veramente interrompere tutti i download in corso?",
+  "hide": "nascondi",
+  "readMore": "leggi di più"
 }

@@ -21,24 +21,30 @@ class EpisodesHomeViewmodel extends ListViewmodel {
     if (podcast == null) return;
     loading();
     tempPodcast = podcast;
-    final episodes = tempPodcast?.episodes
-        .map((e) => (e, podcast))
-        // .map((e) => MEpisode.fromEpisode(e, podcast: tempPodcast))
-        .toList();
+    // final episodes = tempPodcast?.episodes
+    //     .map((e) => (e, podcast))
+    //     // .map((e) => MEpisode.fromEpisode(e, podcast: tempPodcast))
+    //     .toList();
     await super.init(episodes, maxItems: maxItems);
     success();
   }
 
   @override
-  List<(MEpisode, MPodcast)>? get episodes => super.episodes?.toSet().toList();
+  List<(MEpisode, MPodcast)>? get episodes => super
+      .episodes
+      ?.where(
+        (e) => tempPodcast == null || e.$2.url == tempPodcast?.url,
+      )
+      .toSet()
+      .toList();
 
   showListening(HomeViewmodel homeVm) async {
     tempPodcast = null;
-    await homeVm.fetchFavourites();
-    await init(homeVm.saved, maxItems: 30);
-    try {
-      initEpisodesList();
-    } catch (_) {}
+    // await homeVm.init();
+    await super.init(episodes, maxItems: 30);
+    // try {
+    //   initEpisodesList();
+    // } catch (_) {}
     notifyListeners();
   }
 

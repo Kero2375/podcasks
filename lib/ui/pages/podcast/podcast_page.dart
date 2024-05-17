@@ -12,6 +12,7 @@ import 'package:podcasks/ui/common/fav_button.dart';
 import 'package:podcasks/ui/common/popup_menu_item.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/common/episode_item.dart';
+import 'package:podcasks/ui/pages/podcast/more_button.dart';
 import 'package:podcasks/ui/pages/search/search_text_field.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/ui/vms/podcast_vm.dart';
@@ -31,6 +32,7 @@ class PodcastPage extends ConsumerStatefulWidget {
 
 class _PodcastPageState extends ConsumerState<PodcastPage> {
   String? get title => widget.podcast?.title;
+  bool expanded = false;
 
   // @override
   _initEpisodeList(PodcastViewmodel vm) async {
@@ -55,73 +57,6 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
 
   void handleSort(bool item, PodcastViewmodel vm) {
     vm.setNewerFirst(item);
-  }
-
-  void handleMore(
-      int action, MPodcast? podcast, PodcastViewmodel vm, DownloadManager dm) {
-    switch (action) {
-      case 0:
-        showDialog(
-          context: context,
-          builder: (context) => ConfirmDialog(
-            title: context.l10n!.markAllFinished,
-            actionText: context.l10n!.confirm,
-            actionIcon: const Icon(Icons.check),
-            message: context.l10n!.markAllFinishedMessage(podcast?.title ?? ''),
-            // emoji: 'ಠ_ಠ',
-            onTap: () {
-              vm.markAllAsFinished(podcast);
-            },
-          ),
-        );
-        break;
-      case 1:
-        showDialog(
-          context: context,
-          builder: (context) => ConfirmDialog(
-            title: context.l10n!.deleteProgress,
-            actionText: context.l10n!.delete,
-            actionIcon: const Icon(Icons.warning),
-            message: context.l10n!.deleteProgressMessage(podcast?.title ?? ''),
-            emoji: context.l10n!.deleteAllEmoji,
-            onTap: () {
-              vm.deleteAll(podcast);
-            },
-          ),
-        );
-        break;
-      case 2:
-        showDialog(
-          context: context,
-          builder: (context) => ConfirmDialog(
-            title: context.l10n!.downloadAll,
-            actionText: context.l10n!.download,
-            actionIcon: const Icon(Icons.file_download_outlined),
-            message: context.l10n!.downloadMessage(vm.episodes?.length ?? 0),
-            // emoji: context.l10n!.deleteAllEmoji,
-            onTap: () {
-              dm.downloadAll(
-                  vm.episodes?.map((e) => e.$1).toList() ?? [], context);
-            },
-          ),
-        );
-        break;
-      case 3:
-        showDialog(
-          context: context,
-          builder: (context) => ConfirmDialog(
-            title: context.l10n!.stopDownloads,
-            actionText: context.l10n!.stop,
-            actionIcon: const Icon(Icons.file_download_off_outlined),
-            message: context.l10n!.stopMessage,
-            // emoji: context.l10n!.deleteAllEmoji,
-            onTap: () {
-              dm.cancelDownloads();
-            },
-          ),
-        );
-        break;
-    }
   }
 
   @override
@@ -182,11 +117,27 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
                             data: vm.podcast!.description ?? '',
                             style: {
                               '*': Style(
-                                margin: Margins.all(8),
+                                margin: Margins.only(top: 8, right: 8, left: 8),
                                 fontFamily: themeFontFamily.fontFamily,
+                                maxLines:
+                                    expanded && shortDescription(vm) ? null : 2,
                               ),
                             },
                           ),
+                          if (shortDescription(vm))
+                            (expanded)
+                                ? TextButton(
+                                    onPressed: () =>
+                                        setState(() => expanded = false),
+                                    style: underlineButtonStyle,
+                                    child: Text(context.l10n!.hide),
+                                  )
+                                : TextButton(
+                                    onPressed: () =>
+                                        setState(() => expanded = true),
+                                    style: underlineButtonStyle,
+                                    child: Text(context.l10n!.readMore),
+                                  ),
                           _buttons(vm, dm),
                           _episodes(vm, dm),
                           // if (vm.displayingEpisodes.length < (vm.podcast?.episodes.length ?? 0))
@@ -199,6 +150,9 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
       bottomSheet: const BottomPlayer(),
     );
   }
+
+  bool shortDescription(PodcastViewmodel vm) =>
+      (vm.podcast!.description?.length ?? 0) > 100;
 
   PopupMenuButton<bool> _sortMenuButton(PodcastViewmodel vm) {
     return PopupMenuButton(
@@ -232,41 +186,6 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
     );
   }
 
-  PopupMenuButton<int> _moreMenuButton(
-      PodcastViewmodel vm, DownloadManager dm) {
-    return PopupMenuButton(
-      icon: const Icon(Icons.more_vert),
-      onSelected: (item) => handleMore(item, vm.podcast, vm, dm),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      itemBuilder: (context) => [
-        popupMenuItem(
-          value: 0,
-          icon: const Icon(Icons.done_all),
-          text: context.l10n!.markAllFinished,
-        ),
-        popupMenuItem(
-          value: 1,
-          icon: const Icon(Icons.delete_forever),
-          text: context.l10n!.deleteProgress,
-        ),
-        if (dm.status != DownloadTaskStatus.running.index)
-          popupMenuItem(
-            value: 2,
-            icon: const Icon(Icons.file_download_outlined),
-            text: context.l10n!.downloadAll,
-          ),
-        if (dm.status == DownloadTaskStatus.running.index)
-          popupMenuItem(
-            value: 3,
-            icon: const Icon(Icons.file_download_off_outlined),
-            text: context.l10n!.stopDownloads,
-          ),
-      ],
-    );
-  }
-
   Widget _buttons(PodcastViewmodel vm, DownloadManager dm) {
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -278,7 +197,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               _sortMenuButton(vm),
-              _moreMenuButton(vm, dm),
+              MoreButton(vm: vm, dm: dm),
             ],
           ),
         ],

@@ -9,6 +9,12 @@ ButtonStyle get buttonStyle => ButtonStyle(
       textStyle: MaterialStatePropertyAll(textStyleBody),
     );
 
+ButtonStyle get underlineButtonStyle => buttonStyle.copyWith(
+      textStyle: MaterialStatePropertyAll(
+        textStyleBody.copyWith(decoration: TextDecoration.underline),
+      ),
+    );
+
 ButtonStyle controlsButtonStyle(bool rounded) => ButtonStyle(
       shape: MaterialStatePropertyAll(
         RoundedRectangleBorder(

@@ -22,54 +22,57 @@ class FavouritesRow extends StatelessWidget {
     // final bool isFull = episodesVm.isOfSize(favLength);
     final selectedPod = episodesVm.tempPodcast; // TODO: fix later
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-            HomePodcastItem(
-              icon: Icons.headphones,
-              selected: episodesVm.tempPodcast == null,
-              onTap: () {
-                episodesVm.showListening(homeVm);
-              },
-            ),
-            // HomePodcastItem(
-            //   icon: Icons.home_filled,
-            //   selected: isFull,
-            //   onTap: () {
-            //     episodesVm.filterEpisodes(homeVm.favourites);
-            //   },
-            // ),
-          ] +
-          homeVm.favourites
-              // .where((e) => !episodesVm.isInFilter(e))
-              .mapIndexed((i, p) {
-            final isSelected = selectedPod?.url == p.url;
-            return HomePodcastItem(
-              image: p.image,
-              selected: isSelected,
-              onTap: () async {
-                if (!isSelected) {
-                  await episodesVm.initPodcast(p, maxItems: 30);
-                  episodesVm.update();
-                } else {
+    return Padding(
+      padding: const EdgeInsets.all(4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+              // HomePodcastItem(
+              //   icon: Icons.headphones,
+              //   selected: episodesVm.tempPodcast == null,
+              //   onTap: () {
+              //     episodesVm.showListening(homeVm);
+              //   },
+              // ),
+              // HomePodcastItem(
+              //   icon: Icons.playlist_play,
+              //   selected: episodesVm.tempPodcast == null,
+              //   onTap: () {
+              //     episodesVm.showListening(homeVm);
+              //   },
+              // ),
+            ] +
+            homeVm.favourites
+                // .where((e) => !episodesVm.isInFilter(e))
+                .mapIndexed((i, p) {
+              final isSelected = selectedPod?.url == p.url;
+              return HomePodcastItem(
+                image: p.image,
+                selected: isSelected,
+                // onTap: () async {
+                //   if (!isSelected) {
+                //     await episodesVm.initPodcast(p, maxItems: 30);
+                //     episodesVm.update();
+                //   } else {
+                //     HapticFeedback.lightImpact();
+                //     return Navigator.pushNamed(
+                //       context,
+                //       PodcastPage.route,
+                //       arguments: selectedPod,
+                //     );
+                //   }
+                // },
+                onTap: () {
                   HapticFeedback.lightImpact();
                   return Navigator.pushNamed(
                     context,
                     PodcastPage.route,
-                    arguments: selectedPod,
+                    arguments: isSelected ? selectedPod : p,
                   );
-                }
-              },
-              onLongTap: () {
-                HapticFeedback.lightImpact();
-                return Navigator.pushNamed(
-                  context,
-                  PodcastPage.route,
-                  arguments: isSelected ? selectedPod : p,
-                );
-              },
-            );
-          }).toList(),
+                },
+              );
+            }).toList(),
+      ),
     );
   }
 }

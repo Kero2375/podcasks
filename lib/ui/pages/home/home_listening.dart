@@ -12,46 +12,30 @@ import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/home/favourites_row.dart';
 import 'package:podcasks/ui/vms/episodes_home_vm.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
+import 'package:podcasks/ui/vms/listening_vm.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
 
-class HomeContentPage extends ConsumerStatefulWidget {
-  const HomeContentPage({super.key});
+class ListeningPage extends ConsumerStatefulWidget {
+  const ListeningPage({super.key});
 
   @override
-  ConsumerState<HomeContentPage> createState() => _HomeContentPageState();
+  ConsumerState<ListeningPage> createState() => _HomeContentPageState();
 }
 
-class _HomeContentPageState extends ConsumerState<HomeContentPage> {
-  void _initEpisodeList(
-      EpisodesHomeViewmodel episodesVm, HomeViewmodel homeVm) {
+class _HomeContentPageState extends ConsumerState<ListeningPage> {
+  void _initEpisodeList(ListeningVm episodesVm, HomeViewmodel homeVm) {
     final List<(MEpisode, MPodcast)>? saved = homeVm.saved;
-    final favourites = homeVm.favourites;
-    final list = <(MEpisode, MPodcast)>[];
-
-    for (MPodcast p in favourites) {
-      list.addAll(
-        p.episodes
-            .whereNot(
-                ((e) => saved?.firstWhereOrNull((e1) => e1.$1 == e) != null))
-            .map((e) => (e, p)),
-      );
-      list.sort((a, b) => b.$1.publicationDate != null
-          ? a.$1.publicationDate?.compareTo(b.$1.publicationDate!) ?? 0
-          : 0);
-    }
-
-    if (saved != null) {
-      list.addAll(saved);
-    }
-
-    episodesVm.init(list.reversed.toList(), maxItems: 30);
+    episodesVm.init(
+      saved?.map((e) => (e.$1, e.$2)).toList(),
+      maxItems: 30,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final homeVm = ref.watch(homeViewmodel);
     // final playerVm = ref.read(playerViewmodel);
-    final episodesVm = ref.watch(episodesHomeViewmodel);
+    final episodesVm = ref.watch(listeningVm);
     final dm = ref.watch(downloadManager);
 
     homeVm.addListener(() {
@@ -59,22 +43,15 @@ class _HomeContentPageState extends ConsumerState<HomeContentPage> {
     });
 
     if (episodesVm.displayingEpisodes.isEmpty) {
+      // TODO: check
       // episodesVm.filterEpisodes([]);
       _initEpisodeList(episodesVm, homeVm);
     }
 
-    return Column(
-      children: [
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: FavouritesRow(episodesVm: episodesVm, homeVm: homeVm),
-        ),
-        Expanded(child: _episodesList(episodesVm, dm)),
-      ],
-    );
+    return _episodesList(episodesVm, dm);
   }
 
-  Widget _episodesList(EpisodesHomeViewmodel episodesVm, DownloadManager dm) =>
+  Widget _episodesList(ListeningVm episodesVm, DownloadManager dm) =>
       ListView.builder(
         physics: const ScrollPhysics(),
         scrollDirection: Axis.vertical,
