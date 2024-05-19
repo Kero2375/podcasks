@@ -48,6 +48,7 @@ class _HomeEpisodeItemState extends ConsumerState<EpisodeItem> {
 
   @override
   Widget build(BuildContext context) {
+    final playerVm = ref.watch(playerViewmodel);
     final (episodeState, remaining) = episodesVm.getEpisodeState(episode);
 
     return InkWell(

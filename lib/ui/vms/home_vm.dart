@@ -1,5 +1,3 @@
-import 'dart:isolate';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -13,7 +11,6 @@ import 'package:podcasks/data/entities/queue/queue_track.dart';
 import 'package:podcasks/data/entities/save/save_track.dart';
 import 'package:podcasks/repository/history_repo.dart';
 import 'package:podcasks/ui/vms/episodes_home_vm.dart';
-import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/repository/favourites_repo.dart';
 import 'package:podcasks/ui/vms/vm.dart';
@@ -60,7 +57,7 @@ class HomeViewmodel extends Vm {
   }
 
   Future<void> setFavourite(MPodcast podcast, bool setFavourite) async {
-    // loading();
+    loading();
     if (podcast.url != null) {
       if (setFavourite) {
         await _favRepo.addToFavourite(podcast);
@@ -79,20 +76,24 @@ class HomeViewmodel extends Vm {
   }
 
   Future<(MEpisode, MPodcast, Duration)?> getLastSaved() async {
+    loading();
     // final ep = await _lastPlayingRepo.getLastPlaying();
     final (ep, pod) = await _historyRepo.getLast() ?? (null, null);
     if (ep != null && pod != null) {
       final (rem, _) = _historyRepo.getPosition(ep) ?? (null, null);
       if (rem != null) {
+        success();
         return (ep, pod, rem);
       }
     }
+    success();
     return null;
   }
 
   Future<void> fetchListening() async {
     final List<(MEpisode, MPodcast)> list = await _historyRepo.getAllSaved();
     _saved = list;
+    update();
   }
 
   void setPage(Pages newPage) {

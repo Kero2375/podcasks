@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
@@ -17,6 +18,7 @@ AppBar mainAppBar(
   Widget? actions,
   Widget? leading,
   Function()? updateHome,
+  Function()? startLoading,
 }) {
   return AppBar(
     leading: leading,
@@ -31,7 +33,8 @@ AppBar mainAppBar(
       actions ??
           PopupMenuButton(
             icon: const Icon(Icons.more_vert),
-            onSelected: (item) => _checkValue(context, item, updateHome),
+            onSelected: (item) =>
+                _checkValue(context, item, updateHome, startLoading),
             itemBuilder: (BuildContext context) => [
               // popupMenuItem(
               //   value: 0,
@@ -42,6 +45,11 @@ AppBar mainAppBar(
                 value: 1,
                 icon: const Icon(Icons.upload_file_outlined),
                 text: context.l10n!.importOpml,
+              ),
+              popupMenuItem(
+                value: 2,
+                icon: const Icon(Icons.sync),
+                text: 'Sync',
               ),
               // popupMenuItem(
               //   value: 2,
@@ -61,31 +69,51 @@ AppBar mainAppBar(
   );
 }
 
-_checkValue(BuildContext context, int item, Function()? updateHome) {
+_checkValue(BuildContext context, int item, Function()? updateHome,
+    Function()? startLoading) {
   switch (item) {
     case 0:
       Navigator.pushNamed(context, SearchPage.route);
       break;
     case 1:
-      _pickFile(context, updateHome);
+      _pickFile(context, updateHome, startLoading);
+      break;
+    case 2:
+      updateHome?.call();
       break;
   }
 }
 
-_pickFile(BuildContext context, Function()? updateHome) async {
-  FilePickerResult? result = await FilePicker.platform.pickFiles();
+_pickFile(BuildContext context, Function()? updateHome,
+    Function()? startLoading) async {
+  FilePickerResult? result = await FilePicker.platform.pickFiles(
+    allowedExtensions: ['opml', 'OPML', 'xml', 'XML'],
+    type: FileType.custom,
+  );
 
   if (result != null) {
     File file = File(result.files.single.path!);
+    final favRepo = locator.get<FavouriteRepo>();
     final xmlString = await file.readAsString();
     final document = XmlDocument.parse(xmlString);
+    final fav = await favRepo.getAllFavourites();
     final feeds = document
         .findAllElements('outline')
         .where((e) => e.getAttribute('text') != 'feeds')
-        .map((e) => '${e.getAttribute('xmlUrl')}');
+        .map((e) => '${e.getAttribute('xmlUrl')}')
+        .where((e) => !fav.map((e) => e.url).contains(e))
+        .toList();
 
     if (!context.mounted) return;
 
+    if (feeds.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+        "Nothing new to import",
+        style: textStyleBody,
+      )));
+      return;
+    }
     showDialog(
       context: context,
       builder: (context) => ConfirmDialog(
@@ -94,7 +122,7 @@ _pickFile(BuildContext context, Function()? updateHome) async {
         actionText: context.l10n!.import,
         actionIcon: const Icon(Icons.upload_file_outlined),
         onTap: () async {
-          final favRepo = locator.get<FavouriteRepo>();
+          startLoading?.call();
           for (var item in feeds) {
             bool added = await favRepo.addToFavourite(
               await MPodcast.fromUrl(item),

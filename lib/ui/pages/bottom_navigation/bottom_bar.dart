@@ -5,6 +5,7 @@ import 'package:podcasks/ui/pages/bottom_navigation/tab_icon.dart';
 import 'package:podcasks/ui/pages/home/home_page.dart';
 import 'package:podcasks/ui/pages/search/search_page.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
+import 'package:podcasks/ui/vms/listening_vm.dart';
 
 class BottomBar extends ConsumerWidget {
   final Pages selectedPage;
@@ -13,13 +14,11 @@ class BottomBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final homeVm = ref.watch(homeViewmodel);
-
     return BottomNavigationBar(
       elevation: 60,
       selectedLabelStyle: textStyleSmall.copyWith(fontWeight: FontWeight.bold),
       unselectedLabelStyle: textStyleSmall,
-      onTap: (value) => onTabTapped(context, value, homeVm),
+      onTap: (value) => onTabTapped(context, value, ref),
       currentIndex: selectedPage.index,
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
@@ -42,7 +41,9 @@ class BottomBar extends ConsumerWidget {
     );
   }
 
-  void onTabTapped(BuildContext context, int index, HomeViewmodel vm) {
+  void onTabTapped(BuildContext context, int index, WidgetRef ref) {
+    final vm = ref.read(homeViewmodel);
+
     switch (index) {
       case 0:
         vm.setPage(Pages.home);
@@ -53,7 +54,10 @@ class BottomBar extends ConsumerWidget {
         // Navigator.of(context).popAndPushNamed(SearchPage.route);
         break;
       case 2:
+        final lstVm = ref.read(listeningVm);
         vm.setPage(Pages.listening);
+        vm.fetchListening();
+        lstVm.clear();
         // Navigator.of(context).popAndPushNamed(SearchPage.route);
         break;
     }

@@ -3,6 +3,8 @@ import 'package:isar/isar.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/data/entities/save/save_track.dart';
 import 'package:podcasks/data/entities/episode/podcast_episode.dart';
+import 'package:podcasks/locator.dart';
+import 'package:podcasks/repository/favourites_repo.dart';
 import 'package:podcast_search/podcast_search.dart';
 
 abstract class HistoryRepo {
@@ -26,6 +28,8 @@ abstract class HistoryRepo {
 
 class HistoryRepoIsar extends HistoryRepo {
   Isar? get isar => Isar.getInstance();
+  Future<List<MPodcast>> get savedPod async =>
+      await locator.get<FavouriteRepo>().getAllFavourites();
 
   @override
   (Duration, bool)? getPosition(MEpisode episode) {
@@ -51,13 +55,18 @@ class HistoryRepoIsar extends HistoryRepo {
       await isar?.writeTxn(
         () async => await isar?.saveTracks.put(
           SaveTrack(
-            id: id,
-            url: episode.contentUrl,
-            position: position.inSeconds,
-            podcastUrl: podcast.url,
-            finished: finished,
-            dateTime: DateTime.now(),
-          ),
+              id: id,
+              url: episode.contentUrl,
+              title: episode.title,
+              position: position.inSeconds,
+              podcastUrl: podcast.url,
+              finished: finished,
+              dateTime: DateTime.now(),
+              podcast: (await savedPod)
+                          .firstWhereOrNull((p) => p.title == podcast.title) !=
+                      null
+                  ? null
+                  : podcast),
         ),
       );
     }
@@ -76,13 +85,21 @@ class HistoryRepoIsar extends HistoryRepo {
     for (SaveTrack t in track ?? []) {
       if (t.podcastUrl != null && t.url != null) {
         // FIXME
-        final pod = await Podcast.loadFeed(url: t.podcastUrl!); //FIXME?
-        final ep = pod.episodes.firstWhereOrNull((e) => e.contentUrl == t.url);
+        final MPodcast pod =
+            (await savedPod).firstWhereOrNull((p) => p.url == t.podcastUrl) ??
+                t.podcast ??
+                await MPodcast.fromUrl(t.podcastUrl!);
+
+        final ep =
+            pod.episodes.firstWhereOrNull((e) => e.contentUrl == t.url) ??
+                pod.episodes.firstWhereOrNull((e) => e.title == t.title);
+
         if (ep != null) {
-          episodes.add((MEpisode.fromEpisode(ep), MPodcast.fromPodcast(pod)));
+          episodes.add((ep, pod));
         }
       }
     }
+
     return episodes;
   }
 
@@ -121,13 +138,18 @@ class HistoryRepoIsar extends HistoryRepo {
       final id = ep.contentUrl?.hashCode;
       if (id != null) {
         tracks.add(SaveTrack(
-          id: id,
-          url: ep.contentUrl,
-          position: position.inSeconds,
-          podcastUrl: podcast.url,
-          finished: finished,
-          dateTime: now,
-        ));
+            id: id,
+            url: ep.contentUrl,
+            title: ep.title,
+            position: position.inSeconds,
+            podcastUrl: podcast.url,
+            finished: finished,
+            dateTime: now,
+            podcast: (await savedPod)
+                        .firstWhereOrNull((p) => p.title == podcast.title) !=
+                    null
+                ? null
+                : podcast));
       }
     }
 

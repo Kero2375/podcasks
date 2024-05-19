@@ -103,9 +103,8 @@ class _HomePageState extends ConsumerState<HomePage> {
         leading: homeVm.favourites.isNotEmpty
             ? _favouritesButton()
             : const SizedBox.shrink(),
-        updateHome: () async {
-          await homeVm.fetchFavourites();
-        },
+        updateHome: () => _sync(homeVm),
+        startLoading: () => setState(() => _syncing = true),
       ),
       bottomNavigationBar: BottomBar(selectedPage: homeVm.page),
       body: homeVm.state == UiState.loading
@@ -187,38 +186,4 @@ class _HomePageState extends ConsumerState<HomePage> {
   //         const SizedBox(height: BottomPlayer.playerHeight),
   //       ],
   //     );
-
-  // Center _welcomeContent(BuildContext context) {
-  //   return Center(
-  //     child: Padding(
-  //       padding: const EdgeInsets.only(top: 64),
-  //       child: Column(
-  //         children: [
-  //           Text(context.l10n!.welcome, style: textStyleBody),
-  //           Text(context.l10n!.notListeningMessage, style: textStyleBody),
-  //           const SizedBox(height: 8),
-  //           Text(context.l10n!.bohEmoji, style: textStyleBody),
-  //           const SizedBox(height: 8),
-  //           FilledButton(
-  //             onPressed: () {
-  //               Navigator.pushNamed(
-  //                 context,
-  //                 SearchPage.route,
-  //               );
-  //             },
-  //             style: buttonStyle,
-  //             child: Row(
-  //               mainAxisSize: MainAxisSize.min,
-  //               children: [
-  //                 const Icon(Icons.search),
-  //                 const SizedBox(width: 8),
-  //                 Text(context.l10n!.explorePodcasts),
-  //               ],
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
 }

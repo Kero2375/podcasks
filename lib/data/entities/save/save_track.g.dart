@@ -27,18 +27,29 @@ const SaveTrackSchema = CollectionSchema(
       name: r'finished',
       type: IsarType.bool,
     ),
-    r'podcastUrl': PropertySchema(
+    r'podcast': PropertySchema(
       id: 2,
+      name: r'podcast',
+      type: IsarType.object,
+      target: r'MPodcast',
+    ),
+    r'podcastUrl': PropertySchema(
+      id: 3,
       name: r'podcastUrl',
       type: IsarType.string,
     ),
     r'position': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'position',
       type: IsarType.long,
     ),
+    r'title': PropertySchema(
+      id: 5,
+      name: r'title',
+      type: IsarType.string,
+    ),
     r'url': PropertySchema(
-      id: 4,
+      id: 6,
       name: r'url',
       type: IsarType.string,
     )
@@ -50,7 +61,7 @@ const SaveTrackSchema = CollectionSchema(
   idName: r'id',
   indexes: {},
   links: {},
-  embeddedSchemas: {},
+  embeddedSchemas: {r'MPodcast': MPodcastSchema, r'MEpisode': MEpisodeSchema},
   getId: _saveTrackGetId,
   getLinks: _saveTrackGetLinks,
   attach: _saveTrackAttach,
@@ -64,7 +75,20 @@ int _saveTrackEstimateSize(
 ) {
   var bytesCount = offsets.last;
   {
+    final value = object.podcast;
+    if (value != null) {
+      bytesCount += 3 +
+          MPodcastSchema.estimateSize(value, allOffsets[MPodcast]!, allOffsets);
+    }
+  }
+  {
     final value = object.podcastUrl;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.title;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
     }
@@ -86,9 +110,16 @@ void _saveTrackSerialize(
 ) {
   writer.writeDateTime(offsets[0], object.dateTime);
   writer.writeBool(offsets[1], object.finished);
-  writer.writeString(offsets[2], object.podcastUrl);
-  writer.writeLong(offsets[3], object.position);
-  writer.writeString(offsets[4], object.url);
+  writer.writeObject<MPodcast>(
+    offsets[2],
+    allOffsets,
+    MPodcastSchema.serialize,
+    object.podcast,
+  );
+  writer.writeString(offsets[3], object.podcastUrl);
+  writer.writeLong(offsets[4], object.position);
+  writer.writeString(offsets[5], object.title);
+  writer.writeString(offsets[6], object.url);
 }
 
 SaveTrack _saveTrackDeserialize(
@@ -101,9 +132,15 @@ SaveTrack _saveTrackDeserialize(
     dateTime: reader.readDateTime(offsets[0]),
     finished: reader.readBoolOrNull(offsets[1]),
     id: id,
-    podcastUrl: reader.readStringOrNull(offsets[2]),
-    position: reader.readLongOrNull(offsets[3]),
-    url: reader.readStringOrNull(offsets[4]),
+    podcast: reader.readObjectOrNull<MPodcast>(
+      offsets[2],
+      MPodcastSchema.deserialize,
+      allOffsets,
+    ),
+    podcastUrl: reader.readStringOrNull(offsets[3]),
+    position: reader.readLongOrNull(offsets[4]),
+    title: reader.readStringOrNull(offsets[5]),
+    url: reader.readStringOrNull(offsets[6]),
   );
   return object;
 }
@@ -120,10 +157,18 @@ P _saveTrackDeserializeProp<P>(
     case 1:
       return (reader.readBoolOrNull(offset)) as P;
     case 2:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readObjectOrNull<MPodcast>(
+        offset,
+        MPodcastSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 3:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 4:
+      return (reader.readLongOrNull(offset)) as P;
+    case 5:
+      return (reader.readStringOrNull(offset)) as P;
+    case 6:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -354,6 +399,22 @@ extension SaveTrackQueryFilter
     });
   }
 
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> podcastIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'podcast',
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> podcastIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'podcast',
+      ));
+    });
+  }
+
   QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> podcastUrlIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -575,6 +636,152 @@ extension SaveTrackQueryFilter
     });
   }
 
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> titleIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'title',
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> titleIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'title',
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> titleEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'title',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> titleGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'title',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> titleLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'title',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> titleBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'title',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> titleStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'title',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> titleEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'title',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> titleContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'title',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> titleMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'title',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> titleIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'title',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> titleIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'title',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> urlIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -723,7 +930,14 @@ extension SaveTrackQueryFilter
 }
 
 extension SaveTrackQueryObject
-    on QueryBuilder<SaveTrack, SaveTrack, QFilterCondition> {}
+    on QueryBuilder<SaveTrack, SaveTrack, QFilterCondition> {
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> podcast(
+      FilterQuery<MPodcast> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'podcast');
+    });
+  }
+}
 
 extension SaveTrackQueryLinks
     on QueryBuilder<SaveTrack, SaveTrack, QFilterCondition> {}
@@ -774,6 +988,18 @@ extension SaveTrackQuerySortBy on QueryBuilder<SaveTrack, SaveTrack, QSortBy> {
   QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> sortByPositionDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'position', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> sortByTitle() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'title', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> sortByTitleDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'title', Sort.desc);
     });
   }
 
@@ -852,6 +1078,18 @@ extension SaveTrackQuerySortThenBy
     });
   }
 
+  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> thenByTitle() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'title', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> thenByTitleDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'title', Sort.desc);
+    });
+  }
+
   QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> thenByUrl() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'url', Sort.asc);
@@ -892,6 +1130,13 @@ extension SaveTrackQueryWhereDistinct
     });
   }
 
+  QueryBuilder<SaveTrack, SaveTrack, QDistinct> distinctByTitle(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'title', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<SaveTrack, SaveTrack, QDistinct> distinctByUrl(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -920,6 +1165,12 @@ extension SaveTrackQueryProperty
     });
   }
 
+  QueryBuilder<SaveTrack, MPodcast?, QQueryOperations> podcastProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'podcast');
+    });
+  }
+
   QueryBuilder<SaveTrack, String?, QQueryOperations> podcastUrlProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'podcastUrl');
@@ -929,6 +1180,12 @@ extension SaveTrackQueryProperty
   QueryBuilder<SaveTrack, int?, QQueryOperations> positionProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'position');
+    });
+  }
+
+  QueryBuilder<SaveTrack, String?, QQueryOperations> titleProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'title');
     });
   }
 

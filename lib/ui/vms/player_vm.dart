@@ -25,7 +25,7 @@ class PlayerViewmodel extends Vm {
 
   final int _scrollOffset = 300;
 
-  MEpisode? get playing => _playing;
+MEpisode? get playing => _playing;
   MEpisode? _playing;
 
   Duration get position => audioHandler?.position ?? Duration.zero;

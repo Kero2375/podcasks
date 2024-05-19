@@ -47,6 +47,10 @@ class ListViewmodel extends Vm {
     _controller.addListener(loadMoreData);
   }
 
+  void clear() {
+    _displayingEpisodes = [];
+  }
+
   @override
   void dispose() {
     _controller.removeListener(loadMoreData);
