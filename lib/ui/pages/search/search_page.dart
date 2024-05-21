@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/ui/common/themes.dart';
-import 'package:podcasks/ui/pages/bottom_navigation/bottom_bar.dart';
 import 'package:podcasks/ui/pages/search/search_text_field.dart';
 import 'package:podcasks/ui/pages/search/search_list.dart';
 import 'package:podcasks/ui/vms/search_vm.dart';

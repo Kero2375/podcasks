@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/bottom_navigation/tab_icon.dart';
-import 'package:podcasks/ui/pages/home/home_page.dart';
-import 'package:podcasks/ui/pages/search/search_page.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/ui/vms/listening_vm.dart';
 

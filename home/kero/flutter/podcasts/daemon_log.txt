@@ -24,3 +24,6 @@ Sun May 19 2024 [10:45:15 GMT+0200 (Central European Summer Time)] Log file star
 [10:45:17 AM] [FlutterDaemon] [Info] <== [{"id":"2","result":[]}]
 [10:45:17 AM] [FlutterDaemon] [Info] <== [{"id":"3","result":{"platforms":["linux","macos","windows","ios","android","web"]}}]
 [10:45:21 AM] [FlutterDaemon] [Info] <== [{"event":"device.added","params":{"id":"linux","name":"Linux","platform":"linux-x64","emulator":false,"category":"desktop","platformType":"linux","ephemeral":false,"emulatorId":null,"sdk":"Manjaro Linux 6.5.13-7-MANJARO","capabilities":{"hotReload":true,"hotRestart":true,"screenshot":false,"fastStart":false,"flutterExit":true,"hardwareRendering":true,"startPaused":true}}}]
+[12:15:54 PM] [FlutterDaemon] [Info] ==> [{"id":"4","method":"daemon.shutdown"}]
+[12:15:55 PM] [FlutterDaemon] [Info] <== [{"id":"4"}]
+Sun May 19 2024 [12:15:55 GMT+0200 (Central European Summer Time)] Log file ended

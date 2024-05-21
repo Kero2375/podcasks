@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
-import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/bottom_player.dart';
-import 'package:podcasks/ui/common/confirm_dialog.dart';
 import 'package:podcasks/ui/common/fav_button.dart';
-import 'package:podcasks/ui/common/popup_menu_item.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/common/episode_item.dart';
 import 'package:podcasks/ui/pages/podcast/more_button.dart';
@@ -18,7 +14,6 @@ import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/ui/vms/podcast_vm.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcasks/utils.dart';
-import 'package:podcast_search/podcast_search.dart';
 
 class PodcastPage extends ConsumerStatefulWidget {
   static const route = '/podcast_page';

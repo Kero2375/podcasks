@@ -4,8 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/episode_play_button.dart';
-import 'package:podcasks/ui/vms/vm.dart';
-import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/bottom_player.dart';
@@ -108,7 +106,7 @@ class EpisodePage extends ConsumerWidget {
               episode?.publicationDate?.toDate() ?? ''),
           (episode?.duration != null)
               ? _iconInfo(context, Icons.hourglass_top,
-                  episode?.duration?.toTime() ?? '')
+                  episode?.duration.toTime() ?? '')
               : const SizedBox.shrink()
         ],
       ),

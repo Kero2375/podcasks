@@ -13,7 +13,6 @@ import 'package:podcasks/ui/pages/episode_page.dart';
 import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
-import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcasks/utils.dart';
 
 class EpisodeItem extends ConsumerStatefulWidget {
@@ -48,7 +47,7 @@ class _HomeEpisodeItemState extends ConsumerState<EpisodeItem> {
 
   @override
   Widget build(BuildContext context) {
-    final playerVm = ref.watch(playerViewmodel);
+    ref.watch(playerViewmodel);
     final (episodeState, remaining) = episodesVm.getEpisodeState(episode);
 
     return InkWell(

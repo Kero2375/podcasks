@@ -5,7 +5,6 @@ import 'package:podcasks/data/entities/save/save_track.dart';
 import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/repository/favourites_repo.dart';
-import 'package:podcast_search/podcast_search.dart';
 
 abstract class HistoryRepo {
   Future<void> setPosition(

@@ -10,7 +10,6 @@ import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcasks/utils.dart';
-import 'package:podcast_search/podcast_search.dart';
 
 final downloadManager = ChangeNotifierProvider((ref) => DownloadManager());
 

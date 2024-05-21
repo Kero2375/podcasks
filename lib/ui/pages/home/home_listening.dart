@@ -7,7 +7,6 @@ import 'package:podcasks/ui/common/episode_item.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/ui/vms/listening_vm.dart';
-import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcasks/utils.dart';
 
 class ListeningPage extends ConsumerStatefulWidget {

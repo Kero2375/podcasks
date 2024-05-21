@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/utils.dart';
-import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/ui/vms/vm.dart';

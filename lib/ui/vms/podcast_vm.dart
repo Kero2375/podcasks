@@ -4,7 +4,6 @@ import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/ui/common/debouncer.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
-import 'package:podcast_search/podcast_search.dart';
 
 final podcastViewmodel = ChangeNotifierProvider((ref) => PodcastViewmodel());
 

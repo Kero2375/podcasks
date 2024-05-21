@@ -19,7 +19,6 @@ import 'package:podcasks/ui/pages/playing/playing_page.dart';
 import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 import 'package:podcasks/ui/pages/search/search_page.dart';
 import 'package:podcasks/ui/vms/theme_vm.dart';
-import 'package:podcast_search/podcast_search.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<void> main() async {

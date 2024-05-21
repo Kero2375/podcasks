@@ -12,7 +12,6 @@ import 'package:podcasks/ui/pages/queue/queue_button.dart';
 import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcasks/utils.dart';
-import 'package:podcast_search/podcast_search.dart';
 
 class PlayingPage extends ConsumerStatefulWidget {
   static const route = '/playing_page';
