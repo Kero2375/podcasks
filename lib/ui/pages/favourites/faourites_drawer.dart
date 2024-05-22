@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
-import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/favourites/podcast_list.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/utils.dart';
