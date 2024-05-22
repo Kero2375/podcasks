@@ -13,6 +13,8 @@
   "started": "Iniziato",
   "welcome": "ciao!",
   "notListeningMessage": "non stai ancora ascoltando nulla",
+  "notFavouritesMessage": "non hai ancora preferiti",
+  "favourites": "Preferiti",
   "bohEmoji": "¯\\_(ツ)_/¯",
   "explorePodcasts": "esplora podcast",
   "markAllFinished": "Segna tutti come ascoltati",

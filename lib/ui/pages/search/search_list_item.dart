@@ -32,8 +32,7 @@ class SearchListItem extends ConsumerWidget {
         } else {
           await vm.fetchPodcast(item.feedUrl);
           nav.pushNamed(PodcastPage.route,
-              arguments:
-                  MPodcast.fromPodcast(vm.selected)); // TODO: fix loading
+              arguments: MPodcast.fromPodcast(vm.selected));
         }
         vm.success();
       },
@@ -91,7 +90,7 @@ class SearchListItem extends ConsumerWidget {
                 '#${index + 1}',
                 style: textStyleTitle.copyWith(
                     color:
-                        Theme.of(context).colorScheme.primary.withOpacity(.3)),
+                        Theme.of(context).colorScheme.primary.withOpacity(.2)),
               ),
             ],
           ],

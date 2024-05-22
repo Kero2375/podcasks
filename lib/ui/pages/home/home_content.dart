@@ -105,7 +105,7 @@ class _HomeContentPageState extends ConsumerState<HomeContentPage> {
         child: Column(
           children: [
             Text(context.l10n!.welcome, style: textStyleBody),
-            Text(context.l10n!.notListeningMessage, style: textStyleBody),
+            Text(context.l10n!.notFavouritesMessage, style: textStyleBody),
             const SizedBox(height: 8),
             Text(context.l10n!.bohEmoji, style: textStyleBody),
             const SizedBox(height: 8),

@@ -7,7 +7,9 @@ import 'package:podcasks/repository/favourites_repo.dart';
 import 'package:podcasks/ui/common/confirm_dialog.dart';
 import 'package:podcasks/ui/common/popup_menu_item.dart';
 import 'package:podcasks/ui/common/themes.dart';
+import 'package:podcasks/ui/pages/favourites/faourites_drawer.dart';
 import 'package:podcasks/ui/pages/search/search_page.dart';
+import 'package:podcasks/ui/pages/settings/settings_page.dart';
 import 'package:podcasks/utils.dart';
 import 'package:xml/xml.dart';
 
@@ -21,12 +23,29 @@ AppBar mainAppBar(
 }) {
   return AppBar(
     leading: leading,
-    title: Center(
-      child: Text(
-        title ?? '',
-        overflow: TextOverflow.ellipsis,
-        style: textStyleTitle,
-      ),
+    title: Row(
+      children: [
+        if (title == 'Podcasks') ...[
+          ColorFiltered(
+            colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.onBackground, BlendMode.srcIn),
+            child: Image.asset(
+              'assets/icon/icon_foreground.png',
+              width: 50,
+              height: 50,
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
+        Flexible(
+          flex: 1,
+          child: Text(
+            title ?? '',
+            overflow: TextOverflow.ellipsis,
+            style: textStyleTitle,
+          ),
+        ),
+      ],
     ),
     actions: [
       actions ??
@@ -41,17 +60,22 @@ AppBar mainAppBar(
               //   text: context.l10n!.search,
               // ),
               popupMenuItem(
-                value: 1,
-                icon: const Icon(Icons.upload_file_outlined),
-                text: context.l10n!.importOpml,
-              ),
-              popupMenuItem(
                 value: 2,
                 icon: const Icon(Icons.sync),
                 text: 'Sync',
               ),
+              popupMenuItem(
+                value: 4,
+                icon: const Icon(Icons.favorite_outline),
+                text: context.l10n!.favourites,
+              ),
+              popupMenuItem(
+                value: 1,
+                icon: const Icon(Icons.upload_file_outlined),
+                text: context.l10n!.importOpml,
+              ),
               // popupMenuItem(
-              //   value: 2,
+              //   value: 3,
               //   icon: const Icon(Icons.tune),
               //   text: 'Settings',
               // ),
@@ -79,6 +103,12 @@ _checkValue(BuildContext context, int item, Function()? updateHome,
       break;
     case 2:
       updateHome?.call();
+      break;
+    case 3:
+      Navigator.pushNamed(context, SettingsPage.route);
+      break;
+    case 4:
+      Navigator.pushNamed(context, FavouritesPage.route);
       break;
   }
 }
@@ -126,7 +156,6 @@ _pickFile(BuildContext context, Function()? updateHome,
             bool added = await favRepo.addToFavourite(
               await MPodcast.fromUrl(item),
             );
-            // TODO: check
             if (added && context.mounted) {
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text("Added $item")));

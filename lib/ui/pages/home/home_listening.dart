@@ -29,7 +29,7 @@ class _HomeContentPageState extends ConsumerState<ListeningPage> {
   @override
   Widget build(BuildContext context) {
     final homeVm = ref.watch(homeViewmodel);
-    final vm = ref.watch(listeningVm);
+    final vm = ref.watch(listeningViewmodel);
     final dm = ref.watch(downloadManager);
 
     homeVm.addListener(() {
@@ -37,7 +37,6 @@ class _HomeContentPageState extends ConsumerState<ListeningPage> {
     });
 
     if (vm.displayingEpisodes.isEmpty) {
-      // TODO: check
       // episodesVm.filterEpisodes([]);
       _initEpisodeList(vm, homeVm);
     }
@@ -52,7 +51,7 @@ class _HomeContentPageState extends ConsumerState<ListeningPage> {
         physics: const ScrollPhysics(),
         scrollDirection: Axis.vertical,
         controller: episodesVm.controller,
-        shrinkWrap: true,
+        shrinkWrap: false,
         itemCount: episodesVm.displayingEpisodes.length,
         itemBuilder: (context, i) {
           return EpisodeItem(

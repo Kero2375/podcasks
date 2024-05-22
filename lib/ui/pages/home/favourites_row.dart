@@ -18,9 +18,7 @@ class FavouritesRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final int favLength = homeVm.favourites.length;
-    // final bool isFull = episodesVm.isOfSize(favLength);
-    final selectedPod = episodesVm.tempPodcast; // TODO: fix later
+    final selectedPod = episodesVm.tempPodcast;
 
     return Padding(
       padding: const EdgeInsets.all(4),
@@ -47,7 +45,7 @@ class FavouritesRow extends StatelessWidget {
                 .mapIndexed((i, p) {
               final isSelected = selectedPod?.url == p.url;
               return HomePodcastItem(
-                image: p.image,
+                podcast: p,
                 selected: isSelected,
                 // onTap: () async {
                 //   if (!isSelected) {

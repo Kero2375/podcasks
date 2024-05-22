@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/bottom_navigation/tab_icon.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
-import 'package:podcasks/ui/vms/listening_vm.dart';
 
 class BottomBar extends ConsumerWidget {
   final Pages selectedPage;
@@ -21,18 +20,23 @@ class BottomBar extends ConsumerWidget {
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: TabIcon(
-              icon: Icons.home_filled, selected: selectedPage == Pages.home),
+            icon: Icons.home_filled,
+            selected: selectedPage == Pages.home,
+          ),
           label: 'home',
         ),
         BottomNavigationBarItem(
           icon: TabIcon(
-              icon: Icons.search, selected: selectedPage == Pages.search),
+            icon: Icons.search,
+            selected: selectedPage == Pages.search,
+          ),
           label: 'explore',
         ),
         BottomNavigationBarItem(
           icon: TabIcon(
-              icon: Icons.headphones,
-              selected: selectedPage == Pages.listening),
+            icon: Icons.queue_music,
+            selected: selectedPage == Pages.listening,
+          ),
           label: 'listening',
         ),
       ],
@@ -52,24 +56,13 @@ class BottomBar extends ConsumerWidget {
         // Navigator.of(context).popAndPushNamed(SearchPage.route);
         break;
       case 2:
-        final lstVm = ref.read(listeningVm);
+        // final lstVm = ref.read(listeningViewmodel);
         vm.setPage(Pages.listening);
-        vm.fetchListening();
-        lstVm.clear();
+        // vm.fetchListening();
+        // lstVm.clear();
         // Navigator.of(context).popAndPushNamed(SearchPage.route);
         break;
     }
   }
 
-  void _goTo(BuildContext context, String route) {
-    Navigator.pushReplacementNamed(
-      context,
-      route,
-      // PageRouteBuilder(
-      //   pageBuilder: (context, animation1, animation2) => Page1(),
-      //   transitionDuration: Duration.zero,
-      //   reverseTransitionDuration: Duration.zero,
-      // ),
-    );
-  }
 }

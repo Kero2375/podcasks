@@ -14,10 +14,12 @@ import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/manager/audio_handler.dart';
 import 'package:podcasks/ui/pages/episode_page.dart';
+import 'package:podcasks/ui/pages/favourites/faourites_drawer.dart';
 import 'package:podcasks/ui/pages/home/home_page.dart';
 import 'package:podcasks/ui/pages/playing/playing_page.dart';
 import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 import 'package:podcasks/ui/pages/search/search_page.dart';
+import 'package:podcasks/ui/pages/settings/settings_page.dart';
 import 'package:podcasks/ui/vms/theme_vm.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -72,6 +74,8 @@ class MyApp extends ConsumerWidget {
           HomePage.route: (context) => const HomePage(),
           SearchPage.route: (context) => const SearchPage(),
           PlayingPage.route: (context) => const PlayingPage(),
+          SettingsPage.route: (context) => const SettingsPage(),
+          FavouritesPage.route: (context) => const FavouritesPage(),
           // PodcastPage.route: (context) => const PodcastPage(),
         },
         onGenerateRoute: (settings) {

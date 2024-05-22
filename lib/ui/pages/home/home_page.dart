@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/bottom_player.dart';
 import 'package:podcasks/ui/pages/bottom_navigation/bottom_bar.dart';
-import 'package:podcasks/ui/pages/favourites/faourites_drawer.dart';
 import 'package:podcasks/ui/pages/home/home_content.dart';
 import 'package:podcasks/ui/pages/home/home_listening.dart';
 import 'package:podcasks/ui/pages/search/search_page.dart';
 import 'package:podcasks/ui/vms/episodes_home_vm.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
+import 'package:podcasks/ui/vms/listening_vm.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcasks/utils.dart';
@@ -51,82 +50,75 @@ class _HomePageState extends ConsumerState<HomePage> {
     }
   }
 
-  // void _initEpisodeList(
-  //     EpisodesHomeViewmodel episodesVm, HomeViewmodel homeVm) {
-  //   final List<PodcastEpisode>? saved = homeVm.saved;
-  //   // final favourites = homeVm.favourites;
-  //   final list = <PodcastEpisode>[];
-
-  //   if (saved != null) {
-  //     list.addAll(saved);
-  //   }
-
-  //   // // FIXME: get episodes?
-  //   // list.addAll(favourites
-  //   //     .map(
-  //   //       (p) => p.episodes.map(
-  //   //         (e) => PodcastEpisode.fromEpisode(e, podcast: p),
-  //   //       ),
-  //   //     )
-  //   //     .flattened);
-
-  //   episodesVm.init(list, maxItems: 30);
-  // }
-
   @override
   Widget build(BuildContext context) {
     final homeVm = ref.watch(homeViewmodel);
     final playerVm = ref.read(playerViewmodel);
+    final episodesVm = ref.read(episodesHomeViewmodel);
+    final listeningVm = ref.read(listeningViewmodel);
 
-    _sync(HomeViewmodel homeVm) async {
+    sync(HomeViewmodel homeVm) async {
       setState(() => _syncing = true);
       await homeVm.syncFavourites();
-      // await homeVm.fetchFavourites();
-      // await homeVm.fetchListening();
-      // episodesVm.initEpisodesList();
-      // await episodesVm.update();
-      // await homeVm.update();
+      await homeVm.fetchFavourites();
+      await homeVm.fetchListening();
+      episodesVm.initEpisodesList();
+      await episodesVm.update();
+      listeningVm.initEpisodesList();
+      await listeningVm.update();
+      await homeVm.update();
       setState(() => _syncing = false);
     }
+
+    final content = Column(
+      children: [
+        if (_syncing) const LinearProgressIndicator(minHeight: 2),
+        Expanded(
+          child: switch (homeVm.page) {
+            Pages.home => const HomeContentPage(),
+            Pages.search => const SearchPage(),
+            Pages.listening => const ListeningPage(),
+            Pages.favourites => const SizedBox.shrink(),
+          },
+        ),
+        if (playerVm.playing != null)
+          const SizedBox(
+            height: BottomPlayer.playerHeight,
+          ),
+      ],
+    );
 
     return Scaffold(
       appBar: mainAppBar(
         context,
         title: context.l10n!.appTitle,
-        leading: homeVm.favourites.isNotEmpty
-            ? _favouritesButton()
-            : const SizedBox.shrink(),
-        updateHome: () => _sync(homeVm),
+        updateHome: () => sync(homeVm),
         startLoading: () => setState(() => _syncing = true),
       ),
       bottomNavigationBar: BottomBar(selectedPage: homeVm.page),
       body: homeVm.state == UiState.loading
           ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator.adaptive(
-              onRefresh: () async {
-                _sync(homeVm);
-                await Future.delayed(const Duration(seconds: 2));
-              },
-              child: Column(
-                children: [
-                  if (_syncing) const LinearProgressIndicator(minHeight: 2),
-                  Expanded(
-                    child: switch (homeVm.page) {
-                      Pages.home => const HomeContentPage(),
-                      Pages.search => const SearchPage(),
-                      Pages.listening => const ListeningPage(),
-                      Pages.favourites => const SizedBox.shrink(),
-                    },
-                  ),
-                  if (playerVm.playing != null)
-                    const SizedBox(
-                      height: BottomPlayer.playerHeight,
-                    ),
-                ],
-              ),
-            ),
+          : homeVm.page == Pages.search
+              ? content
+              : RefreshIndicator(
+                  onRefresh: () async {
+                    switch (homeVm.page) {
+                      case Pages.listening:
+                        final lstVm = ref.read(listeningViewmodel);
+                        await homeVm.fetchListening();
+                        lstVm.clear();
+                        await lstVm.init(homeVm.saved);
+                        break;
+                      default:
+                        sync(homeVm);
+                        await Future.delayed(const Duration(seconds: 2));
+                        break;
+                    }
+                  },
+                  child: content,
+                ),
       bottomSheet: const BottomPlayer(),
-      drawer: homeVm.favourites.isNotEmpty ? const FavouritesDrawer() : null,
+      // drawer: homeVm.favourites.isNotEmpty ? const FavouritesDrawer() : null,
     );
   }
 
@@ -140,23 +132,23 @@ class _HomePageState extends ConsumerState<HomePage> {
   //   );
   // }
 
-  Builder _favouritesButton() {
-    return Builder(
-      builder: (context) {
-        return IconButton(
-          onPressed: () {
-            Scaffold.of(context).openDrawer();
-          },
-          icon: SvgPicture.asset(
-            'assets/icon/favorites_list.svg',
-            width: 32,
-            // ignore: deprecated_member_use
-            color: Theme.of(context).colorScheme.secondary,
-          ),
-        );
-      },
-    );
-  }
+  // Builder _favouritesButton() {
+  //   return Builder(
+  //     builder: (context) {
+  //       return IconButton(
+  //         onPressed: () {
+  //           Scaffold.of(context).openDrawer();
+  //         },
+  //         icon: SvgPicture.asset(
+  //           'assets/icon/favorites_list.svg',
+  //           width: 32,
+  //           // ignore: deprecated_member_use
+  //           color: Theme.of(context).colorScheme.secondary,
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   // Column _episodesList(EpisodesHomeViewmodel episodesVm, DownloadManager dm) =>
   //     Column(

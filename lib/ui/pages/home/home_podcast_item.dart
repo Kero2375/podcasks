@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 
 class HomePodcastItem extends StatelessWidget {
-  final String? image;
+  final MPodcast? podcast;
   final IconData? icon;
   final Function() onTap;
   final Function()? onLongTap;
@@ -10,7 +11,7 @@ class HomePodcastItem extends StatelessWidget {
   const HomePodcastItem({
     super.key,
     required this.selected,
-    this.image,
+    this.podcast,
     this.icon,
     required this.onTap,
     this.onLongTap,
@@ -21,7 +22,7 @@ class HomePodcastItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(8),
       child: GestureDetector(
         onTap: onTap,
         onLongPress: onLongTap,
@@ -39,13 +40,23 @@ class HomePodcastItem extends StatelessWidget {
               height: size,
               duration: animationDuration,
               curve: Curves.fastOutSlowIn,
-              child: image != null
-                  ? Image.network(image!)
+              child: podcast?.image != null
+                  ? Image.network(podcast!.image!)
                   : Icon(
                       icon!,
                       color: Theme.of(context).colorScheme.secondary,
                     ),
             ),
+            // const SizedBox(height: 8),
+            // SizedBox(
+            //   width: size,
+            //   child: Text(
+            //     podcast?.title ?? '',
+            //     style: textStyleSmall,
+            //     overflow: TextOverflow.ellipsis,
+            //     maxLines: 1,
+            //   ),
+            // ),
             // Icon(Icons.keyboard_arrow_up),
             // AnimatedContainer(
             //   margin: const EdgeInsets.only(top: 8),

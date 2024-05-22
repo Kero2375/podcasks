@@ -32,8 +32,11 @@ class ListeningTag extends StatelessWidget {
     } else if (playing) {
       return tag(
         Theme.of(context).colorScheme.primary.withOpacity(.8),
-        context.l10n!.listening.toUpperCase(),
-        Icons.headphones,
+        remaining != null
+            ? parseRemainingTime(remaining!)
+            : context.l10n!.started.toUpperCase(),
+        // context.l10n!.listening.toUpperCase(),
+        Icons.music_note_outlined,
       );
     } else if (episodeState case EpisodeState.started) {
       return tag(
@@ -41,7 +44,7 @@ class ListeningTag extends StatelessWidget {
         remaining != null
             ? parseRemainingTime(remaining!)
             : context.l10n!.started.toUpperCase(),
-        Icons.bookmark,
+        Icons.bookmark_outline,
       );
     }
     return const SizedBox.shrink();

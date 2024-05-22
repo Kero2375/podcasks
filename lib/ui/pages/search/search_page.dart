@@ -6,17 +6,12 @@ import 'package:podcasks/ui/pages/search/search_list.dart';
 import 'package:podcasks/ui/vms/search_vm.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcasks/utils.dart';
+import 'package:podcast_search/podcast_search.dart';
 
 class SearchPage extends StatelessWidget {
   static const route = "/search_page";
 
   const SearchPage({super.key});
-
-  /// ------------------ TODO ---------------
-  /// remove scaffold
-  /// move bar on top of list
-  /// fix expanded errors?
-  /// make only list watching searchViewmodel? -> Consumer(...)
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +27,17 @@ class SearchPage extends StatelessWidget {
                   horizontal: 16,
                   vertical: 8,
                 ),
-                child: SearchTextField(
-                  controller: vm.searchBarController,
-                  search: vm.search,
-                  init: vm.init,
-                  hint: context.l10n!.searchOrRssHint,
-                  showFilters: true,
-                  clear: vm.clearText,
+                child: _awaitCountryAndGenre(
+                  vm: vm,
+                  builder: (country, genre) => SearchTextField(
+                    controller: vm.searchBarController,
+                    search: vm.search,
+                    init: vm.init,
+                    hint:
+                        '${context.l10n!.search}: ${country.name.capitalize(context)} (${genre.capitalize(context)})', //context.l10n!.searchOrRssHint,
+                    showFilters: true,
+                    clear: vm.clearText,
+                  ),
                 ),
               );
             },
@@ -68,12 +67,29 @@ class SearchPage extends StatelessWidget {
                               ],
                             ),
                           )
-                        : SearchList(items: vm.searched);
+                        : Expanded(child: SearchList(items: vm.searched));
               },
             ),
           ),
         ],
       ),
+    );
+  }
+
+  FutureBuilder<List<Object>> _awaitCountryAndGenre({
+    required SearchViewmodel vm,
+    required Widget Function(Country, String) builder,
+  }) {
+    return FutureBuilder(
+      future: Future.wait([vm.country, vm.genre]),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const SizedBox.shrink();
+        }
+        final country = snapshot.data![0] as Country;
+        final genre = snapshot.data![1] as String;
+        return builder(country, genre);
+      },
     );
   }
 }

@@ -35,10 +35,10 @@ class SearchTextField extends StatelessWidget {
           focusedBorder: InputBorder.none,
           border: InputBorder.none,
           hintText: hint,
-          // icon: Icon(
-          //   Icons.search,
-          //   color: Theme.of(context).colorScheme.onBackground.withOpacity(.5),
-          // ),
+          icon: Icon(
+            Icons.search,
+            color: Theme.of(context).colorScheme.onBackground.withOpacity(.5),
+          ),
           suffixIcon: SizedBox(
             width: 100,
             child: Row(

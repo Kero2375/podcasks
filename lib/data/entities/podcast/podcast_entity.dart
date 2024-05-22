@@ -51,9 +51,8 @@ class MPodcast {
     );
   }
 
-  Future<Podcast?> getPodcast() async => url != null
-      ? Podcast.loadFeed(url: url!) // FIXME: slow! -> cache items!
-      : null;
+  Future<Podcast?> getPodcast() async =>
+      url != null ? Podcast.loadFeed(url: url!) : null;
 
   static Future<MPodcast> fromUrl(String feedUrl) async {
     final podcast = await Podcast.loadFeed(url: feedUrl);

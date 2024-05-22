@@ -1,5 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+const int maxDropdownLength = 15;
 
 extension ParsableDuration on Duration {
   String toTime() {
@@ -13,6 +17,23 @@ extension ParsableDuration on Duration {
 extension ParsableDateTime on DateTime {
   String toDate() {
     return '${day <= 9 ? '0' : ''}$day/${month <= 9 ? '0' : ''}$month/$year';
+  }
+}
+
+extension CountryString on String {
+  String capitalize(BuildContext context) {
+    final s = split(RegExp(r"(?=[A-Z])"))
+        .map((e) => e[0].toUpperCase() + e.substring(1))
+        .join(' ');
+    if (s == 'None' || s == 'All') {
+      return context.l10n!.all;
+    }
+    // return s;
+    if (s.length < maxDropdownLength + 3) {
+      return s;
+    } else {
+      return '${s.substring(0, min(s.length, maxDropdownLength))}...';
+    }
   }
 }
 

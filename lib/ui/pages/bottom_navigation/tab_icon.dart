@@ -11,8 +11,9 @@ class TabIcon extends StatelessWidget {
     Color foreground = selected
         ? Theme.of(context).colorScheme.primary
         : Theme.of(context).colorScheme.onBackground;
-    Color background =
-        selected ? Theme.of(context).colorScheme.onPrimary : Colors.transparent;
+    Color background = selected
+        ? Theme.of(context).colorScheme.primaryContainer
+        : Colors.transparent;
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),

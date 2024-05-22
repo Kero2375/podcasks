@@ -50,7 +50,6 @@ class FavouriteRepoIsar extends FavouriteRepo {
   @override
   Future<void> syncFavourites() async {
     final fav = await getAllFavourites();
-    print('syncing ${fav.length} items');
 
     for (MPodcast p in fav) {
       final url = p.url;
