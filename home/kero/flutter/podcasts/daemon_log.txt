@@ -10,18 +10,17 @@ Version: linux 1.89.0
 Logging Categories:
     FlutterDaemon
 
-Sat May 25 2024 [08:23:14 GMT+0200 (Central European Summer Time)] Log file started
-[8:23:14 AM] [FlutterDaemon] [Info] Spawning /home/kero/fvm/versions/3.13.2/bin/flutter with args ["daemon"]
-[8:23:14 AM] [FlutterDaemon] [Info] ..  in /home/kero/fvm/versions/3.13.2
-[8:23:14 AM] [FlutterDaemon] [Info] ..  with {"toolEnv":{"FLUTTER_HOST":"VSCode","PUB_ENVIRONMENT":"vscode.dart-code","FLUTTER_ROOT":"/home/kero/fvm/versions/3.13.2"}}
-[8:23:14 AM] [FlutterDaemon] [Info]     PID: 2556
-[8:23:21 AM] [FlutterDaemon] [Info] <== [{"event":"daemon.connected","params":{"version":"0.6.1","pid":2638}}]
-[8:23:21 AM] [FlutterDaemon] [Info] ==> [{"id":"1","method":"device.enable"}]
-[8:23:21 AM] [FlutterDaemon] [Info] ==> [{"id":"2","method":"emulator.getEmulators"}]
-[8:23:21 AM] [FlutterDaemon] [Info] ==> [{"id":"3","method":"daemon.getSupportedPlatforms","params":{"projectRoot":"/home/kero/flutter/podcasts"}}]
-[8:23:22 AM] [FlutterDaemon] [Info] <== [{"event":"daemon.logMessage","params":{"level":"status","message":"A new version of Flutter is available!\n\nTo update to the latest version, run \"flutter upgrade\"."}}]
-[8:23:22 AM] [FlutterDaemon] [Info] <== [{"event":"daemon.logMessage","params":{"level":"status","message":"Starting device daemon..."}}]
-[8:23:22 AM] [FlutterDaemon] [Info] <== [{"id":"1"}]
-[8:23:22 AM] [FlutterDaemon] [Info] <== [{"id":"2","result":[]}]
-[8:23:22 AM] [FlutterDaemon] [Info] <== [{"id":"3","result":{"platforms":["linux","macos","windows","ios","android","web"]}}]
-[8:23:26 AM] [FlutterDaemon] [Info] <== [{"event":"device.added","params":{"id":"linux","name":"Linux","platform":"linux-x64","emulator":false,"category":"desktop","platformType":"linux","ephemeral":false,"emulatorId":null,"sdk":"Manjaro Linux 6.5.13-7-MANJARO","capabilities":{"hotReload":true,"hotRestart":true,"screenshot":false,"fastStart":false,"flutterExit":true,"hardwareRendering":true,"startPaused":true}}}]
+Sat May 25 2024 [10:23:46 GMT+0200 (Central European Summer Time)] Log file started
+[10:23:46 AM] [FlutterDaemon] [Info] Spawning /home/kero/fvm/versions/3.13.2/bin/flutter with args ["daemon"]
+[10:23:46 AM] [FlutterDaemon] [Info] ..  in /home/kero/fvm/versions/3.13.2
+[10:23:46 AM] [FlutterDaemon] [Info] ..  with {"toolEnv":{"FLUTTER_HOST":"VSCode","PUB_ENVIRONMENT":"vscode.dart-code","FLUTTER_ROOT":"/home/kero/fvm/versions/3.13.2"}}
+[10:23:46 AM] [FlutterDaemon] [Info]     PID: 23064
+[10:23:47 AM] [FlutterDaemon] [Info] <== [{"event":"daemon.connected","params":{"version":"0.6.1","pid":23209}}]
+[10:23:47 AM] [FlutterDaemon] [Info] ==> [{"id":"1","method":"device.enable"}]
+[10:23:47 AM] [FlutterDaemon] [Info] ==> [{"id":"2","method":"emulator.getEmulators"}]
+[10:23:47 AM] [FlutterDaemon] [Info] ==> [{"id":"3","method":"daemon.getSupportedPlatforms","params":{"projectRoot":"/home/kero/flutter/podcasts"}}]
+[10:23:48 AM] [FlutterDaemon] [Info] <== [{"event":"daemon.logMessage","params":{"level":"status","message":"Starting device daemon..."}}]
+[10:23:48 AM] [FlutterDaemon] [Info] <== [{"id":"1"}]
+[10:23:48 AM] [FlutterDaemon] [Info] <== [{"id":"2","result":[]}]
+[10:23:48 AM] [FlutterDaemon] [Info] <== [{"id":"3","result":{"platforms":["linux","macos","windows","ios","android","web"]}}]
+[10:23:52 AM] [FlutterDaemon] [Info] <== [{"event":"device.added","params":{"id":"linux","name":"Linux","platform":"linux-x64","emulator":false,"category":"desktop","platformType":"linux","ephemeral":false,"emulatorId":null,"sdk":"Manjaro Linux 6.5.13-7-MANJARO","capabilities":{"hotReload":true,"hotRestart":true,"screenshot":false,"fastStart":false,"flutterExit":true,"hardwareRendering":true,"startPaused":true}}}]

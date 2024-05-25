@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,7 +25,7 @@ class PlayerViewmodel extends Vm {
 
   final int _scrollOffset = 300;
 
-MEpisode? get playing => _playing;
+  MEpisode? get playing => _playing;
   MEpisode? _playing;
 
   Duration get position => audioHandler?.position ?? Duration.zero;
@@ -64,7 +65,7 @@ MEpisode? get playing => _playing;
 
     if (track != null && seekPos) {
       final (pos, _) = _historyRepo.getPosition(track) ?? (null, null);
-      if (pos != null) {
+      if (pos != null && pos > duration - const Duration(seconds: 2)) {
         await seekPosition(duration - pos);
       }
     }
@@ -148,9 +149,10 @@ MEpisode? get playing => _playing;
         final next = (await queue).firstOrNull;
         if (next != null) {
           final (ep, pod) = await MEpisode.fromUrl(
-            podcastUrl: next.podcastUrl,
-            episodeUrl: next.url,
-          ) ?? (null, null);
+                podcastUrl: next.podcastUrl,
+                episodeUrl: next.url,
+              ) ??
+              (null, null);
           if (ep != null && pod != null) {
             _queueRepo.removeItem(next);
             await saveTrack(true);
@@ -160,6 +162,26 @@ MEpisode? get playing => _playing;
             return;
           }
         }
+
+        // check next episode
+        int? i = playingPodcast?.episodes.indexWhere(
+          (e) => e.contentUrl == playing?.contentUrl,
+        );
+
+        if (i != null && playingPodcast != null) {
+          MEpisode? ep = (i != 0)
+              ? playingPodcast?.episodes[i - 1] // if not last -> goto next
+              : playing; // if last -> replay
+
+          if (ep != null) {
+            await saveTrack(true);
+            await setupPlayer(ep, playingPodcast!);
+            await play();
+            notifyListeners();
+            return;
+          }
+        }
+
         // empty queue
         await seekPosition(Duration.zero);
         await saveTrack(true);
@@ -206,7 +228,8 @@ MEpisode? get playing => _playing;
   Future<void> saveTrack([bool finished = false]) async {
     if (audioHandler != null && playing != null && playingPodcast != null) {
       print("SAVETRACK");
-      await _historyRepo.setPosition(playing!, playingPodcast!, duration - position, finished);
+      await _historyRepo.setPosition(
+          playing!, playingPodcast!, duration - position, finished);
     }
   }
 
