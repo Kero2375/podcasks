@@ -75,7 +75,10 @@ class _HomePageState extends ConsumerState<HomePage> {
         context,
         title: context.l10n!.appTitle,
         updateHome: () => sync(ref),
-        startLoading: () => homeVm.syncing = true,
+        startLoading: () {
+          homeVm.syncing = true;
+          homeVm.update();
+        },
       ),
       bottomNavigationBar: BottomBar(selectedPage: homeVm.page),
       body: homeVm.state == UiState.loading
