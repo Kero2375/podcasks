@@ -77,5 +77,11 @@
   "downloadMessage": "Are you sure you want to download {count, plural, =1{{count} episode} other{{count} episodes}}?",
   "stopMessage": "Are you sure you want to stop all the current downloads?",
   "hide": "hide",
-  "readMore": "read more"
+  "readMore": "read more",
+  "added": "Added",
+  "nothingToImport": "Nothing new to import",
+  "sync": "Sync",
+  "home": "Home",
+  "explore": "Explore"
+
 }

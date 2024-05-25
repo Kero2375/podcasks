@@ -8,6 +8,7 @@ import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/home/favourites_row.dart';
 import 'package:podcasks/ui/vms/episodes_home_vm.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
+import 'package:podcasks/ui/vms/listening_vm.dart';
 import 'package:podcasks/utils.dart';
 
 class HomeContentPage extends ConsumerStatefulWidget {
@@ -66,16 +67,31 @@ class _HomeContentPageState extends ConsumerState<HomeContentPage> {
       _initEpisodeList(episodesVm, homeVm);
     }
 
-    return Column(
-      children: [
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: FavouritesRow(episodesVm: episodesVm, homeVm: homeVm),
-        ),
-        (episodesVm.displayingEpisodes.isEmpty)
-            ? _welcomeContent(context, homeVm)
-            : Expanded(child: _episodesList(episodesVm, dm)),
-      ],
+    return RefreshIndicator(
+      onRefresh: () async {
+        sync(ref);
+        await Future.delayed(const Duration(seconds: 2));
+      },
+      child: (episodesVm.displayingEpisodes.isEmpty)
+          ? LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) =>
+                  SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: _welcomeContent(context, homeVm),
+                ),
+              ),
+            )
+          : Column(
+              children: [
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: FavouritesRow(episodesVm: episodesVm, homeVm: homeVm),
+                ),
+                Expanded(child: _episodesList(episodesVm, dm)),
+              ],
+            ),
     );
   }
 
@@ -98,34 +114,49 @@ class _HomeContentPageState extends ConsumerState<HomeContentPage> {
         },
       );
 
-  Center _welcomeContent(BuildContext context, HomeViewmodel homeVm) {
+  Widget _welcomeContent(BuildContext context, HomeViewmodel homeVm) {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 64),
-        child: Column(
-          children: [
-            Text(context.l10n!.welcome, style: textStyleBody),
-            Text(context.l10n!.notFavouritesMessage, style: textStyleBody),
-            const SizedBox(height: 8),
-            Text(context.l10n!.bohEmoji, style: textStyleBody),
-            const SizedBox(height: 8),
-            FilledButton(
-              onPressed: () {
-                homeVm.setPage(Pages.search);
-              },
-              style: buttonStyle,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.search),
-                  const SizedBox(width: 8),
-                  Text(context.l10n!.explorePodcasts),
-                ],
-              ),
+      child: Column(
+        children: [
+          Text(context.l10n!.welcome, style: textStyleBody),
+          Text(context.l10n!.notFavouritesMessage, style: textStyleBody),
+          const SizedBox(height: 8),
+          Text(context.l10n!.bohEmoji, style: textStyleBody),
+          const SizedBox(height: 8),
+          FilledButton(
+            onPressed: () {
+              homeVm.setPage(Pages.search);
+            },
+            style: buttonStyle,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.search),
+                const SizedBox(width: 8),
+                Text(context.l10n!.explorePodcasts),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
+}
+
+sync(WidgetRef ref) async {
+  final homeVm = ref.read(homeViewmodel);
+  final epVm = ref.read(episodesHomeViewmodel);
+  final lstVm = ref.read(listeningViewmodel);
+
+  homeVm.syncing = true;
+  homeVm.update();
+  await homeVm.syncFavourites();
+  await homeVm.fetchFavourites();
+  await homeVm.fetchListening();
+  epVm.initEpisodesList();
+  await epVm.update();
+  lstVm.initEpisodesList();
+  await lstVm.update();
+  homeVm.syncing = false;
+  await homeVm.update();
 }

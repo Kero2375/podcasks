@@ -8,6 +8,7 @@ import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/episode_page.dart';
+import 'package:podcasks/ui/pages/playing/playing_menu.dart';
 import 'package:podcasks/ui/pages/queue/queue_button.dart';
 import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
@@ -33,11 +34,7 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
     final podcast = vm.playingPodcast;
 
     return Scaffold(
-      appBar: mainAppBar(context,
-          actions: const Padding(
-            padding: EdgeInsets.only(right: 8.0),
-            // child: _speedButton(vm),
-          )),
+      appBar: mainAppBar(context, actions: PlayingPopupMenu(ep, podcast)),
       body: SingleChildScrollView(
         controller: vm.scrollController,
         child: Column(

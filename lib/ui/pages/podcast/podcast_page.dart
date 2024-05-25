@@ -10,7 +10,6 @@ import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/common/episode_item.dart';
 import 'package:podcasks/ui/pages/podcast/more_button.dart';
 import 'package:podcasks/ui/pages/search/search_text_field.dart';
-import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/ui/vms/podcast_vm.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcasks/utils.dart';
@@ -92,56 +91,49 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
                 )
               ],
             ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          vm.initEpisodesList();
-          await ref.read(homeViewmodel).fetchListening();
-          await vm.update();
-        },
-        child: vm.state == UiState.loading
-            ? const Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
-                controller: vm.controller,
-                child: (vm.podcast == null)
-                    ? Center(
-                        child: Text(context.l10n!.error, style: textStyleBody))
-                    : Column(
-                        children: [
-                          _image(vm.podcast!),
-                          Html(
-                            data: vm.podcast!.description ?? '',
-                            style: {
-                              '*': Style(
-                                margin: Margins.only(top: 8, right: 8, left: 8),
-                                fontFamily: themeFontFamily.fontFamily,
-                                maxLines:
-                                    expanded && shortDescription(vm) ? null : 2,
-                              ),
-                            },
-                          ),
-                          if (shortDescription(vm))
-                            (expanded)
-                                ? TextButton(
-                                    onPressed: () =>
-                                        setState(() => expanded = false),
-                                    style: underlineButtonStyle,
-                                    child: Text(context.l10n!.hide),
-                                  )
-                                : TextButton(
-                                    onPressed: () =>
-                                        setState(() => expanded = true),
-                                    style: underlineButtonStyle,
-                                    child: Text(context.l10n!.readMore),
-                                  ),
-                          _buttons(vm, dm),
-                          _episodes(vm, dm),
-                          // if (vm.displayingEpisodes.length < (vm.podcast?.episodes.length ?? 0))
-                          //   const CircularProgressIndicator(),
-                          const SizedBox(height: BottomPlayer.playerHeight),
-                        ],
-                      ),
-              ),
-      ),
+      body: vm.state == UiState.loading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              controller: vm.controller,
+              child: (vm.podcast == null)
+                  ? Center(
+                      child: Text(context.l10n!.error, style: textStyleBody))
+                  : Column(
+                      children: [
+                        _image(vm.podcast!),
+                        Html(
+                          data: vm.podcast!.description ?? '',
+                          style: {
+                            '*': Style(
+                              margin: Margins.only(top: 8, right: 8, left: 8),
+                              fontFamily: themeFontFamily.fontFamily,
+                              maxLines:
+                                  expanded && shortDescription(vm) ? null : 2,
+                            ),
+                          },
+                        ),
+                        if (shortDescription(vm))
+                          (expanded)
+                              ? TextButton(
+                                  onPressed: () =>
+                                      setState(() => expanded = false),
+                                  style: underlineButtonStyle,
+                                  child: Text(context.l10n!.hide),
+                                )
+                              : TextButton(
+                                  onPressed: () =>
+                                      setState(() => expanded = true),
+                                  style: underlineButtonStyle,
+                                  child: Text(context.l10n!.readMore),
+                                ),
+                        _buttons(vm, dm),
+                        _episodes(vm, dm),
+                        // if (vm.displayingEpisodes.length < (vm.podcast?.episodes.length ?? 0))
+                        //   const CircularProgressIndicator(),
+                        const SizedBox(height: BottomPlayer.playerHeight),
+                      ],
+                    ),
+            ),
       bottomSheet: const BottomPlayer(),
     );
   }

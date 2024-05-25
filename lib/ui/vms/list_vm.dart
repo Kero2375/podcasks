@@ -1,6 +1,5 @@
 import 'dart:developer' as dev;
 import 'dart:math';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/data/entities/queue/queue_track.dart';
@@ -8,7 +7,9 @@ import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/repository/history_repo.dart';
 import 'package:podcasks/repository/queue_repo.dart';
+import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/vms/vm.dart';
+import 'package:podcasks/utils.dart';
 
 class ListViewmodel extends Vm {
   final HistoryRepo historyRepo = locator.get<HistoryRepo>();
@@ -101,12 +102,34 @@ class ListViewmodel extends Vm {
     }
   }
 
-  Future<bool> addToQueue(MEpisode? ep, MPodcast? pd) async {
+  Future<void> addToQueue(
+      MEpisode? ep, MPodcast? pd, BuildContext? context) async {
+    bool res = false;
     if (ep != null && pd != null) {
       await _queueRepo.addItem(ep, pd);
-      return true;
+      res = true;
     }
-    return false;
+
+    if (context?.mounted == true) {
+      ScaffoldMessenger.of(context!).showSnackBar(
+        SnackBar(
+          duration: const Duration(seconds: 2),
+          content: Row(
+            children: [
+              Icon(
+                res ? Icons.check : Icons.warning,
+                color: Theme.of(context).colorScheme.background,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                res ? context.l10n!.addedToQueue : context.l10n!.error,
+                style: textStyleBody,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
   }
 
   Future<void> removeFromQueue(QueueTrack track) async {

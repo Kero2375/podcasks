@@ -8,6 +8,7 @@ import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/bottom_player.dart';
 import 'package:podcasks/ui/common/themes.dart';
+import 'package:podcasks/ui/pages/playing/playing_menu.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcasks/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -31,7 +32,7 @@ class EpisodePage extends ConsumerWidget {
     final dm = ref.watch(downloadManager);
 
     return Scaffold(
-      appBar: mainAppBar(context, title: podcast?.title),
+      appBar: mainAppBar(context, title: podcast?.title, actions: PlayingPopupMenu(episode, podcast)),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

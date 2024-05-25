@@ -9,7 +9,6 @@ import 'package:podcasks/ui/pages/search/search_page.dart';
 import 'package:podcasks/ui/vms/episodes_home_vm.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
-import 'package:podcasks/ui/vms/listening_vm.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcasks/utils.dart';
@@ -24,8 +23,6 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-  bool _syncing = false;
-
   @override
   void initState() {
     final homeVm = ref.read(homeViewmodel);
@@ -54,25 +51,10 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     final homeVm = ref.watch(homeViewmodel);
     final playerVm = ref.read(playerViewmodel);
-    final episodesVm = ref.read(episodesHomeViewmodel);
-    final listeningVm = ref.read(listeningViewmodel);
-
-    sync(HomeViewmodel homeVm) async {
-      setState(() => _syncing = true);
-      await homeVm.syncFavourites();
-      await homeVm.fetchFavourites();
-      await homeVm.fetchListening();
-      episodesVm.initEpisodesList();
-      await episodesVm.update();
-      listeningVm.initEpisodesList();
-      await listeningVm.update();
-      await homeVm.update();
-      setState(() => _syncing = false);
-    }
 
     final content = Column(
       children: [
-        if (_syncing) const LinearProgressIndicator(minHeight: 2),
+        if (homeVm.syncing) const LinearProgressIndicator(minHeight: 2),
         Expanded(
           child: switch (homeVm.page) {
             Pages.home => const HomeContentPage(),
@@ -92,31 +74,15 @@ class _HomePageState extends ConsumerState<HomePage> {
       appBar: mainAppBar(
         context,
         title: context.l10n!.appTitle,
-        updateHome: () => sync(homeVm),
-        startLoading: () => setState(() => _syncing = true),
+        updateHome: () => sync(ref),
+        startLoading: () => homeVm.syncing = true,
       ),
       bottomNavigationBar: BottomBar(selectedPage: homeVm.page),
       body: homeVm.state == UiState.loading
           ? const Center(child: CircularProgressIndicator())
           : homeVm.page == Pages.search
               ? content
-              : RefreshIndicator(
-                  onRefresh: () async {
-                    switch (homeVm.page) {
-                      case Pages.listening:
-                        final lstVm = ref.read(listeningViewmodel);
-                        await homeVm.fetchListening();
-                        lstVm.clear();
-                        await lstVm.init(homeVm.saved);
-                        break;
-                      default:
-                        sync(homeVm);
-                        await Future.delayed(const Duration(seconds: 2));
-                        break;
-                    }
-                  },
-                  child: content,
-                ),
+              : content,
       bottomSheet: const BottomPlayer(),
       // drawer: homeVm.favourites.isNotEmpty ? const FavouritesDrawer() : null,
     );

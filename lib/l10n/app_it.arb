@@ -77,5 +77,10 @@
   "downloadMessage": "Vuoi veramente scaricare {count, plural, =1{{count} episoio} other{{count} episodi}}?",
   "stopMessage": "Vuoi veramente interrompere tutti i download in corso?",
   "hide": "nascondi",
-  "readMore": "leggi di più"
+  "readMore": "leggi di più",
+  "added": "Aggiunti",
+  "nothingToImport": "Niente di nuovo da importare",
+  "sync": "Aggiorna",
+  "home": "Home",
+  "explore": "Esplora"
 }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/bottom_navigation/tab_icon.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
+import 'package:podcasks/utils.dart';
 
 class BottomBar extends ConsumerWidget {
   final Pages selectedPage;
@@ -23,21 +24,21 @@ class BottomBar extends ConsumerWidget {
             icon: Icons.home_filled,
             selected: selectedPage == Pages.home,
           ),
-          label: 'home',
+          label: context.l10n!.home.toLowerCase(),
         ),
         BottomNavigationBarItem(
           icon: TabIcon(
             icon: Icons.search,
             selected: selectedPage == Pages.search,
           ),
-          label: 'explore',
+          label: context.l10n!.explore.toLowerCase(),
         ),
         BottomNavigationBarItem(
           icon: TabIcon(
             icon: Icons.queue_music,
             selected: selectedPage == Pages.listening,
           ),
-          label: 'listening',
+          label: context.l10n!.listening.toLowerCase(),
         ),
       ],
     );

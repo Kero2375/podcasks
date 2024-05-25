@@ -30,6 +30,8 @@ class HomeViewmodel extends Vm {
 
   ChangeNotifierProviderRef<Object?> ref;
 
+  bool syncing = false;
+
   List<MPodcast> get favourites => _favourites.sorted(_sortPodcastsByEpisode);
   List<MPodcast> _favourites = [];
 

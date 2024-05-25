@@ -51,6 +51,9 @@ AppBar mainAppBar(
       actions ??
           PopupMenuButton(
             icon: const Icon(Icons.more_vert),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
             onSelected: (item) =>
                 _checkValue(context, item, updateHome, startLoading),
             itemBuilder: (BuildContext context) => [
@@ -62,7 +65,7 @@ AppBar mainAppBar(
               popupMenuItem(
                 value: 2,
                 icon: const Icon(Icons.sync),
-                text: 'Sync',
+                text: context.l10n!.sync,
               ),
               popupMenuItem(
                 value: 4,
@@ -138,7 +141,7 @@ _pickFile(BuildContext context, Function()? updateHome,
     if (feeds.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
-        "Nothing new to import",
+        context.l10n!.nothingToImport,
         style: textStyleBody,
       )));
       return;
@@ -158,7 +161,7 @@ _pickFile(BuildContext context, Function()? updateHome,
             );
             if (added && context.mounted) {
               ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text("Added $item")));
+                  .showSnackBar(SnackBar(content: Text("${context.l10n!.added} $item")));
             }
             // updateHome?.call();
           }

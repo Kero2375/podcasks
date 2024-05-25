@@ -17,10 +17,10 @@ class ListeningPage extends ConsumerStatefulWidget {
 }
 
 class _HomeContentPageState extends ConsumerState<ListeningPage> {
-  void _initEpisodeList(ListeningVm episodesVm, HomeViewmodel homeVm) {
+  void _initEpisodeList(ListeningVm vm, HomeViewmodel homeVm) {
     // homeVm.fetchListening();
     final List<(MEpisode, MPodcast)>? saved = homeVm.saved;
-    episodesVm.init(
+    vm.init(
       saved?.map((e) => (e.$1, e.$2)).toList(),
       maxItems: 30,
     );
@@ -28,6 +28,7 @@ class _HomeContentPageState extends ConsumerState<ListeningPage> {
 
   @override
   Widget build(BuildContext context) {
+    // ref.watch(playerViewmodel);
     final homeVm = ref.watch(homeViewmodel);
     final vm = ref.watch(listeningViewmodel);
     final dm = ref.watch(downloadManager);
@@ -41,14 +42,27 @@ class _HomeContentPageState extends ConsumerState<ListeningPage> {
       _initEpisodeList(vm, homeVm);
     }
 
-    return (vm.displayingEpisodes.isEmpty)
-        ? _welcomeContent(context, homeVm)
-        : _episodesList(vm, dm);
+    return RefreshIndicator(
+      onRefresh: () async {
+        await homeVm.fetchListening();
+        vm.clear();
+        await vm.init(homeVm.saved);
+      },
+      child: (vm.displayingEpisodes.isEmpty)
+          ? LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) =>
+                  SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: _welcomeContent(context, homeVm, constraints),
+              ),
+            )
+          : _episodesList(vm, dm),
+    );
   }
 
   Widget _episodesList(ListeningVm episodesVm, DownloadManager dm) =>
       ListView.builder(
-        physics: const ScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
         scrollDirection: Axis.vertical,
         controller: episodesVm.controller,
         shrinkWrap: false,
@@ -65,30 +79,24 @@ class _HomeContentPageState extends ConsumerState<ListeningPage> {
         },
       );
 
-  Center _welcomeContent(BuildContext context, HomeViewmodel homeVm) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 64),
+  Widget _welcomeContent(
+      BuildContext context, HomeViewmodel homeVm, BoxConstraints constraints) {
+    final iconColor =
+        Theme.of(context).colorScheme.onBackground.withOpacity(.5);
+    return ConstrainedBox(
+      constraints: BoxConstraints(minHeight: constraints.maxHeight),
+      child: Center(
         child: Column(
           children: [
-            Text(context.l10n!.welcome, style: textStyleBody),
             Text(context.l10n!.notListeningMessage, style: textStyleBody),
             const SizedBox(height: 8),
-            Text(context.l10n!.bohEmoji, style: textStyleBody),
-            const SizedBox(height: 8),
-            FilledButton(
-              onPressed: () {
-                homeVm.setPage(Pages.search);
-              },
-              style: buttonStyle,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.search),
-                  const SizedBox(width: 8),
-                  Text(context.l10n!.explorePodcasts),
-                ],
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('~~', style: textStyleBody.copyWith(color: iconColor)),
+                Icon(Icons.music_note, color: iconColor),
+                Text('~~', style: textStyleBody.copyWith(color: iconColor)),
+              ],
             ),
           ],
         ),

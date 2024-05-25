@@ -15,7 +15,7 @@ Future<int?> showEpisodeMenu({
   required DownloadManager dm,
   required MEpisode? ep,
   required MPodcast? pd,
-  required Offset tapPos, 
+  required Offset tapPos,
 }) {
   final screenSize = MediaQuery.of(context).size;
   return showMenu(
@@ -38,40 +38,20 @@ Future<int?> showEpisodeMenu({
           onTap: () => vm.cancelProgress(ep),
         ),
       episodeMenuItem<int>(
-        message: context.l10n!.download,
-        icon: Icons.download,
-        onTap: () => dm.download(ep, context),
-      ),
-      episodeMenuItem<int>(
         message: context.l10n!.share,
         icon: Icons.share,
         onTap: () => playerVm.share(ep),
       ),
       episodeMenuItem<int>(
+        message: context.l10n!.download,
+        icon: Icons.download,
+        onTap: () => dm.download(ep, context),
+      ),
+      episodeMenuItem<int>(
         message: context.l10n!.addToQueue,
         icon: Icons.queue,
         onTap: () async {
-          bool res = await vm.addToQueue(ep, pd);
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                duration: const Duration(seconds: 2),
-                content: Row(
-                  children: [
-                    Icon(
-                      res ? Icons.check : Icons.warning,
-                      color: Theme.of(context).colorScheme.background,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      res ? context.l10n!.addedToQueue : context.l10n!.error,
-                      style: textStyleBody,
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
+          await vm.addToQueue(ep, pd, context);
         },
       ),
     ],
