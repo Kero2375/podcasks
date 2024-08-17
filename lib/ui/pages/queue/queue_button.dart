@@ -124,7 +124,7 @@ class _QueueButtonState extends ConsumerState<QueueButton> {
             ],
             Expanded(
               child: Text(
-                e.title ?? '??',
+                e.title,
                 overflow: TextOverflow.ellipsis,
                 style: textStyleBody,
               ),
