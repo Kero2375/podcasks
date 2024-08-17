@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
-import 'package:podcasks/data/entities/queue/queue_track.dart';
 import 'package:podcasks/repository/history_repo.dart';
 import 'package:podcasks/repository/queue_repo.dart';
 import 'package:podcasks/data/entities/episode/podcast_episode.dart';
@@ -44,7 +43,7 @@ class PlayerViewmodel extends Vm {
   final HistoryRepo _historyRepo = locator.get<HistoryRepo>();
   final QueueRepo _queueRepo = locator.get<QueueRepo>();
 
-  Future<List<QueueTrack>> get queue async => await _queueRepo.getAll();
+  Future<List<MediaItem>> get queue async => await _queueRepo.getAll();
 
   @override
   void dispose() {
@@ -149,8 +148,8 @@ class PlayerViewmodel extends Vm {
         final next = (await queue).firstOrNull;
         if (next != null) {
           final (ep, pod) = await MEpisode.fromUrl(
-                podcastUrl: next.podcastUrl,
-                episodeUrl: next.url,
+                podcastUrl: next.extras?["podcast_url"],
+                episodeUrl: next.id,
               ) ??
               (null, null);
           if (ep != null && pod != null) {

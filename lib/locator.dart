@@ -12,5 +12,5 @@ void setup() {
   locator.registerSingleton<FavouriteRepo>(FavouriteRepoIsar());
   locator.registerSingleton<PrefsRepo>(PrefsRepoSharedPref());
   locator.registerSingleton<HistoryRepo>(HistoryRepoIsar());
-  locator.registerSingleton<QueueRepo>(QueueRepoIsar());
+  locator.registerSingleton<QueueRepo>(QueueRepoAudioHandler());
 }

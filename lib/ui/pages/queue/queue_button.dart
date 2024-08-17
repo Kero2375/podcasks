@@ -1,7 +1,7 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podcasks/data/entities/queue/queue_track.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/queue/queue_menu.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
@@ -99,7 +99,7 @@ class _QueueButtonState extends ConsumerState<QueueButton> {
     ];
   }
 
-  Widget _item(BuildContext context, QueueTrack e, PodcastViewmodel listVm) {
+  Widget _item(BuildContext context, MediaItem e, PodcastViewmodel listVm) {
     return InkWell(
       onTapDown: (details) => setState(() => _tapPos = details.globalPosition),
       onLongPress: () {
@@ -110,13 +110,13 @@ class _QueueButtonState extends ConsumerState<QueueButton> {
         padding: const EdgeInsets.all(8),
         child: Row(
           children: [
-            if (e.image != null) ...[
+            if (e.artUri != null) ...[
               Container(
                 decoration:
                     BoxDecoration(borderRadius: BorderRadius.circular(4)),
                 clipBehavior: Clip.antiAlias,
                 child: Image.network(
-                  e.image!,
+                  e.artUri.toString(),
                   width: 40,
                 ),
               ),

@@ -48,16 +48,22 @@ class FavouriteRepoIsar extends FavouriteRepo {
   }
 
   @override
-  Future<void> syncFavourites() async {
+  Future<Set<MPodcast>> syncFavourites() async {
     final fav = await getAllFavourites();
+
+    Set<MPodcast> updated = {};
 
     for (MPodcast p in fav) {
       final url = p.url;
       if (url == null) continue;
       final newPod = await Podcast.loadFeed(url: url);
       if (newPod.episodes.length != p.episodes.length) {
-        await addToFavourite(MPodcast.fromPodcast(newPod));
+        MPodcast pod = MPodcast.fromPodcast(newPod);
+        await addToFavourite(pod);
+        updated.add(pod);
       }
     }
+
+    return updated;
   }
 }

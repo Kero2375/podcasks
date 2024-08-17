@@ -1,6 +1,6 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:podcasks/data/entities/queue/queue_track.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/vms/podcast_vm.dart';
 import 'package:podcasks/utils.dart';
@@ -8,7 +8,7 @@ import 'package:podcasks/utils.dart';
 Future<int?> showQueueMenu({
   required BuildContext context,
   required PodcastViewmodel vm,
-  required QueueTrack track,
+  required MediaItem track,
   required Offset tapPos,
 }) {
   final screenSize = MediaQuery.of(context).size;

@@ -7,7 +7,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:podcasks/data/entities/favourites/fav_item.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/data/entities/episode/podcast_episode.dart';
-import 'package:podcasks/data/entities/queue/queue_track.dart';
 import 'package:podcasks/data/entities/save/save_track.dart';
 import 'package:podcasks/repository/history_repo.dart';
 import 'package:podcasks/ui/vms/episodes_home_vm.dart';
@@ -113,7 +112,7 @@ class HomeViewmodel extends Vm {
     BackgroundIsolateBinaryMessenger.ensureInitialized(token);
     final dir = await getApplicationSupportDirectory();
     await Isar.open(
-      [SaveTrackSchema, QueueTrackSchema, FavouriteSchema],
+      [SaveTrackSchema, FavouriteSchema],
       directory: dir.path,
     );
     await FavouriteRepoIsar().syncFavourites();

@@ -1,8 +1,8 @@
 import 'dart:developer' as dev;
 import 'dart:math';
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
-import 'package:podcasks/data/entities/queue/queue_track.dart';
 import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/repository/history_repo.dart';
@@ -107,6 +107,15 @@ class ListViewmodel extends Vm {
     bool res = false;
     if (ep != null && pd != null) {
       await _queueRepo.addItem(ep, pd);
+      // await audioHandler?.addQueueItem(
+      //   MediaItem(
+      //     id: ep.contentUrl ?? '',
+      //     title: ep.title,
+      //     artist: pd.title,
+      //     artUri: Uri.parse(ep.imageUrl ?? pd.image ?? ''),
+      //     duration: ep.duration,
+      //   ),
+      // );
       res = true;
     }
 
@@ -132,13 +141,18 @@ class ListViewmodel extends Vm {
     }
   }
 
-  Future<void> removeFromQueue(QueueTrack track) async {
+  Future<void> removeFromQueue(MediaItem track) async {
     await _queueRepo.removeItem(track);
+    // await audioHandler?.removeQueueItemAt(index);
     notifyListeners();
   }
 
   void clearQueue() async {
     await _queueRepo.clearAll();
+    // var length = await audioHandler?.queue.length ?? 0;
+    // for (int i = 0; i < length; i++) {
+    //   await audioHandler?.removeQueueItemAt(i);
+    // }
     notifyListeners();
   }
 }
