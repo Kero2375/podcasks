@@ -144,6 +144,7 @@ class PlayerViewmodel extends Vm {
       // finished episode
       if (position.inSeconds == duration.inSeconds &&
           duration != Duration.zero) {
+        await saveTrack(true);
         // if there is something in queue
         final next = (await queue).firstOrNull;
         if (next != null) {
