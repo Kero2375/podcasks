@@ -1,15 +1,17 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/data/entities/favourites/fav_item.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/data/entities/save/save_track.dart';
-import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/manager/audio_handler.dart';
 import 'package:podcasks/repository/favourites_repo.dart';
@@ -22,14 +24,11 @@ import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 import 'package:podcasks/ui/pages/search/search_page.dart';
 import 'package:podcasks/ui/pages/settings/settings_page.dart';
 import 'package:podcasks/ui/vms/theme_vm.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:workmanager/workmanager.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
 
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     if (task == 'podcasksUpdate') {
-      print("BACKGROUND TASK STARTED!");
       final dir = await getApplicationSupportDirectory();
       await Isar.open(
         [SaveTrackSchema, FavouriteSchema],
@@ -38,22 +37,19 @@ void callbackDispatcher() {
 
       Set<MPodcast> updated = await FavouriteRepoIsar().syncFavourites();
 
-      String updatedTitles =
-          updated.map((p) => (p.title ?? '?')).toList().join(', ');
-
-      String body = 'New episodes of $updatedTitles';
-
-      if (updated.isNotEmpty) {
+      for (MPodcast pod in updated) {
         AwesomeNotifications().createNotification(
             content: NotificationContent(
-          id: 10,
+          id: pod.title.hashCode,
           channelKey: 'podcasks_sync',
           actionType: ActionType.Default,
-          title: 'Synced',
-          body: body,
+          title: pod.title,
+          body: pod.episodes.first.title,
+          largeIcon: pod.image,
         ));
       }
     }
+
     return Future.value(true);
   });
 }
@@ -80,8 +76,7 @@ Future<void> main() async {
   );
 
   Workmanager().initialize(callbackDispatcher);
-  Workmanager().registerPeriodicTask('podcasksUpdate', 'podcasksUpdate',
-      frequency: const Duration(minutes: 15), initialDelay: Duration.zero);
+  Workmanager().registerPeriodicTask('podcasksUpdate', 'podcasksUpdate', frequency: const Duration(minutes: 15), initialDelay: Duration.zero);
 
   AwesomeNotifications().initialize(
       null,
@@ -90,17 +85,12 @@ Future<void> main() async {
             channelGroupKey: 'basic_channel_group',
             channelKey: 'podcasks_sync',
             channelName: 'Podkasks sync',
-            channelDescription:
-                'Notification channel for podcast episodes sync',
+            channelDescription: 'Notification channel for podcast episodes sync',
             defaultColor: Color(0xFF9D50DD),
             ledColor: Colors.white)
       ],
       // Channel groups are only visual and are not required
-      channelGroups: [
-        NotificationChannelGroup(
-            channelGroupKey: 'basic_channel_group',
-            channelGroupName: 'Podkasks notifications')
-      ],
+      channelGroups: [NotificationChannelGroup(channelGroupKey: 'basic_channel_group', channelGroupName: 'Podkasks notifications')],
       debug: true);
 
   AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
@@ -116,8 +106,8 @@ Future<void> main() async {
 
 class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
-  static final GlobalKey<NavigatorState> navigatorKey =
-      GlobalKey<NavigatorState>();
+
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   ConsumerState<MyApp> createState() => _MyAppState();
@@ -128,12 +118,9 @@ class _MyAppState extends ConsumerState<MyApp> {
   void initState() {
     AwesomeNotifications().setListeners(
         onActionReceivedMethod: NotificationController.onActionReceivedMethod,
-        onNotificationCreatedMethod:
-            NotificationController.onNotificationCreatedMethod,
-        onNotificationDisplayedMethod:
-            NotificationController.onNotificationDisplayedMethod,
-        onDismissActionReceivedMethod:
-            NotificationController.onDismissActionReceivedMethod);
+        onNotificationCreatedMethod: NotificationController.onNotificationCreatedMethod,
+        onNotificationDisplayedMethod: NotificationController.onNotificationDisplayedMethod,
+        onDismissActionReceivedMethod: NotificationController.onDismissActionReceivedMethod);
     super.initState();
   }
 
@@ -141,8 +128,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   Widget build(BuildContext context) {
     final vm = ref.watch(themeViewmodel);
     return DynamicColorBuilder(
-      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) =>
-          MaterialApp(
+      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) => MaterialApp(
         debugShowCheckedModeBanner: false,
         localizationsDelegates: const [
           AppLocalizations.delegate,
@@ -153,7 +139,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         supportedLocales: const [
           Locale('en'),
           Locale('it'),
-          Locale('es'),
+          // Locale('es'),
         ],
         initialRoute: HomePage.route,
         routes: {
@@ -167,21 +153,16 @@ class _MyAppState extends ConsumerState<MyApp> {
         onGenerateRoute: (settings) {
           if (settings.name == PodcastPage.route) {
             return MaterialPageRoute(
-              builder: (context) =>
-                  PodcastPage(settings.arguments as MPodcast?),
+              builder: (context) => PodcastPage(settings.arguments as MPodcast?),
             );
           } else if (settings.name == EpisodePage.route) {
             return MaterialPageRoute(
-              builder: (context) =>
-                  EpisodePage(settings.arguments as (MEpisode, MPodcast)?),
+              builder: (context) => EpisodePage(settings.arguments as (MEpisode, MPodcast)?),
             );
           }
           return null;
         },
-        theme: vm.getAppTheme(
-            MediaQuery.of(context).platformBrightness == Brightness.light
-                ? lightDynamic
-                : darkDynamic),
+        theme: vm.getAppTheme(MediaQuery.of(context).platformBrightness == Brightness.light ? lightDynamic : darkDynamic),
       ),
     );
   }
