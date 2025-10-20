@@ -23,7 +23,6 @@ class FavouritesRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(4),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
               // HomePodcastItem(
               //   icon: Icons.headphones,

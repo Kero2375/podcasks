@@ -28,7 +28,7 @@ AppBar mainAppBar(
         if (title == 'Podcasks') ...[
           ColorFiltered(
             colorFilter: ColorFilter.mode(
-                Theme.of(context).colorScheme.onBackground, BlendMode.srcIn),
+                Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
             child: Image.asset(
               'assets/icon/icon_foreground.png',
               width: 50,
@@ -51,9 +51,7 @@ AppBar mainAppBar(
       actions ??
           PopupMenuButton(
             icon: const Icon(Icons.more_vert),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+            shape: popupMenuShape(context),
             onSelected: (item) =>
                 _checkValue(context, item, updateHome, startLoading),
             itemBuilder: (BuildContext context) => [
@@ -67,11 +65,11 @@ AppBar mainAppBar(
                 icon: const Icon(Icons.sync),
                 text: context.l10n!.sync,
               ),
-              popupMenuItem(
-                value: 4,
-                icon: const Icon(Icons.favorite_outline),
-                text: context.l10n!.favourites,
-              ),
+              // popupMenuItem(
+              //   value: 4,
+              //   icon: const Icon(Icons.favorite_outline),
+              //   text: context.l10n!.favourites,
+              // ),
               popupMenuItem(
                 value: 1,
                 icon: const Icon(Icons.upload_file_outlined),

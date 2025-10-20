@@ -3,7 +3,6 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
@@ -25,6 +24,8 @@ import 'package:podcasks/ui/pages/search/search_page.dart';
 import 'package:podcasks/ui/pages/settings/settings_page.dart';
 import 'package:podcasks/ui/vms/theme_vm.dart';
 import 'package:workmanager/workmanager.dart';
+
+import 'l10n/app_localizations.dart';
 
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {

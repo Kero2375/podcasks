@@ -17,7 +17,9 @@ class BottomPlayer extends ConsumerWidget {
     return vm.playing == null //|| vm.position == Duration.zero
         ? const SizedBox.shrink()
         : BottomSheet(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(0),
+            ),
             enableDrag: false,
             onClosing: () {},
             builder: (context) {

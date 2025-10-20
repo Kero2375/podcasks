@@ -5,6 +5,7 @@ import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/bottom_player.dart';
+import 'package:podcasks/ui/common/divider.dart';
 import 'package:podcasks/ui/common/fav_button.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/common/episode_item.dart';
@@ -38,9 +39,9 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
 
   _firstInit() async {
     final vm = ref.read(podcastViewmodel);
-    vm.loading();
+    // vm.loading();
     await vm.initPodcast(widget.podcast);
-    vm.success();
+    // vm.success();
   }
 
   @override
@@ -145,9 +146,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
     return PopupMenuButton(
       icon: const Icon(Icons.sort),
       onSelected: (item) => handleSort(item, vm),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+      shape: popupMenuShape(context),
       itemBuilder: (context) => [
         PopupMenuItem(
           value: false,
@@ -193,7 +192,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
   }
 
   Widget _episodes(PodcastViewmodel vm, DownloadManager dm) {
-    return ListView.builder(
+    return ListView.separated(
       physics: const PageScrollPhysics(),
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
@@ -210,6 +209,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
           showDesc: true,
         );
       },
+      separatorBuilder: (BuildContext context, int index) => divider(context),
     );
   }
 

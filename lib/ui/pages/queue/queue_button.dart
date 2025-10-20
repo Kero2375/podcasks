@@ -77,7 +77,7 @@ class _QueueButtonState extends ConsumerState<QueueButton> {
       },
       icon: Icon(
         Icons.playlist_play,
-        color: Theme.of(context).colorScheme.onBackground.withOpacity(.8),
+        color: Theme.of(context).colorScheme.onSurface.withAlpha(204),
       ),
     );
   }
@@ -86,7 +86,7 @@ class _QueueButtonState extends ConsumerState<QueueButton> {
     return [
       Center(
         // padding: const EdgeInsets.all(8),
-        child: OutlinedButton.icon(
+        child: TextButton.icon(
           label: Text(context.l10n!.clearAll),
           style: buttonStyle,
           icon: const Icon(Icons.clear_all),

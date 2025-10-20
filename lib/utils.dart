@@ -1,9 +1,18 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'l10n/app_localizations.dart';
 
 const int maxDropdownLength = 15;
+
+ShapeBorder popupMenuShape(BuildContext context) => RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(12),
+    side: BorderSide(
+      color: Theme.of(context).dividerColor,
+      width: 1,
+    )
+);
 
 extension ParsableDuration on Duration {
   String toTime() {

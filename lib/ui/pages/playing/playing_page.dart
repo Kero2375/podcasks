@@ -54,11 +54,9 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
       icon: Text(
         '⚡ ${vm.speed}x',
         style: textStyleBody.copyWith(
-            color: Theme.of(context).colorScheme.onBackground.withOpacity(.8)),
+            color: Theme.of(context).colorScheme.onSurface.withAlpha(204)),
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+      shape: popupMenuShape(context),
       itemBuilder: (context) => [
         _speedMenuItem(0.5),
         _speedMenuItem(0.75),
@@ -84,13 +82,14 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
       MPodcast? podcast) {
     return SizedBox(
       height: MediaQuery.of(context).size.height -
-          MediaQuery.of(context).viewPadding.top * 2,
+          MediaQuery.of(context).viewPadding.top -
+          MediaQuery.of(context).viewPadding.bottom,
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _image(vm.image),
+            Expanded(child: _image(vm.image)),
             _bottomSection(context, ep, podcast, vm),
           ],
         ),
@@ -200,7 +199,7 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
       },
       icon: Icon(
         Icons.keyboard_arrow_down,
-        color: Theme.of(context).colorScheme.onBackground.withOpacity(.5),
+        color: Theme.of(context).colorScheme.onSurface.withAlpha(127),
       ),
     );
   }

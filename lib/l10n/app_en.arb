@@ -65,7 +65,7 @@
   "clearAll": "clear all",
   "nextInQueue": "Next in queue:",
   "emptyQueue": "empty queue",
-  "search": "Search",
+  "searchHint": "Search or insert RSS feed",
   "importOpml": "Import OPML",
   "importTitle": "Confirm import OMPL",
   "import": "Import",

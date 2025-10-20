@@ -72,26 +72,6 @@ class MEpisode {
     );
   }
 
-  Episode toEpisode() {
-    return Episode(
-      guid: guid,
-      title: title,
-      description: description,
-      link: link,
-      publicationDate: publicationDate,
-      author: author,
-      duration: duration,
-      contentUrl: content,
-      imageUrl: imageUrl,
-      season: season,
-      episode: episode,
-      content: content,
-      // chapters: chapters,
-      // transcripts: transcripts,
-      // persons: persons,
-    );
-  }
-
   @override
   bool operator ==(other) {
     return other is MEpisode && contentUrl == other.contentUrl;
@@ -105,7 +85,7 @@ class MEpisode {
     String? episodeUrl,
   }) async {
     if (podcastUrl != null && episodeUrl != null) {
-      final pod = await Podcast.loadFeed(url: podcastUrl);
+      final pod = await Feed.loadFeed(url: podcastUrl);
       final mPod = MPodcast.fromPodcast(pod);
       final ep =
           pod.episodes.firstWhereOrNull((e) => e.contentUrl == episodeUrl);

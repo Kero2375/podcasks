@@ -26,50 +26,22 @@ class HomePodcastItem extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         onLongPress: onLongTap,
-        child: Column(
-          // crossAxisAlignment:CrossAxisAlignment.start,
-          children: [
-            AnimatedContainer(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color:
-                    Theme.of(context).colorScheme.onBackground.withOpacity(.1),
-              ),
-              clipBehavior: Clip.antiAlias,
-              width: size,
-              height: size,
-              duration: animationDuration,
-              curve: Curves.fastOutSlowIn,
-              child: podcast?.image != null
-                  ? Image.network(podcast!.image!)
-                  : Icon(
-                      icon!,
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
-            ),
-            // const SizedBox(height: 8),
-            // SizedBox(
-            //   width: size,
-            //   child: Text(
-            //     podcast?.title ?? '',
-            //     style: textStyleSmall,
-            //     overflow: TextOverflow.ellipsis,
-            //     maxLines: 1,
-            //   ),
-            // ),
-            // Icon(Icons.keyboard_arrow_up),
-            // AnimatedContainer(
-            //   margin: const EdgeInsets.only(top: 8),
-            //   decoration: BoxDecoration(
-            //     borderRadius: BorderRadius.circular(1),
-            //     color: Theme.of(context).colorScheme.secondary.withOpacity(.8),
-            //   ),
-            //   height: 2,
-            //   width: selected ? 30 : 0,
-            //   duration: animationDuration,
-            //   curve: Curves.fastOutSlowIn,
-            // ),
-          ],
+        child: AnimatedContainer(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: Theme.of(context).colorScheme.onSurface.withAlpha(25),
+          ),
+          clipBehavior: Clip.antiAlias,
+          width: size,
+          height: size,
+          duration: animationDuration,
+          curve: Curves.fastOutSlowIn,
+          child: podcast?.image != null
+              ? Image.network(podcast!.image!)
+              : Icon(
+                  icon!,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
         ),
       ),
     );

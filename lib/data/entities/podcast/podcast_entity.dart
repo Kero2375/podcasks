@@ -52,10 +52,10 @@ class MPodcast {
   }
 
   Future<Podcast?> getPodcast() async =>
-      url != null ? Podcast.loadFeed(url: url!) : null;
+      url != null ? Podcast(url: url!) : null;
 
   static Future<MPodcast> fromUrl(String feedUrl) async {
-    final podcast = await Podcast.loadFeed(url: feedUrl);
+    final podcast = await Feed.loadFeed(url: feedUrl);
     return MPodcast.fromPodcast(podcast);
   }
 }
