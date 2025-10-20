@@ -126,12 +126,12 @@ class _HomePageState extends ConsumerState<HomePage> {
                                   color: Theme.of(context)
                                       .colorScheme
                                       .primary
-                                      .withOpacity(.5),
+                                      .withAlpha(127),
                                   borderRadius: BorderRadius.circular(12),
                                   // backgroundColor: Theme.of(context)
                                   //     .colorScheme
-                                  //     .onBackground
-                                  //     .withOpacity(.3),
+                                  //     .onSurface
+                                  //     .withAlpha(76),
                                 ),
                               )
                             : episodesVm.displayingEpisodes.isEmpty

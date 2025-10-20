@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/manager/download_manager.dart';
+import 'package:podcasks/ui/common/divider.dart';
 import 'package:podcasks/ui/common/episode_item.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
@@ -61,7 +62,7 @@ class _HomeContentPageState extends ConsumerState<ListeningPage> {
   }
 
   Widget _episodesList(ListeningVm episodesVm, DownloadManager dm) =>
-      ListView.builder(
+      ListView.separated(
         physics: const AlwaysScrollableScrollPhysics(),
         scrollDirection: Axis.vertical,
         controller: episodesVm.controller,
@@ -77,12 +78,13 @@ class _HomeContentPageState extends ConsumerState<ListeningPage> {
             showDesc: false,
           );
         },
+        separatorBuilder: (BuildContext context, int index) => divider(context),
       );
 
   Widget _welcomeContent(
       BuildContext context, HomeViewmodel homeVm, BoxConstraints constraints) {
     final iconColor =
-        Theme.of(context).colorScheme.onBackground.withOpacity(.5);
+        Theme.of(context).colorScheme.onSurface.withAlpha(127);
     return ConstrainedBox(
       constraints: BoxConstraints(minHeight: constraints.maxHeight),
       child: Center(

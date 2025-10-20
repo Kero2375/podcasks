@@ -3,24 +3,24 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 ButtonStyle get buttonStyle => ButtonStyle(
-      shape: MaterialStatePropertyAll(
+      shape: WidgetStatePropertyAll(
         RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
-      textStyle: MaterialStatePropertyAll(textStyleBody),
+      textStyle: WidgetStatePropertyAll(textStyleBody),
     );
 
 ButtonStyle get underlineButtonStyle => buttonStyle.copyWith(
-      textStyle: MaterialStatePropertyAll(
+      textStyle: WidgetStatePropertyAll(
         textStyleBody.copyWith(decoration: TextDecoration.underline),
       ),
     );
 
 ButtonStyle controlsButtonStyle(bool rounded) => ButtonStyle(
-      shape: MaterialStatePropertyAll(
+      shape: WidgetStatePropertyAll(
         RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(rounded ? 100 : 16)),
       ),
-      textStyle: MaterialStatePropertyAll(textStyleBody),
+      textStyle: WidgetStatePropertyAll(textStyleBody),
     );
 
 TextStyle get themeFontFamily => GoogleFonts.jetBrainsMono();
@@ -41,7 +41,7 @@ TextStyle get textStyleBody => themeFontFamily.copyWith(
 
 textStyleBodyGray(context) => themeFontFamily.copyWith(
       fontSize: 14,
-      color: Theme.of(context).colorScheme.onBackground.withOpacity(.5),
+      color: Theme.of(context).colorScheme.onSurface.withAlpha(127),
     );
 
 textStyleSubtitle(context) => themeFontFamily.copyWith(
@@ -51,7 +51,7 @@ textStyleSubtitle(context) => themeFontFamily.copyWith(
 
 textStyleSmallGray(context) => themeFontFamily.copyWith(
       fontSize: 12,
-      color: Theme.of(context).colorScheme.onBackground.withOpacity(.5),
+      color: Theme.of(context).colorScheme.onSurface.withAlpha(127),
     );
 
 TextStyle get textStyleSmall => themeFontFamily.copyWith(

@@ -41,6 +41,6 @@ class FavButton extends ConsumerWidget {
       );
 
   ButtonStyle get _style => buttonStyle.copyWith(
-        fixedSize: const MaterialStatePropertyAll(Size.fromWidth(150)),
+        fixedSize: const WidgetStatePropertyAll(Size.fromWidth(150)),
       );
 }

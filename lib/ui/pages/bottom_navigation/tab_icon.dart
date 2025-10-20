@@ -10,7 +10,7 @@ class TabIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     Color foreground = selected
         ? Theme.of(context).colorScheme.primary
-        : Theme.of(context).colorScheme.onBackground;
+        : Theme.of(context).colorScheme.onSurface;
     Color background = selected
         ? Theme.of(context).colorScheme.primaryContainer
         : Colors.transparent;
