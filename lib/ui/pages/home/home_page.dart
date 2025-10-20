@@ -71,6 +71,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
 
     return Scaffold(
+      // resizeToAvoidBottomInset: true,
       appBar: mainAppBar(
         context,
         title: context.l10n!.appTitle,

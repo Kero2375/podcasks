@@ -22,9 +22,7 @@ class MoreButton extends StatelessWidget {
     return PopupMenuButton(
       icon: const Icon(Icons.more_vert),
       onSelected: (item) => handleMore(item, vm.podcast, vm, dm, context),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+      shape: popupMenuShape(context),
       itemBuilder: (context) => [
         popupMenuItem(
           value: 0,

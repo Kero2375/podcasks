@@ -56,7 +56,7 @@ class FavouriteRepoIsar extends FavouriteRepo {
     for (MPodcast p in fav) {
       final url = p.url;
       if (url == null) continue;
-      final newPod = await Podcast.loadFeed(url: url);
+      final newPod = await Feed.loadFeed(url: url);
       if (newPod.episodes.length != p.episodes.length) {
         MPodcast pod = MPodcast.fromPodcast(newPod);
         await addToFavourite(pod);

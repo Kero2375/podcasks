@@ -65,7 +65,7 @@
   "clearAll": "cancella",
   "nextInQueue": "Prossimi in coda:",
   "emptyQueue": "coda vuota",
-  "search": "Cerca",
+  "searchHint": "Cerca o inserisci Feed RSS",
   "importOpml": "Importa OPML",
   "importTitle": "Conferma importazione OMPL",
   "import": "Importa",

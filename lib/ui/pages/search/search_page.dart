@@ -33,8 +33,7 @@ class SearchPage extends StatelessWidget {
                     controller: vm.searchBarController,
                     search: vm.search,
                     init: vm.init,
-                    hint:
-                        '${context.l10n!.search}: ${country.name.capitalize(context)} (${genre.capitalize(context)})', //context.l10n!.searchOrRssHint,
+                    hint: context.l10n!.searchHint, //context.l10n!.searchOrRssHint,
                     showFilters: true,
                     clear: vm.clearText,
                   ),

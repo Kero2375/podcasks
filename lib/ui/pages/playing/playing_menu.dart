@@ -23,9 +23,7 @@ class PlayingPopupMenu extends ConsumerWidget {
 
     return PopupMenuButton(
       icon: const Icon(Icons.more_vert),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+      shape: popupMenuShape(context),
       onSelected: (item) => _checkValue(context, item, ref, episode, podcast),
       itemBuilder: (BuildContext context) => [
         if (epState != EpisodeState.finished)

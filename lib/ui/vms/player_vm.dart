@@ -13,10 +13,11 @@ import 'package:podcasks/repository/queue_repo.dart';
 import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/manager/audio_handler.dart';
+// import 'package:podcasks/ui/vms/theme_vm.dart';
 // import 'package:podcasks/repository/search_repo.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 
-final playerViewmodel = ChangeNotifierProvider((ref) => PlayerViewmodel());
+final playerViewmodel = ChangeNotifierProvider((ref) => PlayerViewmodel(ref));
 
 class PlayerViewmodel extends Vm {
   // final SearchRepo _searchRepo = locator.get<SearchRepo>();
@@ -45,6 +46,10 @@ class PlayerViewmodel extends Vm {
 
   Future<List<MediaItem>> get queue async => await _queueRepo.getAll();
 
+  Ref<Object?> ref;
+
+  PlayerViewmodel(this.ref);
+
   @override
   void dispose() {
     audioHandler?.dispose();
@@ -53,8 +58,7 @@ class PlayerViewmodel extends Vm {
     super.dispose();
   }
 
-  Future<void> play(
-      {MEpisode? track, MPodcast? pod, bool seekPos = false}) async {
+  Future<void> play({MEpisode? track, MPodcast? pod, bool seekPos = false}) async {
     loading();
     if (pod != null) {
       if (track!.contentUrl != _playing?.contentUrl) {

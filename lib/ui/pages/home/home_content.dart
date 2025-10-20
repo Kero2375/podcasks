@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/manager/download_manager.dart';
+import 'package:podcasks/ui/common/divider.dart';
 import 'package:podcasks/ui/common/episode_item.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/home/favourites_row.dart';
@@ -84,6 +85,7 @@ class _HomeContentPageState extends ConsumerState<HomeContentPage> {
               ),
             )
           : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -96,7 +98,7 @@ class _HomeContentPageState extends ConsumerState<HomeContentPage> {
   }
 
   Widget _episodesList(EpisodesHomeViewmodel episodesVm, DownloadManager dm) =>
-      ListView.builder(
+      ListView.separated(
         physics: const ScrollPhysics(),
         scrollDirection: Axis.vertical,
         controller: episodesVm.controller,
@@ -112,6 +114,7 @@ class _HomeContentPageState extends ConsumerState<HomeContentPage> {
             showDesc: false,
           );
         },
+        separatorBuilder: (BuildContext context, int index) => divider(context),
       );
 
   Widget _welcomeContent(BuildContext context, HomeViewmodel homeVm) {

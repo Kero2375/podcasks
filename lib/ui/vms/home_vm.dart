@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -27,7 +29,7 @@ class HomeViewmodel extends Vm {
   final _favRepo = locator.get<FavouriteRepo>();
   final _historyRepo = locator.get<HistoryRepo>();
 
-  ChangeNotifierProviderRef<Object?> ref;
+  Ref<Object?> ref;
 
   bool syncing = false;
 
@@ -77,17 +79,21 @@ class HomeViewmodel extends Vm {
   }
 
   Future<(MEpisode, MPodcast, Duration)?> getLastSaved() async {
-    loading();
-    // final ep = await _lastPlayingRepo.getLastPlaying();
-    final (ep, pod) = await _historyRepo.getLast() ?? (null, null);
-    if (ep != null && pod != null) {
-      final (rem, _) = _historyRepo.getPosition(ep) ?? (null, null);
-      if (rem != null) {
-        success();
-        return (ep, pod, rem);
+    try {
+      // loading();
+      // final ep = await _lastPlayingRepo.getLastPlaying();
+      final (ep, pod) = await _historyRepo.getLast() ?? (null, null);
+      if (ep != null && pod != null) {
+        final (rem, _) = _historyRepo.getPosition(ep) ?? (null, null);
+        if (rem != null) {
+          success();
+          return (ep, pod, rem);
+        }
       }
+    } catch (e) {
+      log(e.toString());
     }
-    success();
+    // success();
     return null;
   }
 

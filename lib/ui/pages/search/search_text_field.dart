@@ -30,6 +30,7 @@ class SearchTextField extends StatelessWidget {
       ),
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: TextField(
+        textAlignVertical: TextAlignVertical.center,
         // autofocus: true,
         decoration: InputDecoration(
           focusedBorder: InputBorder.none,
@@ -37,7 +38,7 @@ class SearchTextField extends StatelessWidget {
           hintText: hint,
           icon: Icon(
             Icons.search,
-            color: Theme.of(context).colorScheme.onBackground.withOpacity(.5),
+            color: Theme.of(context).colorScheme.onSurface.withAlpha(127),
           ),
           suffixIcon: SizedBox(
             width: 100,

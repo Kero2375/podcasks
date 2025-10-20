@@ -17,7 +17,7 @@ class SearchRepoPodcastSearch extends SearchRepo {
 
   @override
   Future<Podcast?> fetchPodcast(String? feedUrl) async {
-    return feedUrl != null ? await Podcast.loadFeed(url: feedUrl) : null;
+    return feedUrl != null ? await Feed.loadFeed(url: feedUrl) : null;
   }
 
   @override
