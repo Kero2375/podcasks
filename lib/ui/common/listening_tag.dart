@@ -24,14 +24,13 @@ class ListeningTag extends StatelessWidget {
   Widget build(BuildContext context) {
     if (episodeState == EpisodeState.finished) {
       return tag(
-        Theme.of(context).colorScheme.onBackground.withOpacity(.4),
-        // Theme.of(context).colorScheme.tertiary.withOpacity(.6),
+        Theme.of(context).colorScheme.onSurface.withAlpha(102),
         context.l10n!.finished.toUpperCase(),
         Icons.check,
       );
     } else if (playing) {
       return tag(
-        Theme.of(context).colorScheme.primary.withOpacity(.8),
+        Theme.of(context).colorScheme.primary.withAlpha(204),
         remaining != null
             ? parseRemainingTime(remaining!)
             : context.l10n!.started.toUpperCase(),
@@ -40,7 +39,7 @@ class ListeningTag extends StatelessWidget {
       );
     } else if (episodeState case EpisodeState.started) {
       return tag(
-        Theme.of(context).colorScheme.onBackground.withOpacity(.4),
+        Theme.of(context).colorScheme.onSurface.withAlpha(102),
         remaining != null
             ? parseRemainingTime(remaining!)
             : context.l10n!.started.toUpperCase(),
@@ -59,7 +58,6 @@ class ListeningTag extends StatelessWidget {
           border: Border.all(
             color: color,
           ),
-          // color: Theme.of(context).colorScheme.primary.withOpacity(.8),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

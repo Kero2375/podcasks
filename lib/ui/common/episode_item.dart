@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/manager/download_manager.dart';
-import 'package:podcasks/ui/common/divider.dart';
 import 'package:podcasks/ui/common/episode_menu.dart';
 import 'package:podcasks/ui/common/episode_play_button.dart';
 import 'package:podcasks/ui/common/listening_tag.dart';
@@ -66,73 +65,68 @@ class _HomeEpisodeItemState extends ConsumerState<EpisodeItem> {
           tapPos: _tapPos,
         );
       },
-      child: Column(
-        children: [
-          divider(context),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ...[
-                  (widget.showImage)
-                      ? _podcastImage(context)
-                      : Consumer(builder:
-                          (BuildContext context, WidgetRef ref, Widget? child) {
-                          final vm = ref.watch(playerViewmodel);
-                          return EpisodePlayButton(
-                            episode: episode,
-                            podcast: podcast,
-                            vm: vm,
-                          );
-                        }),
-                  const SizedBox(width: 8),
-                ],
-                Flexible(
-                  flex: 1,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ListeningTag(
-                        ep: episode,
-                        episodeState: episodeState,
-                        remaining: remaining,
-                        padding: const EdgeInsets.only(bottom: 4),
-                        playing:
-                            ref.read(playerViewmodel).playing?.contentUrl ==
-                                episode?.contentUrl,
-                      ),
-                      Text(
-                        episode?.publicationDate?.toDate() ?? '',
-                        style: textStyleSmallGray(context),
-                      ),
-                      Text(
-                        episode?.title ?? '',
-                        style: textStyleHeader,
-                        overflow: TextOverflow.fade,
-                      ),
-                      if (widget.showDesc)
-                        ConstrainedBox(
-                          constraints: const BoxConstraints(maxHeight: 104),
-                          // child: Html(
-                          //   data: episode?.description ?? '',
-                          //   style: {'*': htmlStyle(margin: Margins.zero)},
-                          // ),
-                          child: Text(
-                            HtmlParser.parseHTML(episode?.description ?? '')
-                                .text,
-                            style: textStyleBody,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                    ],
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ...[
+              (widget.showImage)
+                  ? _podcastImage(context)
+                  : Consumer(builder:
+                      (BuildContext context, WidgetRef ref, Widget? child) {
+                      final vm = ref.watch(playerViewmodel);
+                      return EpisodePlayButton(
+                        episode: episode,
+                        podcast: podcast,
+                        vm: vm,
+                      );
+                    }),
+              const SizedBox(width: 8),
+            ],
+            Flexible(
+              flex: 1,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ListeningTag(
+                    ep: episode,
+                    episodeState: episodeState,
+                    remaining: remaining,
+                    padding: const EdgeInsets.only(bottom: 4),
+                    playing:
+                        ref.read(playerViewmodel).playing?.contentUrl ==
+                            episode?.contentUrl,
                   ),
-                ),
-              ],
+                  Text(
+                    episode?.publicationDate?.toDate() ?? '',
+                    style: textStyleSmallGray(context),
+                  ),
+                  Text(
+                    episode?.title ?? '',
+                    style: textStyleHeader,
+                    overflow: TextOverflow.fade,
+                  ),
+                  if (widget.showDesc)
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 104),
+                      // child: Html(
+                      //   data: episode?.description ?? '',
+                      //   style: {'*': htmlStyle(margin: Margins.zero)},
+                      // ),
+                      child: Text(
+                        HtmlParser.parseHTML(episode?.description ?? '')
+                            .text,
+                        style: textStyleBody,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

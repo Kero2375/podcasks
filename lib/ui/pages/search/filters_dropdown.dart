@@ -27,7 +27,7 @@ class FilterDropdown<T> extends StatelessWidget {
       ),
       menuMaxHeight: 600,
       onChanged: onChanged,
-      value: value,
+      initialValue: value,
       items: items.entries
           .map((entry) => MapEntry(
               null,
@@ -37,7 +37,7 @@ class FilterDropdown<T> extends StatelessWidget {
                 child: Text(
                   getString(entry.value).capitalize(context),
                   style: textStyleBody.copyWith(
-                      color: Theme.of(context).colorScheme.onBackground),
+                      color: Theme.of(context).colorScheme.onSurface),
                 ),
               )))
           .map((e) => e.value)

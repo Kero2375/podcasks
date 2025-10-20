@@ -127,7 +127,7 @@ class ListViewmodel extends Vm {
             children: [
               Icon(
                 res ? Icons.check : Icons.warning,
-                color: Theme.of(context).colorScheme.background,
+                color: Theme.of(context).colorScheme.surface,
               ),
               const SizedBox(width: 8),
               Text(

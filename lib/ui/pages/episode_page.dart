@@ -122,7 +122,7 @@ class EpisodePage extends ConsumerWidget {
           Icon(
             icon,
             size: 15,
-            color: Theme.of(context).colorScheme.onBackground.withOpacity(.5),
+            color: Theme.of(context).colorScheme.onSurface.withAlpha(127),
           ),
           const SizedBox(width: 8),
           Text(text ?? '', style: textStyleSmallGray(context)),

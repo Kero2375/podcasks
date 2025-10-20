@@ -81,7 +81,7 @@ class SearchListItem extends ConsumerWidget {
               Icon(
                 Icons.open_in_new,
                 size: 24,
-                color: Theme.of(context).colorScheme.primary.withOpacity(.5),
+                color: Theme.of(context).colorScheme.primary.withAlpha(127),
               )
             ],
             if (vm.searchBarController.text.trim() == '') ...[
@@ -90,7 +90,7 @@ class SearchListItem extends ConsumerWidget {
                 '#${index + 1}',
                 style: textStyleTitle.copyWith(
                     color:
-                        Theme.of(context).colorScheme.primary.withOpacity(.2)),
+                        Theme.of(context).colorScheme.primary.withAlpha(51)),
               ),
             ],
           ],
