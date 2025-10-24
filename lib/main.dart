@@ -27,6 +27,7 @@ import 'package:workmanager/workmanager.dart';
 
 import 'l10n/app_localizations.dart';
 
+@pragma("vm:entry-point")
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     if (task == 'podcasksUpdate') {
@@ -38,15 +39,33 @@ void callbackDispatcher() {
 
       Set<MPodcast> updated = await FavouriteRepoIsar().syncFavourites();
 
-      for (MPodcast pod in updated) {
+      if (updated.length == 1) {
         AwesomeNotifications().createNotification(
             content: NotificationContent(
-          id: pod.title.hashCode,
+          id: updated.first.title.hashCode,
           channelKey: 'podcasks_sync',
           actionType: ActionType.Default,
-          title: pod.title,
-          body: pod.episodes.first.title,
-          largeIcon: pod.image,
+          title: updated.first.title,
+          body: updated.first.episodes.first.title,
+          largeIcon: updated.first.image,
+        ));
+      } else if (updated.length > 1) {
+        const title = "There are new episodes!";
+        final body =
+            "${updated.first.episodes[0].title}, ${updated.first.episodes[1].title}";
+        final extra = (updated.length == 2)
+            ? ""
+            : (updated.length == 3)
+                ? ", and one other"
+                : ", and ${updated.length - 2} others";
+        AwesomeNotifications().createNotification(
+            content: NotificationContent(
+          id: updated.first.title.hashCode,
+          channelKey: 'podcasks_sync',
+          actionType: ActionType.Default,
+          title: title,
+          body: body + extra,
+          largeIcon: updated.first.image,
         ));
       }
     }
@@ -77,7 +96,8 @@ Future<void> main() async {
   );
 
   Workmanager().initialize(callbackDispatcher);
-  Workmanager().registerPeriodicTask('podcasksUpdate', 'podcasksUpdate', frequency: const Duration(minutes: 15), initialDelay: Duration.zero);
+  Workmanager().registerPeriodicTask('podcasksUpdate', 'podcasksUpdate',
+      frequency: const Duration(minutes: 15), initialDelay: Duration.zero);
 
   AwesomeNotifications().initialize(
       null,
@@ -86,12 +106,17 @@ Future<void> main() async {
             channelGroupKey: 'basic_channel_group',
             channelKey: 'podcasks_sync',
             channelName: 'Podkasks sync',
-            channelDescription: 'Notification channel for podcast episodes sync',
+            channelDescription:
+                'Notification channel for podcast episodes sync',
             defaultColor: Color(0xFF9D50DD),
             ledColor: Colors.white)
       ],
       // Channel groups are only visual and are not required
-      channelGroups: [NotificationChannelGroup(channelGroupKey: 'basic_channel_group', channelGroupName: 'Podkasks notifications')],
+      channelGroups: [
+        NotificationChannelGroup(
+            channelGroupKey: 'basic_channel_group',
+            channelGroupName: 'Podkasks notifications')
+      ],
       debug: true);
 
   AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
@@ -108,7 +133,8 @@ Future<void> main() async {
 class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
-  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
 
   @override
   ConsumerState<MyApp> createState() => _MyAppState();
@@ -119,9 +145,12 @@ class _MyAppState extends ConsumerState<MyApp> {
   void initState() {
     AwesomeNotifications().setListeners(
         onActionReceivedMethod: NotificationController.onActionReceivedMethod,
-        onNotificationCreatedMethod: NotificationController.onNotificationCreatedMethod,
-        onNotificationDisplayedMethod: NotificationController.onNotificationDisplayedMethod,
-        onDismissActionReceivedMethod: NotificationController.onDismissActionReceivedMethod);
+        onNotificationCreatedMethod:
+            NotificationController.onNotificationCreatedMethod,
+        onNotificationDisplayedMethod:
+            NotificationController.onNotificationDisplayedMethod,
+        onDismissActionReceivedMethod:
+            NotificationController.onDismissActionReceivedMethod);
     super.initState();
   }
 
@@ -129,7 +158,9 @@ class _MyAppState extends ConsumerState<MyApp> {
   Widget build(BuildContext context) {
     final vm = ref.watch(themeViewmodel);
     return DynamicColorBuilder(
-      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) => MaterialApp(
+
+      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) =>
+          MaterialApp(
         debugShowCheckedModeBanner: false,
         localizationsDelegates: const [
           AppLocalizations.delegate,
@@ -154,16 +185,22 @@ class _MyAppState extends ConsumerState<MyApp> {
         onGenerateRoute: (settings) {
           if (settings.name == PodcastPage.route) {
             return MaterialPageRoute(
-              builder: (context) => PodcastPage(settings.arguments as MPodcast?),
+              builder: (context) =>
+                  PodcastPage(settings.arguments as MPodcast?),
             );
           } else if (settings.name == EpisodePage.route) {
             return MaterialPageRoute(
-              builder: (context) => EpisodePage(settings.arguments as (MEpisode, MPodcast)?),
+              builder: (context) =>
+                  EpisodePage(settings.arguments as (MEpisode, MPodcast)?),
             );
           }
           return null;
         },
-        theme: vm.getAppTheme(MediaQuery.of(context).platformBrightness == Brightness.light ? lightDynamic : darkDynamic),
+        theme: vm.getAppTheme(
+          MediaQuery.of(context).platformBrightness == Brightness.light
+              ? lightDynamic
+              : darkDynamic,
+        ),
       ),
     );
   }

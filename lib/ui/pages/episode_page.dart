@@ -43,7 +43,9 @@ class EpisodePage extends ConsumerWidget {
           ],
         ),
       ),
-      bottomSheet: const BottomPlayer(),
+      bottomSheet: BottomPlayer(
+        bottomMargin: MediaQuery.of(context).viewPadding.bottom,
+      ),
     );
   }
 
@@ -133,13 +135,16 @@ class EpisodePage extends ConsumerWidget {
 }
 
 Widget description(MEpisode? episode) {
-  return SelectionArea(
-    child: Html(
-      data: episode?.description ?? '',
-      onLinkTap: (url, attributes, element) {
-        launchUrl(Uri.parse(url!));
-      },
-      style: {'*': htmlStyle()},
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 48),
+    child: SelectionArea(
+      child: Html(
+        data: episode?.description ?? '',
+        onLinkTap: (url, attributes, element) {
+          launchUrl(Uri.parse(url!));
+        },
+        style: {'*': htmlStyle()},
+      ),
     ),
   );
 }

@@ -22,13 +22,17 @@ class EpisodePlayButton extends StatelessWidget {
     return Center(
       child: IconButton.filled(
         onPressed: () async {
-          vm.isPlaying(url: episode?.contentUrl)
+          if (vm.state != UiState.loading) {
+            vm.isPlaying(url: episode?.contentUrl)
               ? vm.pause()
               : vm.play(
                   track: episode,
                   pod: podcast,
                   seekPos: true,
                 );
+          } else {
+            vm.pause();
+          }
         },
         icon: vm.state == UiState.loading &&
                 vm.playing?.contentUrl == episode?.contentUrl

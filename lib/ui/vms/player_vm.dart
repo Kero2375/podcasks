@@ -13,6 +13,7 @@ import 'package:podcasks/repository/queue_repo.dart';
 import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/manager/audio_handler.dart';
+import 'package:podcasks/ui/vms/theme_vm.dart';
 // import 'package:podcasks/ui/vms/theme_vm.dart';
 // import 'package:podcasks/repository/search_repo.dart';
 import 'package:podcasks/ui/vms/vm.dart';
@@ -80,6 +81,7 @@ class PlayerViewmodel extends Vm {
   }
 
   Future<void> setupPlayer(MEpisode track, MPodcast pod) async {
+    ref.read(themeViewmodel).setPrimaryColor(track.imageUrl ?? pod.image);
     // loading();
     _playingPodcast = pod;
     _playing = track;

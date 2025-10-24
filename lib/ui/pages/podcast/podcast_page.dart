@@ -135,7 +135,9 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
                       ],
                     ),
             ),
-      bottomSheet: const BottomPlayer(),
+      bottomSheet: BottomPlayer(
+        bottomMargin: MediaQuery.of(context).viewPadding.bottom,
+      ),
     );
   }
 

@@ -91,6 +91,7 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
           children: [
             Expanded(child: _image(vm.image)),
             _bottomSection(context, ep, podcast, vm),
+            SizedBox(height: MediaQuery.of(context).viewPadding.bottom),
           ],
         ),
       ),
@@ -237,9 +238,15 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
   Container _image(String? image) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
-      clipBehavior: Clip.antiAlias,
-      child: (image != null) ? Image.network(image) : null,
+      child: FittedBox(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(64)
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: (image != null) ? Image.network(image) : null,
+        ),
+      ),
     );
   }
 }
