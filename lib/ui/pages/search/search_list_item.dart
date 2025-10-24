@@ -84,15 +84,15 @@ class SearchListItem extends ConsumerWidget {
                 color: Theme.of(context).colorScheme.primary.withAlpha(127),
               )
             ],
-            if (vm.searchBarController.text.trim() == '') ...[
-              const SizedBox(width: 16),
-              Text(
-                '#${index + 1}',
-                style: textStyleTitle.copyWith(
-                    color:
-                        Theme.of(context).colorScheme.primary.withAlpha(51)),
-              ),
-            ],
+            // if (vm.searchBarController.text.trim() == '') ...[
+            //   const SizedBox(width: 16),
+            //   Text(
+            //     '#${index + 1}',
+            //     style: textStyleTitle.copyWith(
+            //         color:
+            //             Theme.of(context).colorScheme.primary.withAlpha(51)),
+            //   ),
+            // ],
           ],
         ),
       ),

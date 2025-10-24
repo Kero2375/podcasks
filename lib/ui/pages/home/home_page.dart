@@ -29,6 +29,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final playerVm = ref.read(playerViewmodel);
     final episodesVm = ref.read(episodesHomeViewmodel);
     _checkSaved(homeVm, playerVm, episodesVm);
+    sync(ref);
     super.initState();
   }
 

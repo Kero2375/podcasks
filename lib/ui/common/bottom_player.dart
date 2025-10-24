@@ -9,7 +9,8 @@ import 'package:podcasks/utils.dart';
 class BottomPlayer extends ConsumerWidget {
   static const double playerHeight = 64;
 
-  const BottomPlayer({super.key});
+  const BottomPlayer({super.key, this.bottomMargin = 0});
+  final double bottomMargin;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -17,85 +18,111 @@ class BottomPlayer extends ConsumerWidget {
     return vm.playing == null //|| vm.position == Duration.zero
         ? const SizedBox.shrink()
         : BottomSheet(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(0),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
             ),
+            clipBehavior: Clip.antiAlias,
+            backgroundColor: Theme.of(context).colorScheme.primaryFixedDim.withAlpha(20),
             enableDrag: false,
             onClosing: () {},
             builder: (context) {
               final playing = vm.isPlaying();
               return SizedBox(
-                height: playerHeight,
-                child: Column(
+                height: playerHeight + bottomMargin,
+                child: Stack(
                   children: [
-                    LinearProgressIndicator(value: vm.percent),
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Flexible(
-                            flex: 1,
-                            child: GestureDetector(
-                              onTap: () => Navigator.pushNamed(context, PlayingPage.route),
-                              onVerticalDragEnd: (details) {
-                                if (details.primaryVelocity! < 0) {
-                                  Navigator.pushNamed(context, PlayingPage.route);
-                                }
-                              },
-                              child: Container(
-                                color: Colors.transparent,
-                                child: Row(
-                                  children: [
-                                    if (vm.image != null)
-                                      Container(
-                                        margin: const EdgeInsets.all(8),
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(4),
-                                        ),
-                                        clipBehavior: Clip.antiAlias,
-                                        child: Image.network(vm.image!),
-                                      ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Html(
-                                        data: vm.playing?.title ?? '',
-                                        style: {
-                                          '*': Style(
-                                            margin: Margins.zero,
-                                            fontFamily: themeFontFamily.fontFamily,
-                                            textOverflow: TextOverflow.ellipsis,
+                    SizedBox(
+                      height: double.infinity,
+                      child: LinearProgressIndicator(
+                        borderRadius: BorderRadius.circular(8),
+                        value: vm.percent,
+                        backgroundColor: Colors.transparent,
+                        color: Theme.of(context).colorScheme.primaryContainer,
+                      ),
+                    ),
+                    Column(
+                      children: [
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                flex: 1,
+                                child: GestureDetector(
+                                  onTap: () => Navigator.pushNamed(
+                                      context, PlayingPage.route),
+                                  onVerticalDragEnd: (details) {
+                                    if (details.primaryVelocity! < 0) {
+                                      Navigator.pushNamed(
+                                          context, PlayingPage.route);
+                                    }
+                                  },
+                                  child: Container(
+                                    color: Colors.transparent,
+                                    child: Row(
+                                      children: [
+                                        if (vm.image != null)
+                                          Container(
+                                            margin: const EdgeInsets.all(8),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                            ),
+                                            clipBehavior: Clip.antiAlias,
+                                            child: Image.network(vm.image!),
                                           ),
-                                        },
-                                      ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Html(
+                                            data: vm.playing?.title ?? '',
+                                            style: {
+                                              '*': Style(
+                                                margin: Margins.zero,
+                                                fontFamily:
+                                                    themeFontFamily.fontFamily,
+                                                textOverflow:
+                                                    TextOverflow.ellipsis,
+                                              ),
+                                            },
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Semantics(
-                              label: playing
-                                  ? context.l10n!.pause
-                                  : context.l10n!.play,
-                              child: IconButton(
-                                onPressed: () {
-                                  if (playing) {
-                                    vm.pause();
-                                  } else {
-                                    vm.play();
-                                  }
-                                },
-                                icon: playing
-                                    ? const Icon(Icons.pause)
-                                    : const Icon(Icons.play_arrow),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: Semantics(
+                                  label: playing
+                                      ? context.l10n!.pause
+                                      : context.l10n!.play,
+                                  child: IconButton(
+                                    onPressed: () {
+                                      if (playing) {
+                                        vm.pause();
+                                      } else {
+                                        vm.play();
+                                      }
+                                    },
+                                    icon: playing
+                                        ? const Icon(Icons.pause)
+                                        : const Icon(Icons.play_arrow),
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                        // LinearProgressIndicator(
+                        //   value: vm.percent,
+                        //   borderRadius: BorderRadius.circular(20),
+                        //   minHeight: 2,
+                        // ),
+                        SizedBox(height: bottomMargin),
+                      ],
                     ),
                   ],
                 ),

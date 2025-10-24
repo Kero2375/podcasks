@@ -66,7 +66,7 @@ class SearchPage extends StatelessWidget {
                               ],
                             ),
                           )
-                        : Expanded(child: SearchList(items: vm.searched));
+                        : SearchList(items: vm.searched);
               },
             ),
           ),

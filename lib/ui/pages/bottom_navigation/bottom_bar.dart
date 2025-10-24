@@ -13,7 +13,8 @@ class BottomBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return BottomNavigationBar(
-      elevation: 60,
+      elevation: 0,
+      backgroundColor: Theme.of(context).colorScheme.primaryFixedDim.withAlpha(20),
       selectedLabelStyle: textStyleSmall.copyWith(fontWeight: FontWeight.bold),
       unselectedLabelStyle: textStyleSmall,
       onTap: (value) => onTabTapped(context, value, ref),
