@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
@@ -12,7 +13,6 @@ import 'package:podcasks/ui/pages/playing/playing_menu.dart';
 import 'package:podcasks/ui/pages/queue/queue_button.dart';
 import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
-import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcasks/utils.dart';
 
 class PlayingPage extends ConsumerStatefulWidget {
@@ -28,6 +28,26 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
     with TickerProviderStateMixin {
   bool wasPlayingBeforeSeek = false;
   double? tempSeekPerc;
+  Color? dominantColor;
+  bool colorReady = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final vm = ref.read(playerViewmodel);
+    PaletteGenerator.fromImageProvider(ResizeImage(
+            Image.network(vm.image ?? '').image,
+            width: 10,
+            height: 10))
+        .then((value) => {
+              setState(() {
+                dominantColor = Theme.of(context).brightness == Brightness.light
+                    ? value.vibrantColor?.color
+                    : value.lightVibrantColor?.color;
+                colorReady = true;
+              }),
+            });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,17 +135,17 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
             },
             style: controlsButtonStyle(true),
           ),
-          IconButton.filled(
-            icon: vm.isPlaying()
-                ? const Icon(Icons.pause)
-                : const Icon(Icons.play_arrow),
-            iconSize: 40,
-            onPressed: () {
-              HapticFeedback.lightImpact();
-              vm.isPlaying() ? vm.pause() : vm.play();
-            },
-            style: controlsButtonStyle(!vm.isPlaying()),
-          ),
+          (vm.isReady && colorReady)
+              ? _playButton(vm)
+              : SizedBox(
+                  width: 55,
+                  height: 55,
+                  child: CircularProgressIndicator(
+                    padding: const EdgeInsets.all(8),
+                    strokeWidth: 8,
+                    color: Theme.of(context).colorScheme.onSurface.withAlpha(127),
+                  ),
+                ),
           IconButton(
             icon: const Icon(Icons.forward_30),
             iconSize: 30,
@@ -140,46 +160,54 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
     );
   }
 
+  Widget _playButton(PlayerViewmodel vm) {
+    final bgColor = Theme.of(context).colorScheme.onSurface;
+    void onPressed() {
+      HapticFeedback.lightImpact();
+      vm.isPlaying() ? vm.pause() : vm.play();
+    }
+
+    return SizedBox(
+      height: 55,
+      width: 55,
+      child: vm.isPlaying()
+          ? IconButton.outlined(
+              icon: const Icon(Icons.pause),
+              iconSize: 40,
+              onPressed: onPressed,
+              color: bgColor,
+              style: controlsButtonStyle(!vm.isPlaying()),
+            )
+          : IconButton.filled(
+              icon: const Icon(Icons.play_arrow),
+              iconSize: 40,
+              onPressed: onPressed,
+              style: controlsButtonStyle(!vm.isPlaying()).copyWith(
+                backgroundColor: WidgetStatePropertyAll(dominantColor),
+              ),
+            ),
+    );
+  }
+
   Widget _bottomSection(BuildContext context, MEpisode? ep, MPodcast? podcast,
       PlayerViewmodel vm) {
     return Column(
       children: [
         _title(context, ep, podcast),
-        Slider(
-          value: tempSeekPerc ?? max(vm.percent, 0),
-          onChangeStart: (value) {
-            // tempSeekPerc = value;
-            HapticFeedback.lightImpact();
-            wasPlayingBeforeSeek = vm.isPlaying();
-            if (wasPlayingBeforeSeek) {
-              vm.pause();
-            }
-          },
-          onChanged: (value) {
-            setState(() {
-              tempSeekPerc = value;
-            });
-          },
-          onChangeEnd: (value) async {
-            vm.seek(value).then(
-                  (value) => setState(() {
-                    tempSeekPerc = null;
-                  }),
-                );
-            if (wasPlayingBeforeSeek) {
-              vm.play();
-            }
-          },
-        ),
+        _slider(vm),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              vm.position.toTime(),
+              tempSeekPerc != null
+                  ? (vm.duration * tempSeekPerc!).toTime()
+                  : vm.position.toTime(),
               style: textStyleSmallGray(context),
             ),
             Text(
-              (vm.position - vm.duration).toTime(),
+              tempSeekPerc != null
+                  ? ((vm.duration * tempSeekPerc!) - vm.duration).toTime()
+                  : (vm.position - vm.duration).toTime(),
               style: textStyleSmallGray(context),
             ),
           ],
@@ -202,6 +230,36 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
         ),
       ],
     );
+  }
+
+  Slider _slider(PlayerViewmodel vm) {
+    return Slider(
+        activeColor: dominantColor,
+        value: tempSeekPerc ?? max(vm.percent, 0),
+        onChangeStart: (value) {
+          // tempSeekPerc = value;
+          HapticFeedback.lightImpact();
+          wasPlayingBeforeSeek = vm.isPlaying();
+          if (wasPlayingBeforeSeek) {
+            vm.pause();
+          }
+        },
+        onChanged: (value) {
+          setState(() {
+            tempSeekPerc = value;
+          });
+        },
+        onChangeEnd: (value) async {
+          vm.seek(value).then(
+                (value) => setState(() {
+                  tempSeekPerc = null;
+                }),
+              );
+          if (wasPlayingBeforeSeek) {
+            vm.play();
+          }
+        },
+      );
   }
 
   IconButton _showDescriptionButton(PlayerViewmodel vm, BuildContext context) {
@@ -240,7 +298,9 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: textStyleSubtitle(context),
+            style: textStyleSubtitle(context).copyWith(
+              color: dominantColor,
+            ),
           ),
         ),
       ],
@@ -248,16 +308,25 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
   }
 
   Widget _image(String? image) {
-    return Center(
-      child: FittedBox(
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
+    final imageSize = MediaQuery.of(context).size.width * 0.8;
+    return Column(
+      children: [
+        SizedBox(
+        width: imageSize, height: imageSize,
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadiusGeometry.circular(8)
+            ),
+            elevation: 32,
+            shadowColor: dominantColor?.withAlpha(64),
+            margin: EdgeInsets.zero,
+            clipBehavior: Clip.antiAlias,
+            child: Container(
+              child: (image != null) ? Image.network(image, width: imageSize, height: imageSize, fit: BoxFit.cover,) : null,
+            ),
           ),
-          clipBehavior: Clip.antiAlias,
-          child: (image != null) ? Image.network(image) : null,
         ),
-      ),
+      ],
     );
   }
 }
