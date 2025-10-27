@@ -12,6 +12,7 @@ import 'package:podcasks/ui/pages/playing/playing_menu.dart';
 import 'package:podcasks/ui/pages/queue/queue_button.dart';
 import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
+import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcasks/utils.dart';
 
 class PlayingPage extends ConsumerStatefulWidget {
@@ -26,6 +27,7 @@ class PlayingPage extends ConsumerStatefulWidget {
 class _PlayingPageState extends ConsumerState<PlayingPage>
     with TickerProviderStateMixin {
   bool wasPlayingBeforeSeek = false;
+  double? tempSeekPerc;
 
   @override
   Widget build(BuildContext context) {
@@ -144,16 +146,26 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
       children: [
         _title(context, ep, podcast),
         Slider(
-          value: max(vm.percent, 0),
+          value: tempSeekPerc ?? max(vm.percent, 0),
           onChangeStart: (value) {
+            // tempSeekPerc = value;
             HapticFeedback.lightImpact();
             wasPlayingBeforeSeek = vm.isPlaying();
             if (wasPlayingBeforeSeek) {
               vm.pause();
             }
           },
-          onChanged: (value) => vm.seek(value),
-          onChangeEnd: (value) {
+          onChanged: (value) {
+            setState(() {
+              tempSeekPerc = value;
+            });
+          },
+          onChangeEnd: (value) async {
+            vm.seek(value).then(
+                  (value) => setState(() {
+                    tempSeekPerc = null;
+                  }),
+                );
             if (wasPlayingBeforeSeek) {
               vm.play();
             }
@@ -235,13 +247,12 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
     );
   }
 
-  Container _image(String? image) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8),
+  Widget _image(String? image) {
+    return Center(
       child: FittedBox(
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(64)
+            borderRadius: BorderRadius.circular(8),
           ),
           clipBehavior: Clip.antiAlias,
           child: (image != null) ? Image.network(image) : null,

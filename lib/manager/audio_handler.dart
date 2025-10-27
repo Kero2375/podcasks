@@ -40,7 +40,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
           playing: false,
         ),
       );
-      _player.setUrl(item.id);
+      await _player.setUrl(item.id);
       await _player.load();
       // playbackState.listen(playbackStateListener);
     }
@@ -86,6 +86,8 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   Duration get duration => _player.duration ?? Duration.zero;
 
   double get speed => _player.speed;
+
+  ProcessingState get processingState => _player.processingState;
 
   @override
   Future<void> setSpeed(double speed) {

@@ -7,13 +7,14 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/repository/history_repo.dart';
 import 'package:podcasks/repository/queue_repo.dart';
 import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/manager/audio_handler.dart';
-import 'package:podcasks/ui/vms/theme_vm.dart';
+// import 'package:podcasks/ui/vms/theme_vm.dart';
 // import 'package:podcasks/ui/vms/theme_vm.dart';
 // import 'package:podcasks/repository/search_repo.dart';
 import 'package:podcasks/ui/vms/vm.dart';
@@ -34,6 +35,8 @@ class PlayerViewmodel extends Vm {
   Duration get duration => audioHandler?.duration ?? Duration.zero;
 
   double get speed => audioHandler?.speed ?? 1;
+
+  bool get isReady => audioHandler?.processingState == ProcessingState.ready;
 
   double get percent => (duration != Duration.zero && duration >= position)
       ? position.inSeconds / duration.inSeconds
@@ -81,7 +84,7 @@ class PlayerViewmodel extends Vm {
   }
 
   Future<void> setupPlayer(MEpisode track, MPodcast pod) async {
-    ref.read(themeViewmodel).setPrimaryColor(track.imageUrl ?? pod.image);
+    // ref.read(themeViewmodel).setPrimaryColor(track.imageUrl ?? pod.image);
     // loading();
     _playingPodcast = pod;
     _playing = track;
@@ -112,7 +115,7 @@ class PlayerViewmodel extends Vm {
         Duration(milliseconds: ((1 / speed) * 1000).toInt()),
         (timer) => updatePosition());
     _saveTimer =
-        Timer.periodic(const Duration(seconds: 10), (timer) => saveTrack());
+        Timer.periodic(const Duration(seconds: 1), (timer) => saveTrack());
     // await saveTrack();
   }
 
