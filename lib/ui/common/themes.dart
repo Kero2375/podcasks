@@ -39,17 +39,17 @@ TextStyle get textStyleBody => themeFontFamily.copyWith(
       fontSize: 14,
     );
 
-textStyleBodyGray(context) => themeFontFamily.copyWith(
+TextStyle textStyleBodyGray(context) => themeFontFamily.copyWith(
       fontSize: 14,
       color: Theme.of(context).colorScheme.onSurface.withAlpha(127),
     );
 
-textStyleSubtitle(context) => themeFontFamily.copyWith(
+TextStyle textStyleSubtitle(context) => themeFontFamily.copyWith(
       fontSize: 18,
       color: Theme.of(context).colorScheme.primary,
     );
 
-textStyleSmallGray(context) => themeFontFamily.copyWith(
+TextStyle textStyleSmallGray(context) => themeFontFamily.copyWith(
       fontSize: 12,
       color: Theme.of(context).colorScheme.onSurface.withAlpha(127),
     );
