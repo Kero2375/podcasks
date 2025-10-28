@@ -19,7 +19,6 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         ),
         androidLoadControl: AndroidLoadControl(
           maxBufferDuration: Duration(minutes: 20),
-          minBufferDuration: Duration(minutes: 5),
         )
       )
     );
