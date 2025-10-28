@@ -99,7 +99,7 @@ class BottomPlayer extends ConsumerWidget {
                                   label: playing
                                       ? context.l10n!.pause
                                       : context.l10n!.play,
-                                  child: IconButton(
+                                  child: IconButton.filledTonal(
                                     onPressed: () {
                                       if (playing) {
                                         vm.pause();
@@ -110,6 +110,7 @@ class BottomPlayer extends ConsumerWidget {
                                     icon: playing
                                         ? const Icon(Icons.pause)
                                         : const Icon(Icons.play_arrow),
+                                    style: controlsButtonStyle(!vm.isPlaying()),
                                   ),
                                 ),
                               ),

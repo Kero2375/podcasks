@@ -84,7 +84,10 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
       bottomNavigationBar: BottomBar(selectedPage: homeVm.page),
       body: homeVm.state == UiState.loading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: CircularProgressIndicator(
+              strokeCap: StrokeCap.round,
+            ))
           : homeVm.page == Pages.search
               ? content
               : content,

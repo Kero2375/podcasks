@@ -47,7 +47,9 @@ class SearchPage extends StatelessWidget {
                 final vm = ref.watch(searchViewmodel);
                 return vm.state == UiState.loading
                     ? const Center(
-                        child: CircularProgressIndicator(),
+                        child: CircularProgressIndicator(
+                          strokeCap: StrokeCap.round,
+                        ),
                       )
                     : vm.searched.isEmpty
                         ? Center(
