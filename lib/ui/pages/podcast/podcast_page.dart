@@ -67,7 +67,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
       appBar: vm.searchController == null
           ? mainAppBar(
               context,
-              title: title,
+              // title: title,
               actions: IconButton(
                 onPressed: () {
                   vm.showSearch();
@@ -83,6 +83,8 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
                 search: vm.search,
                 clear: vm.clearText,
               ),
+              leadingWidth: 0,
+              leading: const SizedBox.shrink(),
               actions: [
                 IconButton(
                   onPressed: () {
@@ -105,6 +107,15 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
                       child: Text(context.l10n!.error, style: textStyleBody))
                   : Column(
                       children: [
+                        if (vm.podcast?.title != null)
+                          Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Text(
+                              vm.podcast!.title!,
+                              style: textStyleTitle,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         _image(vm.podcast!),
                         Html(
                           data: vm.podcast!.description ?? '',
