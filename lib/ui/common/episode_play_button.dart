@@ -40,6 +40,7 @@ class EpisodePlayButton extends StatelessWidget {
                 height: 15,
                 width: 15,
                 child: CircularProgressIndicator(
+                  strokeCap: StrokeCap.round,
                   color: Theme.of(context).colorScheme.onPrimary,
                 ),
               )

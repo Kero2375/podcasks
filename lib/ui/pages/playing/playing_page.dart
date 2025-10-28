@@ -141,6 +141,7 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
                   width: 55,
                   height: 55,
                   child: CircularProgressIndicator(
+                    strokeCap: StrokeCap.round,
                     padding: const EdgeInsets.all(8),
                     strokeWidth: 8,
                     color: Theme.of(context).colorScheme.onSurface.withAlpha(127),
@@ -161,7 +162,6 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
   }
 
   Widget _playButton(PlayerViewmodel vm) {
-    final bgColor = Theme.of(context).colorScheme.onSurface;
     void onPressed() {
       HapticFeedback.lightImpact();
       vm.isPlaying() ? vm.pause() : vm.play();
@@ -171,12 +171,14 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
       height: 55,
       width: 55,
       child: vm.isPlaying()
-          ? IconButton.outlined(
+          ? IconButton.filledTonal(
               icon: const Icon(Icons.pause),
+              color: dominantColor,
               iconSize: 40,
               onPressed: onPressed,
-              color: bgColor,
-              style: controlsButtonStyle(!vm.isPlaying()),
+              style: controlsButtonStyle(!vm.isPlaying()).copyWith(
+                // backgroundColor: WidgetStatePropertyAll(bgColor),
+              ),
             )
           : IconButton.filled(
               icon: const Icon(Icons.play_arrow),

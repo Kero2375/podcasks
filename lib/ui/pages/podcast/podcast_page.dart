@@ -93,7 +93,11 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
               ],
             ),
       body: vm.state == UiState.loading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: CircularProgressIndicator(
+                strokeCap: StrokeCap.round,
+              ),
+            )
           : SingleChildScrollView(
               controller: vm.controller,
               child: (vm.podcast == null)
