@@ -11,7 +11,19 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   MyAudioHandler() {
-    _player = AudioPlayer();
+    _player = AudioPlayer(
+      audioLoadConfiguration: const AudioLoadConfiguration(
+        darwinLoadControl: DarwinLoadControl(
+          preferredForwardBufferDuration: Duration(minutes: 20),
+          canUseNetworkResourcesForLiveStreamingWhilePaused: true,
+        ),
+        androidLoadControl: AndroidLoadControl(
+          maxBufferDuration: Duration(minutes: 20),
+          minBufferDuration: Duration(minutes: 5),
+        )
+      )
+    );
+    _player.setCanUseNetworkResourcesForLiveStreamingWhilePaused(true);
     _player.durationStream.listen((d) {
       mediaItem.add(
         mediaItem.value?.copyWith(duration: d),
@@ -40,7 +52,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
           playing: false,
         ),
       );
-      await _player.setUrl(item.id);
+      await _player.setUrl(item.id, preload: true);
       await _player.load();
       // playbackState.listen(playbackStateListener);
     }
@@ -84,6 +96,8 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   Duration get position => _player.position;
 
   Duration get duration => _player.duration ?? Duration.zero;
+
+  Duration get buffered => _player.bufferedPosition;
 
   double get speed => _player.speed;
 

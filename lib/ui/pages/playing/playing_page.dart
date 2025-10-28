@@ -236,32 +236,34 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
 
   Slider _slider(PlayerViewmodel vm) {
     return Slider(
-        activeColor: dominantColor,
-        value: tempSeekPerc ?? max(vm.percent, 0),
-        onChangeStart: (value) {
-          // tempSeekPerc = value;
-          HapticFeedback.lightImpact();
-          wasPlayingBeforeSeek = vm.isPlaying();
-          if (wasPlayingBeforeSeek) {
-            vm.pause();
-          }
-        },
-        onChanged: (value) {
-          setState(() {
-            tempSeekPerc = value;
-          });
-        },
-        onChangeEnd: (value) async {
-          vm.seek(value).then(
-                (value) => setState(() {
-                  tempSeekPerc = null;
-                }),
-              );
-          if (wasPlayingBeforeSeek) {
-            vm.play();
-          }
-        },
-      );
+      secondaryActiveColor: dominantColor?.withAlpha(50),
+      secondaryTrackValue: vm.bufferedPercent,
+      activeColor: dominantColor,
+      value: tempSeekPerc ?? max(vm.percent, 0),
+      onChangeStart: (value) {
+        // tempSeekPerc = value;
+        HapticFeedback.lightImpact();
+        wasPlayingBeforeSeek = vm.isPlaying();
+        if (wasPlayingBeforeSeek) {
+          vm.pause();
+        }
+      },
+      onChanged: (value) {
+        setState(() {
+          tempSeekPerc = value;
+        });
+      },
+      onChangeEnd: (value) async {
+        vm.seek(value).then(
+              (value) => setState(() {
+                tempSeekPerc = null;
+              }),
+            );
+        if (wasPlayingBeforeSeek) {
+          vm.play();
+        }
+      },
+    );
   }
 
   IconButton _showDescriptionButton(PlayerViewmodel vm, BuildContext context) {

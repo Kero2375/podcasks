@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/playing/playing_page.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
+import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcasks/utils.dart';
 
 class BottomPlayer extends ConsumerWidget {
@@ -107,9 +108,16 @@ class BottomPlayer extends ConsumerWidget {
                                         vm.play();
                                       }
                                     },
-                                    icon: playing
-                                        ? const Icon(Icons.pause)
-                                        : const Icon(Icons.play_arrow),
+                                    icon: !vm.isReady || vm.state == UiState.loading
+                                        ? const SizedBox(
+                                            height: 15,
+                                            width: 15,
+                                            child: CircularProgressIndicator(
+                                              strokeCap: StrokeCap.round,
+                                            ))
+                                        : playing
+                                            ? const Icon(Icons.pause)
+                                            : const Icon(Icons.play_arrow),
                                     style: controlsButtonStyle(!vm.isPlaying()),
                                   ),
                                 ),

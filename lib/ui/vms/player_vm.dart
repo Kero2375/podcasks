@@ -34,12 +34,18 @@ class PlayerViewmodel extends Vm {
 
   Duration get duration => audioHandler?.duration ?? Duration.zero;
 
+  Duration get buffered => audioHandler?.buffered ?? Duration.zero;
+
   double get speed => audioHandler?.speed ?? 1;
 
   bool get isReady => audioHandler?.processingState == ProcessingState.ready;
 
   double get percent => (duration != Duration.zero && duration >= position)
       ? position.inSeconds / duration.inSeconds
+      : 0.0;
+
+  double get bufferedPercent => (duration != Duration.zero && duration >= buffered)
+      ? buffered.inSeconds / duration.inSeconds
       : 0.0;
 
   Timer? _positionTimer;
