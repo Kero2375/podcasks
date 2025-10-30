@@ -4,7 +4,6 @@ import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
@@ -23,9 +22,9 @@ final playerViewmodel = ChangeNotifierProvider((ref) => PlayerViewmodel(ref));
 
 class PlayerViewmodel extends Vm {
   // final SearchRepo _searchRepo = locator.get<SearchRepo>();
-  ScrollController scrollController = ScrollController();
+  // ScrollController scrollController = ScrollController();
 
-  final int _scrollOffset = 300;
+  // final int _scrollOffset = 300;
 
   MEpisode? get playing => _playing;
   MEpisode? _playing;
@@ -248,19 +247,19 @@ class PlayerViewmodel extends Vm {
     }
   }
 
-  bool isScrollToInitialPosition() =>
-      scrollController.offset <=
-      scrollController.initialScrollOffset + _scrollOffset;
-
-  scrollDown() async {
-    if (isScrollToInitialPosition()) {
-      await scrollController.animateTo(
-        scrollController.initialScrollOffset + _scrollOffset,
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.decelerate,
-      );
-    }
-  }
+  // bool isScrollToInitialPosition() =>
+  //     scrollController.offset <=
+  //     scrollController.initialScrollOffset + _scrollOffset;
+  //
+  // scrollDown() async {
+  //   if (isScrollToInitialPosition()) {
+  //     await scrollController.animateTo(
+  //       scrollController.initialScrollOffset + _scrollOffset,
+  //       duration: const Duration(milliseconds: 200),
+  //       curve: Curves.decelerate,
+  //     );
+  //   }
+  // }
 
   Future<void> setSpeed(double speed) async {
     await audioHandler?.setSpeed(speed);

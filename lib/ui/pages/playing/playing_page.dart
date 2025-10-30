@@ -57,15 +57,7 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
 
     return Scaffold(
       appBar: mainAppBar(context, actions: PlayingPopupMenu(ep, podcast)),
-      body: SingleChildScrollView(
-        controller: vm.scrollController,
-        child: Column(
-          children: [
-            _pageContent(context, vm, ep, podcast),
-            description(ep),
-          ],
-        ),
-      ),
+      body: _pageContent(context, vm, ep, podcast),
     );
   }
 
@@ -76,7 +68,7 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
       icon: Text(
         '⚡ ${vm.speed}x',
         style: textStyleBody.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withAlpha(204)),
+            color: Theme.of(context).colorScheme.onSurface.withAlpha(150)),
       ),
       shape: popupMenuShape(context),
       itemBuilder: (context) => [
@@ -100,22 +92,16 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
         ));
   }
 
-  SizedBox _pageContent(BuildContext context, PlayerViewmodel vm, MEpisode? ep,
+  Widget _pageContent(BuildContext context, PlayerViewmodel vm, MEpisode? ep,
       MPodcast? podcast) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height -
-          MediaQuery.of(context).viewPadding.top -
-          MediaQuery.of(context).viewPadding.bottom,
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(child: _image(vm.image)),
-            _bottomSection(context, ep, podcast, vm),
-            SizedBox(height: MediaQuery.of(context).viewPadding.bottom),
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.all(32),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(child: _image(vm.image)),
+          _bottomSection(context, ep, podcast, vm),
+        ],
       ),
     );
   }
@@ -221,7 +207,7 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
             Align(
                 alignment: Alignment.centerLeft,
                 child: _speedButton(context, vm)),
-            _showDescriptionButton(vm, context),
+            _showDescriptionButton(vm, context, ep),
             Align(
               alignment: Alignment.centerRight,
               child: Builder(
@@ -266,14 +252,38 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
     );
   }
 
-  IconButton _showDescriptionButton(PlayerViewmodel vm, BuildContext context) {
+  IconButton _showDescriptionButton(PlayerViewmodel vm, BuildContext context, MEpisode? ep) {
     return IconButton(
       onPressed: () {
         HapticFeedback.lightImpact();
-        vm.scrollDown();
+        showDialog(
+          context: context,
+          builder: (context) => Dialog.fullscreen(
+            child: Scaffold(
+              appBar: AppBar(
+                title: (ep != null)
+                    ? Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Text(ep.title, style: textStyleTitle),
+                      )
+                    : null,
+              ),
+              body: SingleChildScrollView(child: Column(
+                children: [
+
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: description(ep),
+                  ),
+                ],
+              )),
+            ),
+
+          ),
+        );
       },
       icon: Icon(
-        Icons.keyboard_arrow_down,
+        Icons.receipt_long_outlined,
         color: Theme.of(context).colorScheme.onSurface.withAlpha(127),
       ),
     );
