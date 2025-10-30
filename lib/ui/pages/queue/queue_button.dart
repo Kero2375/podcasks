@@ -76,8 +76,8 @@ class _QueueButtonState extends ConsumerState<QueueButton> {
         );
       },
       icon: Icon(
-        Icons.playlist_play,
-        color: Theme.of(context).colorScheme.onSurface.withAlpha(204),
+        Icons.queue_music,
+        color: Theme.of(context).colorScheme.onSurface.withAlpha(127),
       ),
     );
   }
