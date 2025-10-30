@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 
@@ -37,7 +38,7 @@ class HomePodcastItem extends StatelessWidget {
           duration: animationDuration,
           curve: Curves.fastOutSlowIn,
           child: podcast?.image != null
-              ? Image.network(podcast!.image!)
+              ? CachedNetworkImage(imageUrl: podcast!.image!)
               : Icon(
                   icon!,
                   color: Theme.of(context).colorScheme.secondary,

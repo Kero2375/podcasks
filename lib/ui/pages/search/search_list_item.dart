@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
@@ -48,8 +49,8 @@ class SearchListItem extends ConsumerWidget {
               width: 45,
               clipBehavior: Clip.antiAlias,
               child: (item.bestArtworkUrl != null)
-                  ? Image.network(
-                      item.bestArtworkUrl!,
+                  ? CachedNetworkImage(
+                      imageUrl: item.bestArtworkUrl!,
                     )
                   : const SizedBox.shrink(),
             ),

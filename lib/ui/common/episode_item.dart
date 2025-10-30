@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -145,8 +146,8 @@ class _HomeEpisodeItemState extends ConsumerState<EpisodeItem> {
         child: Row(
           children: [
             if (image != null)
-              Image.network(
-                image!,
+              CachedNetworkImage(
+                imageUrl: image!,
                 height: 40,
                 width: 40,
               ),

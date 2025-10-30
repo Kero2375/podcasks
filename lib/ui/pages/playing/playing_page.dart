@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -35,18 +36,18 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
   void initState() {
     super.initState();
     final vm = ref.read(playerViewmodel);
-    PaletteGenerator.fromImageProvider(ResizeImage(
-            Image.network(vm.image ?? '').image,
-            width: 10,
-            height: 10))
-        .then((value) => {
-              setState(() {
-                dominantColor = Theme.of(context).brightness == Brightness.light
-                    ? value.vibrantColor?.color
-                    : value.lightVibrantColor?.color;
-                colorReady = true;
-              }),
-            });
+    if (vm.image != null) {
+      PaletteGenerator.fromImageProvider(
+        CachedNetworkImageProvider(vm.image!, maxWidth: 10, maxHeight: 10),
+      ).then((value) => {
+            setState(() {
+              dominantColor = Theme.of(context).brightness == Brightness.light
+                  ? value.vibrantColor?.color
+                  : value.lightVibrantColor?.color;
+              colorReady = true;
+            }),
+          });
+    }
   }
 
   @override
@@ -181,6 +182,7 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
       PlayerViewmodel vm) {
     return Column(
       children: [
+        const SizedBox(height: 8),
         _title(context, ep, podcast),
         _slider(vm),
         Row(
@@ -323,24 +325,24 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
 
   Widget _image(String? image) {
     final imageSize = MediaQuery.of(context).size.width * 0.8;
-    return Column(
-      children: [
-        SizedBox(
-        width: imageSize, height: imageSize,
-          child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadiusGeometry.circular(8)
-            ),
-            elevation: 32,
-            shadowColor: dominantColor?.withAlpha(64),
-            margin: EdgeInsets.zero,
-            clipBehavior: Clip.antiAlias,
-            child: Container(
-              child: (image != null) ? Image.network(image, width: imageSize, height: imageSize, fit: BoxFit.cover,) : null,
-            ),
+    return AspectRatio(
+      aspectRatio: 1,
+      child: SizedBox(
+      width: imageSize, height: imageSize,
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadiusGeometry.circular(8)
+          ),
+          elevation: 32,
+          shadowColor: dominantColor?.withAlpha(64),
+          margin: EdgeInsets.zero,
+          clipBehavior: Clip.antiAlias,
+          child: Container(
+            child: (image != null) ? CachedNetworkImage(
+              imageUrl: image, width: imageSize, height: imageSize, fit: BoxFit.cover,) : null,
           ),
         ),
-      ],
+      ),
     );
   }
 }

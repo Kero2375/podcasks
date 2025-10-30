@@ -110,8 +110,9 @@ class HomeViewmodel extends Vm {
 
   Future<void> syncFavourites() async {
     final token = RootIsolateToken.instance;
-    await compute((message) => _sync(token), token);
-    _notifyAll();
+    compute((message) => _sync(token), token)
+        .then((_) => _notifyAll());
+    // _notifyAll();
   }
 
   static Future<void> _sync(token) async {
