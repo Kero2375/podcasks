@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -237,7 +238,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
       clipBehavior: Clip.antiAlias,
       width: 120,
       height: 120,
-      child: Image.network(item.image ?? ''),
+      child: CachedNetworkImage(imageUrl: item.image ?? ''),
     );
   }
 }

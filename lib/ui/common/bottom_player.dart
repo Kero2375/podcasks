@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -71,7 +72,7 @@ class BottomPlayer extends ConsumerWidget {
                                                   BorderRadius.circular(4),
                                             ),
                                             clipBehavior: Clip.antiAlias,
-                                            child: Image.network(vm.image!),
+                                            child: CachedNetworkImage(imageUrl: vm.image!),
                                           ),
                                         const SizedBox(width: 8),
                                         Expanded(

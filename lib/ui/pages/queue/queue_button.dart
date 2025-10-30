@@ -1,4 +1,5 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -115,8 +116,8 @@ class _QueueButtonState extends ConsumerState<QueueButton> {
                 decoration:
                     BoxDecoration(borderRadius: BorderRadius.circular(4)),
                 clipBehavior: Clip.antiAlias,
-                child: Image.network(
-                  e.artUri.toString(),
+                child: CachedNetworkImage(
+                  imageUrl: e.artUri.toString(),
                   width: 40,
                 ),
               ),
