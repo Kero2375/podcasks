@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/entities/episode/podcast_episode.dart';
@@ -5,11 +6,15 @@ import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/divider.dart';
 import 'package:podcasks/ui/common/episode_item.dart';
+import 'package:podcasks/ui/common/episode_menu.dart';
+import 'package:podcasks/ui/common/home_episode_card.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/home/favourites_row.dart';
 import 'package:podcasks/ui/vms/episodes_home_vm.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/ui/vms/listening_vm.dart';
+import 'package:podcasks/ui/vms/player_vm.dart';
+import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcasks/utils.dart';
 
 class HomeContentPage extends ConsumerStatefulWidget {
@@ -27,15 +32,16 @@ class _HomeContentPageState extends ConsumerState<HomeContentPage> {
     final list = <(MEpisode, MPodcast)>[];
 
     for (MPodcast p in favourites) {
-      list.addAll(
-        p.episodes
-            // .whereNot(
-            //     ((e) => saved?.firstWhereOrNull((e1) => e1.$1 == e) != null))
-            .map((e) => (e, p)),
-      );
-      list.sort((a, b) => b.$1.publicationDate != null
-          ? a.$1.publicationDate?.compareTo(b.$1.publicationDate!) ?? 0
-          : 0);
+      list.add((p.episodes.first, p));
+      // list.addAll(
+      //   p.episodes
+      //       // .whereNot(
+      //       //     ((e) => saved?.firstWhereOrNull((e1) => e1.$1 == e) != null))
+      //       .map((e) => (e, p)),
+      // );
+      // list.sort((a, b) => b.$1.publicationDate != null
+      //     ? a.$1.publicationDate?.compareTo(b.$1.publicationDate!) ?? 0
+      //     : 0);
     }
 
     // if (saved != null) {
@@ -87,10 +93,10 @@ class _HomeContentPageState extends ConsumerState<HomeContentPage> {
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: FavouritesRow(episodesVm: episodesVm, homeVm: homeVm),
-                ),
+                // SingleChildScrollView(
+                //   scrollDirection: Axis.horizontal,
+                //   child: FavouritesRow(episodesVm: episodesVm, homeVm: homeVm),
+                // ),
                 Expanded(child: _episodesList(episodesVm, dm)),
               ],
             ),
@@ -98,23 +104,50 @@ class _HomeContentPageState extends ConsumerState<HomeContentPage> {
   }
 
   Widget _episodesList(EpisodesHomeViewmodel episodesVm, DownloadManager dm) =>
-      ListView.separated(
-        physics: const ScrollPhysics(),
+      GridView.count(
+        crossAxisCount: 2,
+        // physics: const ScrollPhysics(),
         scrollDirection: Axis.vertical,
         controller: episodesVm.controller,
         shrinkWrap: true,
-        itemCount: episodesVm.displayingEpisodes.length,
-        itemBuilder: (context, i) {
-          return EpisodeItem(
-            vm: episodesVm,
-            dm: dm,
-            episode: episodesVm.displayingEpisodes[i].$1,
-            podcast: episodesVm.displayingEpisodes[i].$2,
-            showImage: true,
-            showDesc: false,
-          );
-        },
-        separatorBuilder: (BuildContext context, int index) => divider(context),
+        childAspectRatio: 0.7,
+        padding: const EdgeInsets.all(12),
+        mainAxisSpacing: 8,
+        crossAxisSpacing: 8,
+        children: episodesVm.displayingEpisodes.map(
+          (x) => HomeEpisodeCard(
+            episode: x.$1,
+            podcast: x.$2,
+            onTap: () {
+              final playerVm = ref.watch(playerViewmodel);
+              if (playerVm.state != UiState.loading) {
+                playerVm.isPlaying(url: x.$1.contentUrl)
+                  ? playerVm.pause()
+                  : playerVm.play(
+                      track: x.$1,
+                      pod: x.$2,
+                      seekPos: true,
+                    );
+              } else {
+                playerVm.pause();
+              }
+            },
+            onLongTap: () {
+              final (episodeState, remaining) = episodesVm.getEpisodeState(x.$1);
+              showEpisodeMenu(
+                context: context,
+                value: episodeState,
+                vm: episodesVm,
+                dm: ref.read(downloadManager),
+                playerVm: ref.read(playerViewmodel),
+                ep: x.$1,
+                pd: x.$2,
+                tapPos: const Offset(8, 8),
+              );
+            },
+          )
+        ).toList(),
+        // separatorBuilder: (BuildContext context, int index) => divider(context),
       );
 
   Widget _welcomeContent(BuildContext context, HomeViewmodel homeVm) {
