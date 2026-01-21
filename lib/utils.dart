@@ -21,11 +21,36 @@ extension ParsableDuration on Duration {
     if (time.startsWith('-0')) time = "-${time.substring(3)}";
     return time;
   }
+  String? toEnlapsed() {
+    if (this.inMinutes < 2) {
+      return null;
+    }
+    return parseRemainingTime(this);
+  }
 }
 
 extension ParsableDateTime on DateTime {
   String toDate() {
     return '${day <= 9 ? '0' : ''}$day/${month <= 9 ? '0' : ''}$month/$year';
+  }
+
+  String toTimeAgo() {
+    final now = DateTime.now();
+    if (now.difference(this).inDays < 1) {
+      return "today";
+    }
+    else if (now.difference(this).inDays < 7) {
+      return "${now.difference(this).inDays}d ago";
+    }
+    else if (now.difference(this).inDays < 31) {
+      return "${(now.difference(this).inDays/7).round()}w ago";
+    } 
+    else if (now.difference(this).inDays < 365) {
+      return "${(now.difference(this).inDays/31).round()}m ago";
+    }
+    else {
+      return "${(now.difference(this).inDays/365).round()}y ago";
+    }
   }
 }
 
@@ -48,9 +73,9 @@ extension CountryString on String {
 
 String parseRemainingTime(Duration time) {
   if (time > const Duration(hours: 1)) {
-    return '-${time.inHours}h';
+    return '${time.inHours}h';
   } else {
-    return '-${time.inMinutes}m';
+    return '${time.inMinutes}m';
   }
 }
 

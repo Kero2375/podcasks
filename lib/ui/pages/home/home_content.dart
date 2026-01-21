@@ -4,14 +4,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/manager/download_manager.dart';
+import 'package:podcasks/repository/favourites_repo.dart';
 import 'package:podcasks/ui/common/divider.dart';
 import 'package:podcasks/ui/common/episode_item.dart';
 import 'package:podcasks/ui/common/episode_menu.dart';
 import 'package:podcasks/ui/common/home_episode_card.dart';
 import 'package:podcasks/ui/common/themes.dart';
+import 'package:podcasks/ui/pages/episode_page.dart';
 import 'package:podcasks/ui/pages/home/favourites_row.dart';
+import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 import 'package:podcasks/ui/vms/episodes_home_vm.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
+import 'package:podcasks/ui/vms/list_vm.dart';
 import 'package:podcasks/ui/vms/listening_vm.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcasks/ui/vms/vm.dart';
@@ -33,6 +37,8 @@ class _HomeContentPageState extends ConsumerState<HomeContentPage> {
 
     for (MPodcast p in favourites) {
       list.add((p.episodes.first, p));
+      // TODO: next ep instead of last
+
       // list.addAll(
       //   p.episodes
       //       // .whereNot(
@@ -48,7 +54,7 @@ class _HomeContentPageState extends ConsumerState<HomeContentPage> {
     //   list.addAll(saved);
     // }
 
-    episodesVm.init(list.reversed.toList(), maxItems: 30);
+    episodesVm.init(list.toList(), maxItems: 30);
   }
 
   @override
@@ -103,52 +109,60 @@ class _HomeContentPageState extends ConsumerState<HomeContentPage> {
     );
   }
 
-  Widget _episodesList(EpisodesHomeViewmodel episodesVm, DownloadManager dm) =>
-      GridView.count(
-        crossAxisCount: 2,
-        // physics: const ScrollPhysics(),
-        scrollDirection: Axis.vertical,
-        controller: episodesVm.controller,
-        shrinkWrap: true,
-        childAspectRatio: 0.7,
-        padding: const EdgeInsets.all(12),
-        mainAxisSpacing: 8,
-        crossAxisSpacing: 8,
-        children: episodesVm.displayingEpisodes.map(
-          (x) => HomeEpisodeCard(
-            episode: x.$1,
-            podcast: x.$2,
-            onTap: () {
-              final playerVm = ref.watch(playerViewmodel);
-              if (playerVm.state != UiState.loading) {
-                playerVm.isPlaying(url: x.$1.contentUrl)
-                  ? playerVm.pause()
-                  : playerVm.play(
-                      track: x.$1,
-                      pod: x.$2,
-                      seekPos: true,
-                    );
-              } else {
-                playerVm.pause();
-              }
-            },
-            onLongTap: () {
-              final (episodeState, remaining) = episodesVm.getEpisodeState(x.$1);
-              showEpisodeMenu(
-                context: context,
-                value: episodeState,
-                vm: episodesVm,
-                dm: ref.read(downloadManager),
-                playerVm: ref.read(playerViewmodel),
-                ep: x.$1,
-                pd: x.$2,
-                tapPos: const Offset(8, 8),
+  Widget _episodesList(EpisodesHomeViewmodel episodesVm, DownloadManager dm) {
+    final playerVm = ref.watch(playerViewmodel);
+    return GridView.count(
+      crossAxisCount: 2,
+      // physics: const ScrollPhysics(),
+      scrollDirection: Axis.vertical,
+      controller: episodesVm.controller,
+      shrinkWrap: true,
+      childAspectRatio: 0.7,
+      padding: const EdgeInsets.all(12),
+      mainAxisSpacing: 8,
+      crossAxisSpacing: 8,
+      children: episodesVm.displayingEpisodes
+          .map((x) {
+            final state = episodesVm.getEpisodeState(x.$1);
+            return HomeEpisodeCard(
+                episode: x.$1,
+                podcast: x.$2,
+                onCardTap: () => Navigator.pushNamed(context, PodcastPage.route,
+                    arguments: x.$2),
+                onPlayTap: () {
+                  if (playerVm.state != UiState.loading) {
+                    playerVm.isPlaying(url: x.$1.contentUrl)
+                        ? playerVm.pause()
+                        : playerVm.play(
+                            track: x.$1,
+                            pod: x.$2,
+                            seekPos: true,
+                          );
+                  } else {
+                    playerVm.pause();
+                  }
+                },
+                onLongTap: (Offset tapPosition) {
+                  final (episodeState, remaining) =
+                      episodesVm.getEpisodeState(x.$1);
+                  showEpisodeMenu(
+                    context: context,
+                    value: episodeState,
+                    vm: episodesVm,
+                    dm: ref.read(downloadManager),
+                    playerVm: ref.read(playerViewmodel),
+                    ep: x.$1,
+                    pd: x.$2,
+                    tapPos: tapPosition,
+                  );
+                },
+                timeLeftOnEpisode: state.$1 == EpisodeState.finished ? null : state.$2 == null ? x.$1.duration.toEnlapsed() : state.$2?.toEnlapsed(),
               );
-            },
-          )
-        ).toList(),
-        // separatorBuilder: (BuildContext context, int index) => divider(context),
-      );
+          })
+          .toList(),
+      // separatorBuilder: (BuildContext context, int index) => divider(context),
+    );
+  }
 
   Widget _welcomeContent(BuildContext context, HomeViewmodel homeVm) {
     return Center(

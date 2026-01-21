@@ -32,7 +32,7 @@ class ListeningTag extends StatelessWidget {
       return tag(
         Theme.of(context).colorScheme.primary.withAlpha(204),
         remaining != null
-            ? parseRemainingTime(remaining!)
+            ? "-${parseRemainingTime(remaining!)}"
             : context.l10n!.started.toUpperCase(),
         // context.l10n!.listening.toUpperCase(),
         Icons.music_note_outlined,
@@ -41,7 +41,7 @@ class ListeningTag extends StatelessWidget {
       return tag(
         Theme.of(context).colorScheme.onSurface.withAlpha(102),
         remaining != null
-            ? parseRemainingTime(remaining!)
+            ? "-${parseRemainingTime(remaining!)}"
             : context.l10n!.started.toUpperCase(),
         Icons.bookmark_outline,
       );

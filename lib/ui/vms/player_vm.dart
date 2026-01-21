@@ -273,4 +273,11 @@ class PlayerViewmodel extends Vm {
       Clipboard.setData(ClipboardData(text: episode!.link!));
     }
   }
+
+  Duration? getEnlapsed(MEpisode? episode) {
+    if (episode == null) return null;
+    final (pos, _) =  _historyRepo.getPosition(episode) ?? (Duration.zero, false);
+    return episode.duration - pos;
+  }
+
 }
