@@ -324,24 +324,20 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
   }
 
   Widget _image(String? image) {
-    final imageSize = MediaQuery.of(context).size.width * 0.8;
-    return AspectRatio(
-      aspectRatio: 1,
-      child: SizedBox(
-      width: imageSize, height: imageSize,
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.circular(8)
-          ),
-          elevation: 32,
-          shadowColor: dominantColor?.withAlpha(64),
-          margin: EdgeInsets.zero,
-          clipBehavior: Clip.antiAlias,
-          child: Container(
-            child: (image != null) ? CachedNetworkImage(
-              imageUrl: image, width: imageSize, height: imageSize, fit: BoxFit.cover,) : null,
-          ),
+    if (image == null) return const SizedBox.shrink();
+    final imageSize = MediaQuery.of(context).size.width;
+    return FittedBox(
+      fit: BoxFit.contain,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(6),
+          boxShadow: dominantColor != null
+              ? [BoxShadow(color: dominantColor!.withAlpha(64), blurRadius: 30)]
+              : [],
         ),
+        clipBehavior: Clip.antiAlias,
+        child: CachedNetworkImage(
+            imageUrl: image, fit: BoxFit.fill, width: imageSize),
       ),
     );
   }
