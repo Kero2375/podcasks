@@ -508,6 +508,12 @@ abstract class AppLocalizations {
   /// **'Import OPML'**
   String get importOpml;
 
+  /// No description provided for @exportOpml.
+  ///
+  /// In en, this message translates to:
+  /// **'Export OPML'**
+  String get exportOpml;
+
   /// No description provided for @importTitle.
   ///
   /// In en, this message translates to:

@@ -67,6 +67,7 @@
   "emptyQueue": "coda vuota",
   "searchHint": "Cerca o inserisci Feed RSS",
   "importOpml": "Importa OPML",
+  "exportOpml": "Esporta OPML",
   "importTitle": "Conferma importazione OMPL",
   "import": "Importa",
   "importMessage": "Vuoi veramente aggiungere {count, plural, =1{{count} elementi} other{{count} elementi}} ai preferiti?",

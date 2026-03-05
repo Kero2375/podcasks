@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:podcast_search/podcast_search.dart';
@@ -55,40 +57,23 @@ AppBar mainAppBar(
             onSelected: (item) =>
                 _checkValue(context, item, updateHome, startLoading),
             itemBuilder: (BuildContext context) => [
-              // popupMenuItem(
-              //   value: 0,
-              //   icon: const Icon(Icons.search),
-              //   text: context.l10n!.search,
-              // ),
               popupMenuItem(
                 value: 2,
                 icon: const Icon(Icons.sync),
                 text: context.l10n!.sync,
               ),
-              // popupMenuItem(
-              //   value: 4,
-              //   icon: const Icon(Icons.favorite_outline),
-              //   text: context.l10n!.favourites,
-              // ),
+              popupMenuItem(
+                value: 5,
+                icon: const Icon(Icons.file_upload_outlined),
+                text: context.l10n!.exportOpml,
+              ),
               popupMenuItem(
                 value: 1,
-                icon: const Icon(Icons.upload_file_outlined),
+                icon: const Icon(Icons.file_download_outlined),
                 text: context.l10n!.importOpml,
               ),
-              // popupMenuItem(
-              //   value: 3,
-              //   icon: const Icon(Icons.tune),
-              //   text: 'Settings',
-              // ),
             ],
           ),
-
-      // IconButton(
-      //   onPressed: () {
-      //     Navigator.pushNamed(context, SearchPage.route);
-      //   },
-      //   icon: const Icon(Icons.search),
-      // )
     ],
   );
 }
@@ -111,6 +96,76 @@ _checkValue(BuildContext context, int item, Function()? updateHome,
     case 4:
       Navigator.pushNamed(context, FavouritesPage.route);
       break;
+    case 5:
+      _exportFile(context);
+      break;
+  }
+}
+
+_exportFile(BuildContext context) async {
+  final favRepo = locator.get<FavouriteRepo>();
+  final fav = await favRepo.getAllFavourites();
+
+  if (fav.isEmpty) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+        context.l10n!.notFavouritesMessage,
+        style: textStyleBody,
+      )));
+    }
+    return;
+  }
+
+  final builder = XmlBuilder();
+  builder.processing('xml', 'version="1.0" encoding="UTF-8"');
+  builder.element('opml', attributes: {'version': '1.0'}, nest: () {
+    builder.element('head', nest: () {
+      builder.element('title', nest: 'Podcasks Subscriptions');
+    });
+    builder.element('body', nest: () {
+      for (var p in fav) {
+        builder.element('outline', attributes: {
+          'text': p.title ?? '',
+          'title': p.title ?? '',
+          'type': 'rss',
+          'xmlUrl': p.url ?? '',
+          'htmlUrl': p.link ?? '',
+        });
+      }
+    });
+  });
+
+  final xmlString = builder.buildDocument().toXmlString(pretty: true);
+  final bytes = Uint8List.fromList(utf8.encode(xmlString));
+
+  try {
+    String? outputFile = await FilePicker.platform.saveFile(
+      dialogTitle: 'Please select where to save your file:',
+      fileName: 'podcasks_subscriptions.opml',
+      type: FileType.any,
+      bytes: bytes,
+    );
+
+    if (outputFile == null) {
+      return;
+    }
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+        "File saved successfully",
+        style: textStyleBody,
+      )));
+    }
+  } catch (e) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+        "${context.l10n!.error}: $e",
+        style: textStyleBody,
+      )));
+    }
   }
 }
 
@@ -161,13 +216,10 @@ _pickFile(BuildContext context, Function()? updateHome,
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text("${context.l10n!.added} $item")));
             }
-            // updateHome?.call();
           }
           updateHome?.call();
         },
       ),
     );
-  } else {
-    // User canceled the picker
   }
 }

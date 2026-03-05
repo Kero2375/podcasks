@@ -227,6 +227,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get importOpml => 'Importa OPML';
 
   @override
+  String get exportOpml => 'Esporta OPML';
+
+  @override
   String get importTitle => 'Conferma importazione OMPL';
 
   @override

@@ -67,6 +67,7 @@
   "emptyQueue": "empty queue",
   "searchHint": "Search or insert RSS feed",
   "importOpml": "Import OPML",
+  "exportOpml": "Export OPML",
   "importTitle": "Confirm import OMPL",
   "import": "Import",
   "importMessage": "Do you really want to add {count, plural, =1{{count} item} other{{count} items}} to you favorites?",
