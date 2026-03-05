@@ -7,6 +7,7 @@ import 'package:podcasks/locator.dart';
 import 'package:podcasks/repository/history_repo.dart';
 import 'package:podcasks/repository/queue_repo.dart';
 import 'package:podcasks/ui/common/themes.dart';
+import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcasks/utils.dart';
 
@@ -51,6 +52,8 @@ class ListViewmodel extends Vm {
     _displayingEpisodes = [];
   }
 
+  void refreshHomeList(HomeViewmodel homeVm) {}
+
   @override
   void dispose() {
     _controller.removeListener(loadMoreData);
@@ -85,18 +88,26 @@ class ListViewmodel extends Vm {
             : (EpisodeState.none, null);
   }
 
-  Future<void> markAsFinished(Episode? ep, Podcast? pd) async {
+  Future<void> markAsFinished(Episode? ep, Podcast? pd, {HomeViewmodel? homeVm}) async {
     if (ep != null && pd != null) {
       await historyRepo.setPosition(ep, pd, Duration.zero, ep.duration);
-      initEpisodesList();
+      if (homeVm != null) {
+        refreshHomeList(homeVm);
+      } else {
+        initEpisodesList();
+      }
       update();
     }
   }
 
-  Future<void> cancelProgress(Episode? ep) async {
+  Future<void> cancelProgress(Episode? ep, {HomeViewmodel? homeVm}) async {
     if (ep != null) {
       await historyRepo.removeEpisode(ep);
-      initEpisodesList();
+      if (homeVm != null) {
+        refreshHomeList(homeVm);
+      } else {
+        initEpisodesList();
+      }
       update();
     }
   }

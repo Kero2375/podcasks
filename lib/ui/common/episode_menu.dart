@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/themes.dart';
+import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcasks/utils.dart';
@@ -15,6 +16,7 @@ Future<int?> showEpisodeMenu({
   required Episode? ep,
   required Podcast? pd,
   required Offset tapPos,
+  HomeViewmodel? homeVm,
 }) {
   final screenSize = MediaQuery.of(context).size;
   return showMenu(
@@ -26,13 +28,13 @@ Future<int?> showEpisodeMenu({
         episodeMenuItem<int>(
           message: context.l10n!.markAsFinished,
           icon: Icons.check,
-          onTap: () => vm.markAsFinished(ep, pd),
+          onTap: () => vm.markAsFinished(ep, pd, homeVm: homeVm),
         ),
       if (value != EpisodeState.none)
         episodeMenuItem<int>(
           message: context.l10n!.cancelProgress,
           icon: Icons.delete_outline,
-          onTap: () => vm.cancelProgress(ep),
+          onTap: () => vm.cancelProgress(ep, homeVm: homeVm),
         ),
       episodeMenuItem<int>(
         message: context.l10n!.share,

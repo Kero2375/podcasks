@@ -47,28 +47,21 @@ class _HomeEpisodeCardState extends State<HomeEpisodeCard> {
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(5),
-                    child: (widget.timeLeftOnEpisode == null)
-                        ? ColorFiltered(
-                            colorFilter: const ColorFilter.mode(
-                              Colors.grey,
-                              BlendMode.saturation,
-                            ),
-                            child: CachedNetworkImage(
-                              imageUrl: widget.podcast.image!,
-                            ),
-                          )
-                        : CachedNetworkImage(
-                            imageUrl: widget.podcast.image!,
-                          ),
+                    child: CachedNetworkImage(
+                      imageUrl: widget.podcast.image!,
+                    ),
                   ),
                 ),
               if (widget.podcast.title != null && widget.timeLeftOnEpisode == null)
                 Expanded(
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
                     children: [
+                      const SizedBox(width: 4),
                       Icon(
-                        Icons.bookmark,
+                        Icons.check,
                         // size: 18,
                         color: Theme.of(context)
                             .colorScheme
@@ -76,7 +69,7 @@ class _HomeEpisodeCardState extends State<HomeEpisodeCard> {
                             .withAlpha(127),
                       ),
                       const SizedBox(width: 8),
-                      Expanded(
+                      Flexible(
                         child: Text(
                           maxLines: 3,
                           widget.podcast.title!,

@@ -4,6 +4,7 @@ import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/popup_menu_item.dart';
 import 'package:podcasks/ui/vms/episodes_home_vm.dart';
+import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcasks/ui/vms/podcast_vm.dart';
@@ -61,6 +62,7 @@ class PlayingPopupMenu extends ConsumerWidget {
     final dm = ref.read(downloadManager);
     final vm = ref.read(playerViewmodel);
     final epVm = ref.read(podcastViewmodel);
+    final homeVm = ref.read(homeViewmodel);
 
     switch (item) {
       case 0:
@@ -73,10 +75,10 @@ class PlayingPopupMenu extends ConsumerWidget {
         await epVm.addToQueue(episode, podcast, context);
         break;
       case 3:
-        epVm.markAsFinished(episode, podcast);
+        epVm.markAsFinished(episode, podcast, homeVm: homeVm);
         break;
       case 4:
-        epVm.cancelProgress(episode);
+        epVm.cancelProgress(episode, homeVm: homeVm);
         break;
     }
   }
