@@ -21,8 +21,8 @@ class EpisodesHomeViewmodel extends ListViewmodel {
     int latestFinishedIndex = -1;
     for (int i = 0; i < sortedEpisodes.length; i++) {
       final ep = sortedEpisodes[i];
-      final (remaining, finished) =
-          historyRepo.getPosition(ep) ?? (null, false);
+      final (remaining, _, finished) =
+          historyRepo.getPosition(ep) ?? (null, null, false);
 
       if (finished) {
         latestFinishedIndex = i;

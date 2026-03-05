@@ -57,6 +57,7 @@ class PlayerViewmodel extends Vm {
   }
 
   Future<void> play({Episode? track, Podcast? pod, bool seekPos = false}) async {
+    _stopSaveTimers();
     loading();
     if (pod != null) {
       if (track!.contentUrl != _playing?.contentUrl) {
@@ -65,16 +66,21 @@ class PlayerViewmodel extends Vm {
     }
 
     if (track != null && seekPos) {
-      final (remaining, finished) = _historyRepo.getPosition(track) ?? (null, null);
+      final (remaining, total, finished) =
+          _historyRepo.getPosition(track) ?? (null, null, null);
       if (remaining != null && finished == false) {
         if (remaining > const Duration(seconds: 2)) {
-          await seekPosition(duration - remaining);
+          final totalDuration = (total != null && total != Duration.zero)
+              ? total
+              : (track.duration ?? duration);
+          if (totalDuration != Duration.zero) {
+            await seekPosition(totalDuration - remaining);
+          }
         }
       }
     }
 
     audioHandler?.play();
-    saveTrack();
     _startSaveTimers();
     success();
   }
@@ -169,9 +175,12 @@ class PlayerViewmodel extends Vm {
         );
 
         if (i != null && playingPodcast != null) {
-          Episode? ep = (i != 0)
-              ? playingPodcast?.episodes[i - 1] // if not last -> goto next
-              : playing; // if last -> replay
+          Episode? ep;
+          if ((i != 0)) {
+            ep = playingPodcast?.episodes[i - 1];
+          } else {
+            ep = null;
+          } 
 
           if (ep != null) {
             await saveTrack();
@@ -227,10 +236,13 @@ class PlayerViewmodel extends Vm {
 
   Future<void> saveTrack() async {
     if (audioHandler != null && playing != null && playingPodcast != null) {
+      final d = duration;
+      final p = position;
+      if (d == Duration.zero) return;
       print("SAVETRACK");
-      final remaining = duration - position;
+      final remaining = d - p;
       await _historyRepo.setPosition(
-          playing!, playingPodcast!, remaining, duration);
+          playing!, playingPodcast!, remaining, d);
     }
   }
 
@@ -249,7 +261,12 @@ class PlayerViewmodel extends Vm {
 
   Duration? getEnlapsed(Episode? episode) {
     if (episode == null) return null;
-    final (pos, _) =  _historyRepo.getPosition(episode) ?? (Duration.zero, false);
-    return (episode.duration ?? Duration.zero) - pos;
+    final (rem, total, _) =
+        _historyRepo.getPosition(episode) ?? (Duration.zero, Duration.zero, false);
+    final d = (episode.duration != null && episode.duration != Duration.zero)
+        ? episode.duration!
+        : total;
+    if (d == Duration.zero) return null;
+    return d - rem;
   }
 }

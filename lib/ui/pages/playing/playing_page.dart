@@ -30,6 +30,7 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
   double? tempSeekPerc;
   Color? dominantColor;
   bool colorReady = false;
+  double speedValue = 1;
 
   @override
   void initState() {
@@ -61,39 +62,107 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
     );
   }
 
-  PopupMenuButton<double> _speedButton(
-      BuildContext context, PlayerViewmodel vm) {
-    return PopupMenuButton<double>(
-      onSelected: vm.setSpeed,
+  Widget _speedButton(BuildContext context, PlayerViewmodel vm) {
+    return IconButton(
+      onPressed: () {
+        showModalBottomSheet(
+            context: context,
+            showDragHandle: true,
+            useSafeArea: true,
+            builder: (BuildContext context) {
+              return StatefulBuilder(
+                builder: (context, stateSetter) => Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Text(
+                        "${speedValue}x",
+                        style: textStyleBody,
+                      ),
+                      Slider(
+                        min: .5,
+                        max: 1.5,
+                        value: speedValue,
+                        onChanged: (value) {
+                          stateSetter(() {
+                            speedValue = double.parse(value.toStringAsFixed(2));
+                          });
+                        },
+                        onChangeEnd: (value) {
+                          vm.setSpeed(speedValue);
+                        },
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          // TODO: fix not updating slider when pressing buttons
+                          _speedMenuItem(0.5, vm),
+                          _speedMenuItem(0.75, vm),
+                          _speedMenuItem(1, vm),
+                          _speedMenuItem(1.25, vm),
+                          _speedMenuItem(1.5, vm),
+                          // _speedMenuItem(2),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              );
+            });
+      },
       icon: Text(
         '⚡ ${vm.speed}x',
         style: textStyleBody.copyWith(
             color: Theme.of(context).colorScheme.onSurface.withAlpha(150)),
       ),
-      shape: popupMenuShape(context),
-      itemBuilder: (context) => [
-        _speedMenuItem(0.5),
-        _speedMenuItem(0.75),
-        _speedMenuItem(1),
-        _speedMenuItem(1.25),
-        _speedMenuItem(1.5),
-        _speedMenuItem(2),
-      ],
+    );
+
+    // return PopupMenuButton<double>(
+    //   onSelected: vm.setSpeed,
+    //   icon: Text(
+    //     '⚡ ${vm.speed}x',
+    //     style: textStyleBody.copyWith(
+    //         color: Theme.of(context).colorScheme.onSurface.withAlpha(150)),
+    //   ),
+    //   shape: popupMenuShape(context),
+    //   itemBuilder: (context) => [
+    //     _speedMenuItem(0.5),
+    //     _speedMenuItem(0.75),
+    //     _speedMenuItem(1),
+    //     _speedMenuItem(1.25),
+    //     _speedMenuItem(1.5),
+    //     _speedMenuItem(2),
+    //   ],
+    // );
+  }
+
+  Widget _speedMenuItem(double speed, PlayerViewmodel vm) {
+    return IconButton.filledTonal(
+      style: IconButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadiusGeometry.circular(12),
+        ),
+      ),
+      onPressed: () {
+        setState(() {
+          speedValue = speed;
+          vm.setSpeed(speed);
+        });
+      },
+      icon: Text(
+        speed.toString(),
+        style: textStyleBody,
+      ),
+      // textStyle: textStyleBody,
+      // child: Text(
+      //   '⚡️ ${speed}x',
+      //   style: textStyleBody,
+      // )
     );
   }
 
-  PopupMenuItem<double> _speedMenuItem(double speed) {
-    return PopupMenuItem(
-        value: speed,
-        textStyle: textStyleBody,
-        child: Text(
-          '⚡️ ${speed}x',
-          style: textStyleBody,
-        ));
-  }
-
-  Widget _pageContent(BuildContext context, PlayerViewmodel vm, Episode? ep,
-      Podcast? podcast) {
+  Widget _pageContent(
+      BuildContext context, PlayerViewmodel vm, Episode? ep, Podcast? podcast) {
     return Padding(
       padding: const EdgeInsets.all(32),
       child: Column(
@@ -130,7 +199,8 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
                     strokeCap: StrokeCap.round,
                     padding: const EdgeInsets.all(8),
                     strokeWidth: 8,
-                    color: Theme.of(context).colorScheme.onSurface.withAlpha(127),
+                    color:
+                        Theme.of(context).colorScheme.onSurface.withAlpha(127),
                   ),
                 ),
           IconButton(
@@ -163,8 +233,8 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
               iconSize: 40,
               onPressed: onPressed,
               style: controlsButtonStyle(!vm.isPlaying()).copyWith(
-                // backgroundColor: WidgetStatePropertyAll(bgColor),
-              ),
+                  // backgroundColor: WidgetStatePropertyAll(bgColor),
+                  ),
             )
           : IconButton.filled(
               icon: const Icon(Icons.play_arrow),
@@ -177,8 +247,8 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
     );
   }
 
-  Widget _bottomSection(BuildContext context, Episode? ep, Podcast? podcast,
-      PlayerViewmodel vm) {
+  Widget _bottomSection(
+      BuildContext context, Episode? ep, Podcast? podcast, PlayerViewmodel vm) {
     return Column(
       children: [
         const SizedBox(height: 8),
@@ -202,8 +272,8 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
           ],
         ),
         _buttons(vm),
-        Stack(
-          alignment: Alignment.center,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Align(
                 alignment: Alignment.centerLeft,
@@ -253,33 +323,25 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
     );
   }
 
-  IconButton _showDescriptionButton(PlayerViewmodel vm, BuildContext context, Episode? ep) {
+  IconButton _showDescriptionButton(
+      PlayerViewmodel vm, BuildContext context, Episode? ep) {
     return IconButton(
       onPressed: () {
         HapticFeedback.lightImpact();
-        showDialog(
+        showModalBottomSheet(
+          showDragHandle: true,
           context: context,
-          builder: (context) => Dialog.fullscreen(
-            child: Scaffold(
-              appBar: AppBar(
-                title: (ep != null)
-                    ? Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Text(ep.title, style: textStyleTitle),
-                      )
-                    : null,
-              ),
-              body: SingleChildScrollView(child: Column(
-                children: [
-
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: description(ep),
-                  ),
-                ],
-              )),
-            ),
-
+          builder: (context) => BottomSheet(
+            onClosing: () {},
+            builder: (BuildContext context) => SingleChildScrollView(
+                child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: description(ep),
+                ),
+              ],
+            )),
           ),
         );
       },

@@ -36,7 +36,7 @@ class BottomBar extends ConsumerWidget {
         ),
         BottomNavigationBarItem(
           icon: TabIcon(
-            icon: Icons.queue_music,
+            icon: Icons.history,
             selected: selectedPage == Pages.listening,
           ),
           label: context.l10n!.listening.toLowerCase(),

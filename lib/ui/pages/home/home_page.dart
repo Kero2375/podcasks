@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/bottom_player.dart';
 import 'package:podcasks/ui/pages/bottom_navigation/bottom_bar.dart';
+import 'package:podcasks/ui/pages/home/chrono/chrono_page.dart';
 import 'package:podcasks/ui/pages/home/home_content.dart';
-import 'package:podcasks/ui/pages/home/home_listening.dart';
 import 'package:podcasks/ui/pages/search/search_page.dart';
 import 'package:podcasks/ui/vms/episodes_home_vm.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
@@ -61,7 +61,8 @@ class _HomePageState extends ConsumerState<HomePage> {
           child: switch (homeVm.page) {
             Pages.home => const HomeContentPage(),
             Pages.search => const SearchPage(),
-            Pages.listening => const ListeningPage(),
+            Pages.listening => const ChronoPage(),
+            // Pages.listening => const ListeningPage(),
             Pages.favourites => const SizedBox.shrink(),
           },
         ),

@@ -12,7 +12,7 @@ abstract class HistoryRepo {
 
   Future<void> removeEpisode(Episode episode);
 
-  (Duration, bool)? getPosition(Episode episode);
+  (Duration, Duration, bool)? getPosition(Episode episode);
 
   // @Deprecated('Avoid fetching all saved episodes')
   Future<List<(Episode, Podcast)>> getAllSaved();
@@ -38,14 +38,15 @@ class HistoryRepoIsar extends HistoryRepo {
   }
 
   @override
-  (Duration, bool)? getPosition(Episode episode) {
+  (Duration, Duration, bool)? getPosition(Episode episode) {
     final id = _generateId(episode);
     final saved = isar?.saveTracks.getSync(id);
     if (saved != null && saved.position != null) {
       final remaining = Duration(seconds: saved.position!);
+      final total = Duration(seconds: saved.duration ?? 0);
       // If stored position is 0, it was explicitly marked as finished
       final finished = (saved.position == 0) || isFinished(remaining);
-      return (remaining, finished);
+      return (remaining, total, finished);
     }
     return null;
   }

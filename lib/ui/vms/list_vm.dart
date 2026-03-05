@@ -80,7 +80,8 @@ class ListViewmodel extends Vm {
 
   (EpisodeState, Duration?) getEpisodeState(Episode? ep) {
     if (ep == null) return (EpisodeState.none, null);
-    final (remaining, finished) = historyRepo.getPosition(ep) ?? (null, null);
+    final (remaining, _, finished) =
+        historyRepo.getPosition(ep) ?? (null, null, false);
     return finished == true
         ? (EpisodeState.finished, null)
         : (remaining != null && remaining.inSeconds != 0)

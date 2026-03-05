@@ -47,7 +47,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get finished => 'Ascoltato';
 
   @override
-  String get listening => 'In ascolto';
+  String get listening => 'Tutti';
 
   @override
   String get started => 'Iniziato';

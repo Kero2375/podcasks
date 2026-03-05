@@ -9,7 +9,7 @@
   "follow": "Follow",
   "following": "{count, plural, =1{Following} other{Following}}",
   "finished": "Finished",
-  "listening": "Listening",
+  "listening": "All",
   "started": "Started",
   "welcome": "welcome!",
   "notListeningMessage": "you're not listening to anything yet",

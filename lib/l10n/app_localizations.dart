@@ -163,7 +163,7 @@ abstract class AppLocalizations {
   /// No description provided for @listening.
   ///
   /// In en, this message translates to:
-  /// **'Listening'**
+  /// **'All'**
   String get listening;
 
   /// No description provided for @started.

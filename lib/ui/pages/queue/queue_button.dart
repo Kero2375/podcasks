@@ -1,5 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +9,7 @@ import 'package:podcasks/ui/pages/queue/queue_menu.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcasks/ui/vms/podcast_vm.dart';
 import 'package:podcasks/utils.dart';
+import 'package:podcast_search/podcast_search.dart';
 
 class QueueButton extends ConsumerStatefulWidget {
   final PlayerViewmodel vm;
@@ -106,6 +108,20 @@ class _QueueButtonState extends ConsumerState<QueueButton> {
       onLongPress: () {
         HapticFeedback.lightImpact();
         showQueueMenu(context: context, vm: listVm, track: e, tapPos: _tapPos);
+      },
+      onTap: () async {
+        // Play on tap
+        final podcastUrl = e.extras?["podcast_url"];
+          if (podcastUrl != null) {
+            final pod = await Feed.loadFeed(url: podcastUrl);
+            final ep = pod.episodes.firstWhereOrNull((i) => i.contentUrl == e.id);
+            if (ep != null) {
+              listVm.removeFromQueue(e);
+              widget.vm.saveTrack();
+              widget.vm.setupPlayer(ep, pod);
+              widget.vm.play();
+            }
+          }
       },
       child: Padding(
         padding: const EdgeInsets.all(8),

@@ -81,7 +81,7 @@ class HomeViewmodel extends Vm {
       // final ep = await _lastPlayingRepo.getLastPlaying();
       final (ep, pod) = await _historyRepo.getLast() ?? (null, null);
       if (ep != null && pod != null) {
-        final (rem, _) = _historyRepo.getPosition(ep) ?? (null, null);
+        final (rem, _, _) = _historyRepo.getPosition(ep) ?? (null, null, null);
         if (rem != null) {
           success();
           return (ep, pod, rem);
