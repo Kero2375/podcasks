@@ -38,14 +38,13 @@ class HomeViewmodel extends Vm {
   List<(Episode, Podcast)>? get saved => _saved;
   List<(Episode, Podcast)>? _saved;
 
-  HomeViewmodel(this.ref) {
-    init();
-  }
+  HomeViewmodel(this.ref);
 
   Pages get page => _page;
   Pages _page = Pages.home;
 
   init() async {
+    if (state == UiState.loading) return;
     loading();
     await fetchFavourites();
     await fetchListening();
@@ -53,9 +52,8 @@ class HomeViewmodel extends Vm {
   }
 
   Future<void> fetchFavourites() async {
-    loading();
     _favourites = await _favRepo.getAllFavourites();
-    success();
+    notifyListeners();
   }
 
   Future<void> setFavourite(Podcast podcast, bool setFavourite) async {
@@ -99,7 +97,7 @@ class HomeViewmodel extends Vm {
   Future<void> fetchListening() async {
     final List<(Episode, Podcast)> list = await _historyRepo.getAllSaved();
     _saved = list;
-    update();
+    notifyListeners();
   }
 
   void setPage(Pages newPage) {
@@ -109,12 +107,13 @@ class HomeViewmodel extends Vm {
 
   Future<void> syncFavourites() async {
     final token = RootIsolateToken.instance;
-    compute((message) => _sync(token), token)
+    if (token == null) return;
+    compute(_sync, token)
         .then((_) => _notifyAll());
     // _notifyAll();
   }
 
-  static Future<void> _sync(token) async {
+  static Future<void> _sync(RootIsolateToken token) async {
     BackgroundIsolateBinaryMessenger.ensureInitialized(token);
     final dir = await getApplicationSupportDirectory();
     await Isar.open(

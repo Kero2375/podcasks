@@ -10,8 +10,18 @@ class Favourite {
   late String podcastJson;
 
   @ignore
-  Podcast get podcast => PodcastConverter.deserialize(podcastJson);
-  set podcast(Podcast p) => podcastJson = PodcastConverter.serialize(p);
+  Podcast? _podcast;
+
+  @ignore
+  Podcast get podcast {
+    _podcast ??= PodcastConverter.deserialize(podcastJson);
+    return _podcast!;
+  }
+
+  set podcast(Podcast p) {
+    _podcast = p;
+    podcastJson = PodcastConverter.serialize(p);
+  }
 
   Favourite({
     this.id = Isar.autoIncrement,

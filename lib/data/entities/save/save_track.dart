@@ -16,10 +16,20 @@ class SaveTrack {
   String? podcastJson;
 
   @ignore
-  Podcast? get podcast =>
-      podcastJson != null ? PodcastConverter.deserialize(podcastJson!) : null;
-  set podcast(Podcast? p) =>
-      podcastJson = p != null ? PodcastConverter.serialize(p) : null;
+  Podcast? _podcast;
+
+  @ignore
+  Podcast? get podcast {
+    if (_podcast == null && podcastJson != null) {
+      _podcast = PodcastConverter.deserialize(podcastJson!);
+    }
+    return _podcast;
+  }
+
+  set podcast(Podcast? p) {
+    _podcast = p;
+    podcastJson = p != null ? PodcastConverter.serialize(p) : null;
+  }
 
   SaveTrack({
     this.id = Isar.autoIncrement,
@@ -31,6 +41,8 @@ class SaveTrack {
     required this.dateTime,
     Podcast? podcast,
   }) {
-    this.podcast = podcast;
+    if (podcast != null) {
+      this.podcast = podcast;
+    }
   }
 }

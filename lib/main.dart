@@ -81,7 +81,7 @@ Future<void> main() async {
   setup();
 
   final dir = await getApplicationSupportDirectory();
-  Isar.open(
+  await Isar.open(
     [SaveTrackSchema, FavouriteSchema],
     directory: dir.path,
   );
