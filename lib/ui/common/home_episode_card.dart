@@ -1,14 +1,7 @@
-import 'dart:math';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:podcasks/data/entities/episode/podcast_episode.dart';
-import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
-import 'package:podcasks/ui/common/episode_play_button.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/ui/common/themes.dart';
-import 'package:podcasks/ui/vms/player_vm.dart';
-import 'package:podcasks/utils.dart';
 
 class HomeEpisodeCard extends StatefulWidget {
   const HomeEpisodeCard({
@@ -21,8 +14,8 @@ class HomeEpisodeCard extends StatefulWidget {
     this.timeLeftOnEpisode,
   });
 
-  final MEpisode episode;
-  final MPodcast podcast;
+  final Episode episode;
+  final Podcast podcast;
   final Function onPlayTap;
   final Function onCardTap;
   final Function(Offset) onLongTap;
@@ -132,20 +125,9 @@ class _HomeEpisodeCardState extends State<HomeEpisodeCard> {
                             widget.timeLeftOnEpisode ?? '',
                             style: textStyleSmall,
                           ),
-                          icon: Icon(Icons.play_arrow),
+                          icon: const Icon(Icons.play_arrow),
                         ),
                       )
-                    // else
-                    //   Text(
-                    //     'finished',
-                    //     overflow: TextOverflow.ellipsis,
-                    //     style: textStyleSmall.copyWith(
-                    //       color: Theme.of(context)
-                    //           .colorScheme
-                    //           .onSurface
-                    //           .withAlpha(127),
-                    //     ),
-                    //   ),
                   ],
                 )
             ],

@@ -2,8 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
-import 'package:podcasks/data/entities/episode/podcast_episode.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/episode_menu.dart';
 import 'package:podcasks/ui/common/episode_play_button.dart';
@@ -18,8 +17,8 @@ import 'package:podcasks/utils.dart';
 class EpisodeItem extends ConsumerStatefulWidget {
   final bool showImage;
   final bool showDesc;
-  final MEpisode? episode;
-  final MPodcast? podcast;
+  final Episode? episode;
+  final Podcast? podcast;
   final ListViewmodel vm;
   final DownloadManager dm;
 
@@ -39,8 +38,8 @@ class EpisodeItem extends ConsumerStatefulWidget {
 
 class _HomeEpisodeItemState extends ConsumerState<EpisodeItem> {
   Offset _tapPos = Offset.zero;
-  MEpisode? get episode => widget.episode;
-  MPodcast? get podcast => widget.podcast;
+  Episode? get episode => widget.episode;
+  Podcast? get podcast => widget.podcast;
   String? get image => podcast?.image;
   ListViewmodel get episodesVm => widget.vm;
   DownloadManager get downloadManager => widget.dm;

@@ -1,10 +1,9 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
-import 'package:podcasks/data/entities/episode/podcast_episode.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/manager/audio_handler.dart';
 
 abstract class QueueRepo {
-  Future<void> addItem(MEpisode episode, MPodcast podcast);
+  Future<void> addItem(Episode episode, Podcast podcast);
 
   Future<MediaItem?> getItem(int id);
 
@@ -17,7 +16,7 @@ abstract class QueueRepo {
 
 class QueueRepoAudioHandler extends QueueRepo {
   @override
-  Future<void> addItem(MEpisode episode, MPodcast podcast) async {
+  Future<void> addItem(Episode episode, Podcast podcast) async {
     await audioHandler?.addQueueItem(
       MediaItem(
           id: episode.contentUrl ?? '',

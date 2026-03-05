@@ -1,17 +1,10 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podcasks/data/entities/episode/podcast_episode.dart';
-import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/manager/download_manager.dart';
-import 'package:podcasks/repository/favourites_repo.dart';
-import 'package:podcasks/ui/common/divider.dart';
-import 'package:podcasks/ui/common/episode_item.dart';
 import 'package:podcasks/ui/common/episode_menu.dart';
 import 'package:podcasks/ui/common/home_episode_card.dart';
 import 'package:podcasks/ui/common/themes.dart';
-import 'package:podcasks/ui/pages/episode_page.dart';
-import 'package:podcasks/ui/pages/home/favourites_row.dart';
 import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 import 'package:podcasks/ui/vms/episodes_home_vm.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
@@ -31,28 +24,15 @@ class HomeContentPage extends ConsumerStatefulWidget {
 class _HomeContentPageState extends ConsumerState<HomeContentPage> {
   void _initEpisodeList(
       EpisodesHomeViewmodel episodesVm, HomeViewmodel homeVm) {
-    // final List<(MEpisode, MPodcast)>? saved = homeVm.saved;
+    // final List<(Episode, Podcast)>? saved = homeVm.saved;
     final favourites = homeVm.favourites;
-    final list = <(MEpisode, MPodcast)>[];
+    final list = <(Episode, Podcast)>[];
 
-    for (MPodcast p in favourites) {
-      list.add((p.episodes.first, p));
-      // TODO: next ep instead of last
-
-      // list.addAll(
-      //   p.episodes
-      //       // .whereNot(
-      //       //     ((e) => saved?.firstWhereOrNull((e1) => e1.$1 == e) != null))
-      //       .map((e) => (e, p)),
-      // );
-      // list.sort((a, b) => b.$1.publicationDate != null
-      //     ? a.$1.publicationDate?.compareTo(b.$1.publicationDate!) ?? 0
-      //     : 0);
+    for (Podcast p in favourites) {
+      if (p.episodes.isNotEmpty) {
+        list.add((p.episodes.first, p));
+      }
     }
-
-    // if (saved != null) {
-    //   list.addAll(saved);
-    // }
 
     episodesVm.init(list.toList(), maxItems: 30);
   }
@@ -156,7 +136,7 @@ class _HomeContentPageState extends ConsumerState<HomeContentPage> {
                     tapPos: tapPosition,
                   );
                 },
-                timeLeftOnEpisode: state.$1 == EpisodeState.finished ? null : state.$2 == null ? x.$1.duration.toEnlapsed() : state.$2?.toEnlapsed(),
+                timeLeftOnEpisode: state.$1 == EpisodeState.finished ? null : state.$2 == null ? x.$1.duration?.toEnlapsed() : state.$2?.toEnlapsed(),
               );
           })
           .toList(),

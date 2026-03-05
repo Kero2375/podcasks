@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:podcasks/data/entities/episode/podcast_episode.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
 import 'package:podcasks/utils.dart';
 
 class ListeningTag extends StatelessWidget {
-  final MEpisode? ep;
+  final Episode? ep;
   final EpisodeState episodeState;
   final EdgeInsets padding;
   final bool playing;

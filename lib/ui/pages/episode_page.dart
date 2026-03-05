@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/episode_play_button.dart';
-import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/bottom_player.dart';
 import 'package:podcasks/ui/common/themes.dart';
@@ -16,13 +15,13 @@ import 'package:url_launcher/url_launcher.dart';
 class EpisodePage extends ConsumerWidget {
   static const route = '/podcast_page/episode_page';
 
-  MEpisode? get episode => _episodePodcast?.$1;
-  // final MEpisode? _episodeData;
+  Episode? get episode => _episodePodcast?.$1;
+  // final Episode? _episodeData;
 
-  MPodcast? get podcast => _episodePodcast?.$2;
-  // final MPodcast? _podcast;
+  Podcast? get podcast => _episodePodcast?.$2;
+  // final Podcast? _podcast;
 
-  final (MEpisode, MPodcast)? _episodePodcast;
+  final (Episode, Podcast)? _episodePodcast;
 
   const EpisodePage(this._episodePodcast, {super.key});
 
@@ -109,7 +108,7 @@ class EpisodePage extends ConsumerWidget {
               episode?.publicationDate?.toDate() ?? ''),
           (episode?.duration != null)
               ? _iconInfo(context, Icons.hourglass_top,
-                  episode?.duration.toTime() ?? '')
+                  episode?.duration?.toTime() ?? '')
               : const SizedBox.shrink()
         ],
       ),
@@ -134,7 +133,7 @@ class EpisodePage extends ConsumerWidget {
   }
 }
 
-Widget description(MEpisode? episode) {
+Widget description(Episode? episode) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 48),
     child: SelectionArea(

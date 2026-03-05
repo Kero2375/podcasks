@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podcasks/data/entities/episode/podcast_episode.dart';
-import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/divider.dart';
 import 'package:podcasks/ui/common/episode_item.dart';
@@ -20,7 +19,7 @@ class ListeningPage extends ConsumerStatefulWidget {
 class _HomeContentPageState extends ConsumerState<ListeningPage> {
   void _initEpisodeList(ListeningVm vm, HomeViewmodel homeVm) {
     // homeVm.fetchListening();
-    final List<(MEpisode, MPodcast)>? saved = homeVm.saved;
+    final List<(Episode, Podcast)>? saved = homeVm.saved;
     vm.init(
       saved?.map((e) => (e.$1, e.$2)).toList(),
       maxItems: 30,

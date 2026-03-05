@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
@@ -33,7 +32,7 @@ class SearchListItem extends ConsumerWidget {
         } else {
           await vm.fetchPodcast(item.feedUrl);
           nav.pushNamed(PodcastPage.route,
-              arguments: MPodcast.fromPodcast(vm.selected));
+              arguments: vm.selected);
         }
         vm.success();
       },

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podcasks/data/entities/episode/podcast_episode.dart';
-import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/popup_menu_item.dart';
 import 'package:podcasks/ui/vms/episodes_home_vm.dart';
@@ -11,8 +10,8 @@ import 'package:podcasks/ui/vms/podcast_vm.dart';
 import 'package:podcasks/utils.dart';
 
 class PlayingPopupMenu extends ConsumerWidget {
-  final MEpisode? episode;
-  final MPodcast? podcast;
+  final Episode? episode;
+  final Podcast? podcast;
 
   const PlayingPopupMenu(this.episode, this.podcast, {super.key});
 
@@ -57,8 +56,8 @@ class PlayingPopupMenu extends ConsumerWidget {
     );
   }
 
-  _checkValue(BuildContext context, int item, WidgetRef ref, MEpisode? episode,
-      MPodcast? podcast) async {
+  _checkValue(BuildContext context, int item, WidgetRef ref, Episode? episode,
+      Podcast? podcast) async {
     final dm = ref.read(downloadManager);
     final vm = ref.read(playerViewmodel);
     final epVm = ref.read(podcastViewmodel);

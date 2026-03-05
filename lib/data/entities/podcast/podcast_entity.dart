@@ -1,61 +1,75 @@
-// ignore_for_file: implementation_imports
-
-import 'package:isar/isar.dart';
-import 'package:podcasks/data/entities/episode/podcast_episode.dart';
+import 'dart:convert';
 import 'package:podcast_search/podcast_search.dart';
-part 'podcast_entity.g.dart';
 
-@embedded
-class MPodcast {
-  final String? guid;
-  final String? url;
-  final String? link;
-  final String? title;
-  final String? description;
-  final String? image;
-  final String? copyright;
-  // final Locked? locked;
-  // final List<Funding> funding;
-  // final List<Person> persons;
-  final List<MEpisode> episodes;
-
-  const MPodcast({
-    this.guid,
-    this.url,
-    this.link,
-    this.title,
-    this.description,
-    this.image,
-    this.copyright,
-    // this.locked,
-    // this.funding = const <Funding>[],
-    // this.persons = const <Person>[],
-    this.episodes = const <MEpisode>[],
-  });
-
-  factory MPodcast.fromPodcast(Podcast? podcast) {
-    return MPodcast(
-      guid: podcast?.guid,
-      url: podcast?.url,
-      link: podcast?.link,
-      title: podcast?.title,
-      description: podcast?.description,
-      image: podcast?.image,
-      copyright: podcast?.copyright,
-      // locked: podcast?.locked,
-      // funding: podcast?.funding ?? const <Funding>[],
-      // persons: podcast?.persons ?? const <Person>[],
-      episodes:
-          podcast?.episodes.map((e) => MEpisode.fromEpisode(e)).toList() ??
-              const <MEpisode>[],
-    );
+class PodcastConverter {
+  static String serialize(Podcast object) {
+    return jsonEncode({
+      'guid': object.guid,
+      'url': object.url,
+      'link': object.link,
+      'title': object.title,
+      'description': object.description,
+      'image': object.image,
+      'copyright': object.copyright,
+      'episodes': object.episodes.map((e) => EpisodeConverter.toMap(e)).toList(),
+    });
   }
 
-  Future<Podcast?> getPodcast() async =>
-      url != null ? Podcast(url: url!) : null;
+  static Podcast deserialize(String jsonString) {
+    final Map<String, dynamic> json = jsonDecode(jsonString);
+    return Podcast(
+      guid: json['guid'],
+      url: json['url'],
+      link: json['link'],
+      title: json['title'],
+      description: json['description'],
+      image: json['image'],
+      copyright: json['copyright'],
+      episodes: (json['episodes'] as List? ?? [])
+          .map((e) => EpisodeConverter.fromMap(e))
+          .toList(),
+    );
+  }
+}
 
-  static Future<MPodcast> fromUrl(String feedUrl) async {
-    final podcast = await Feed.loadFeed(url: feedUrl);
-    return MPodcast.fromPodcast(podcast);
+class EpisodeConverter {
+  static Map<String, dynamic> toMap(Episode object) {
+    return {
+      'guid': object.guid,
+      'title': object.title,
+      'description': object.description,
+      'link': object.link,
+      'publicationDate': object.publicationDate?.toIso8601String(),
+      'author': object.author,
+      'duration': object.duration?.inSeconds,
+      'contentUrl': object.contentUrl,
+      'imageUrl': object.imageUrl,
+      'season': object.season,
+      'episode': object.episode,
+      'content': object.content,
+      'length': object.length,
+    };
+  }
+
+  static Episode fromMap(Map<String, dynamic> json) {
+    return Episode(
+      guid: json['guid'] ?? '',
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      link: json['link'] ?? '',
+      publicationDate: json['publicationDate'] != null
+          ? DateTime.parse(json['publicationDate'])
+          : null,
+      author: json['author'] ?? '',
+      duration: json['duration'] != null
+          ? Duration(seconds: json['duration'])
+          : null,
+      contentUrl: json['contentUrl'],
+      imageUrl: json['imageUrl'],
+      season: json['season'],
+      episode: json['episode'],
+      content: json['content'],
+      length: json['length'] ?? 0,
+    );
   }
 }

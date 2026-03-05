@@ -14,6 +14,11 @@ ShapeBorder popupMenuShape(BuildContext context) => RoundedRectangleBorder(
     )
 );
 
+const int finishedThresholdSeconds = 15;
+
+bool isFinished(Duration? remaining) =>
+    remaining != null && remaining.inSeconds <= finishedThresholdSeconds;
+
 extension ParsableDuration on Duration {
   String toTime() {
     var time = toString().split('.').first.padLeft(8, "0");
@@ -22,7 +27,7 @@ extension ParsableDuration on Duration {
     return time;
   }
   String? toEnlapsed() {
-    if (this.inMinutes < 2) {
+    if (inSeconds <= 0) {
       return null;
     }
     return parseRemainingTime(this);
@@ -82,22 +87,3 @@ String parseRemainingTime(Duration time) {
 extension LocalizationContext on BuildContext {
   AppLocalizations? get l10n => AppLocalizations.of(this);
 }
-
-// Future<void> checkNotificationPermission({
-//   required Function() then,
-//   required BuildContext context,
-// }) async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   bool granted = await Permission.notification.isGranted;
-//   if (!granted) {
-//     granted = (await Permission.notification.request()).isGranted;
-//     if (!granted && context.mounted) {
-//       _showSnack(context, "Notification permission not granted");
-//       return;
-//     } else if (granted) {
-//       then();
-//     }
-//   } else {
-//     then();
-//   }
-// }

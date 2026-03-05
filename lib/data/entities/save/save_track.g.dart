@@ -22,34 +22,28 @@ const SaveTrackSchema = CollectionSchema(
       name: r'dateTime',
       type: IsarType.dateTime,
     ),
-    r'finished': PropertySchema(
+    r'podcastJson': PropertySchema(
       id: 1,
-      name: r'finished',
-      type: IsarType.bool,
-    ),
-    r'podcast': PropertySchema(
-      id: 2,
-      name: r'podcast',
-      type: IsarType.object,
-      target: r'MPodcast',
+      name: r'podcastJson',
+      type: IsarType.string,
     ),
     r'podcastUrl': PropertySchema(
-      id: 3,
+      id: 2,
       name: r'podcastUrl',
       type: IsarType.string,
     ),
     r'position': PropertySchema(
-      id: 4,
+      id: 3,
       name: r'position',
       type: IsarType.long,
     ),
     r'title': PropertySchema(
-      id: 5,
+      id: 4,
       name: r'title',
       type: IsarType.string,
     ),
     r'url': PropertySchema(
-      id: 6,
+      id: 5,
       name: r'url',
       type: IsarType.string,
     )
@@ -61,7 +55,7 @@ const SaveTrackSchema = CollectionSchema(
   idName: r'id',
   indexes: {},
   links: {},
-  embeddedSchemas: {r'MPodcast': MPodcastSchema, r'MEpisode': MEpisodeSchema},
+  embeddedSchemas: {},
   getId: _saveTrackGetId,
   getLinks: _saveTrackGetLinks,
   attach: _saveTrackAttach,
@@ -75,10 +69,9 @@ int _saveTrackEstimateSize(
 ) {
   var bytesCount = offsets.last;
   {
-    final value = object.podcast;
+    final value = object.podcastJson;
     if (value != null) {
-      bytesCount += 3 +
-          MPodcastSchema.estimateSize(value, allOffsets[MPodcast]!, allOffsets);
+      bytesCount += 3 + value.length * 3;
     }
   }
   {
@@ -109,17 +102,11 @@ void _saveTrackSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeDateTime(offsets[0], object.dateTime);
-  writer.writeBool(offsets[1], object.finished);
-  writer.writeObject<MPodcast>(
-    offsets[2],
-    allOffsets,
-    MPodcastSchema.serialize,
-    object.podcast,
-  );
-  writer.writeString(offsets[3], object.podcastUrl);
-  writer.writeLong(offsets[4], object.position);
-  writer.writeString(offsets[5], object.title);
-  writer.writeString(offsets[6], object.url);
+  writer.writeString(offsets[1], object.podcastJson);
+  writer.writeString(offsets[2], object.podcastUrl);
+  writer.writeLong(offsets[3], object.position);
+  writer.writeString(offsets[4], object.title);
+  writer.writeString(offsets[5], object.url);
 }
 
 SaveTrack _saveTrackDeserialize(
@@ -130,18 +117,13 @@ SaveTrack _saveTrackDeserialize(
 ) {
   final object = SaveTrack(
     dateTime: reader.readDateTime(offsets[0]),
-    finished: reader.readBoolOrNull(offsets[1]),
     id: id,
-    podcast: reader.readObjectOrNull<MPodcast>(
-      offsets[2],
-      MPodcastSchema.deserialize,
-      allOffsets,
-    ),
-    podcastUrl: reader.readStringOrNull(offsets[3]),
-    position: reader.readLongOrNull(offsets[4]),
-    title: reader.readStringOrNull(offsets[5]),
-    url: reader.readStringOrNull(offsets[6]),
+    podcastUrl: reader.readStringOrNull(offsets[2]),
+    position: reader.readLongOrNull(offsets[3]),
+    title: reader.readStringOrNull(offsets[4]),
+    url: reader.readStringOrNull(offsets[5]),
   );
+  object.podcastJson = reader.readStringOrNull(offsets[1]);
   return object;
 }
 
@@ -155,20 +137,14 @@ P _saveTrackDeserializeProp<P>(
     case 0:
       return (reader.readDateTime(offset)) as P;
     case 1:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 2:
-      return (reader.readObjectOrNull<MPodcast>(
-        offset,
-        MPodcastSchema.deserialize,
-        allOffsets,
-      )) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 3:
-      return (reader.readStringOrNull(offset)) as P;
-    case 4:
       return (reader.readLongOrNull(offset)) as P;
-    case 5:
+    case 4:
       return (reader.readStringOrNull(offset)) as P;
-    case 6:
+    case 5:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -319,33 +295,6 @@ extension SaveTrackQueryFilter
     });
   }
 
-  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> finishedIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'finished',
-      ));
-    });
-  }
-
-  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition>
-      finishedIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'finished',
-      ));
-    });
-  }
-
-  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> finishedEqualTo(
-      bool? value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'finished',
-        value: value,
-      ));
-    });
-  }
-
   QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> idEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
@@ -399,18 +348,154 @@ extension SaveTrackQueryFilter
     });
   }
 
-  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> podcastIsNull() {
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition>
+      podcastJsonIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'podcast',
+        property: r'podcastJson',
       ));
     });
   }
 
-  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> podcastIsNotNull() {
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition>
+      podcastJsonIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'podcast',
+        property: r'podcastJson',
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> podcastJsonEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'podcastJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition>
+      podcastJsonGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'podcastJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> podcastJsonLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'podcastJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> podcastJsonBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'podcastJson',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition>
+      podcastJsonStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'podcastJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> podcastJsonEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'podcastJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> podcastJsonContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'podcastJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> podcastJsonMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'podcastJson',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition>
+      podcastJsonIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'podcastJson',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition>
+      podcastJsonIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'podcastJson',
+        value: '',
       ));
     });
   }
@@ -930,14 +1015,7 @@ extension SaveTrackQueryFilter
 }
 
 extension SaveTrackQueryObject
-    on QueryBuilder<SaveTrack, SaveTrack, QFilterCondition> {
-  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> podcast(
-      FilterQuery<MPodcast> q) {
-    return QueryBuilder.apply(this, (query) {
-      return query.object(q, r'podcast');
-    });
-  }
-}
+    on QueryBuilder<SaveTrack, SaveTrack, QFilterCondition> {}
 
 extension SaveTrackQueryLinks
     on QueryBuilder<SaveTrack, SaveTrack, QFilterCondition> {}
@@ -955,15 +1033,15 @@ extension SaveTrackQuerySortBy on QueryBuilder<SaveTrack, SaveTrack, QSortBy> {
     });
   }
 
-  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> sortByFinished() {
+  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> sortByPodcastJson() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'finished', Sort.asc);
+      return query.addSortBy(r'podcastJson', Sort.asc);
     });
   }
 
-  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> sortByFinishedDesc() {
+  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> sortByPodcastJsonDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'finished', Sort.desc);
+      return query.addSortBy(r'podcastJson', Sort.desc);
     });
   }
 
@@ -1030,18 +1108,6 @@ extension SaveTrackQuerySortThenBy
     });
   }
 
-  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> thenByFinished() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'finished', Sort.asc);
-    });
-  }
-
-  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> thenByFinishedDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'finished', Sort.desc);
-    });
-  }
-
   QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -1051,6 +1117,18 @@ extension SaveTrackQuerySortThenBy
   QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> thenByPodcastJson() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'podcastJson', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> thenByPodcastJsonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'podcastJson', Sort.desc);
     });
   }
 
@@ -1111,9 +1189,10 @@ extension SaveTrackQueryWhereDistinct
     });
   }
 
-  QueryBuilder<SaveTrack, SaveTrack, QDistinct> distinctByFinished() {
+  QueryBuilder<SaveTrack, SaveTrack, QDistinct> distinctByPodcastJson(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'finished');
+      return query.addDistinctBy(r'podcastJson', caseSensitive: caseSensitive);
     });
   }
 
@@ -1159,15 +1238,9 @@ extension SaveTrackQueryProperty
     });
   }
 
-  QueryBuilder<SaveTrack, bool?, QQueryOperations> finishedProperty() {
+  QueryBuilder<SaveTrack, String?, QQueryOperations> podcastJsonProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'finished');
-    });
-  }
-
-  QueryBuilder<SaveTrack, MPodcast?, QQueryOperations> podcastProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'podcast');
+      return query.addPropertyName(r'podcastJson');
     });
   }
 

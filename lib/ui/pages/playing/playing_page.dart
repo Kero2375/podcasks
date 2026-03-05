@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:palette_generator/palette_generator.dart';
-import 'package:podcasks/data/entities/episode/podcast_episode.dart';
-import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/episode_page.dart';
@@ -93,8 +92,8 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
         ));
   }
 
-  Widget _pageContent(BuildContext context, PlayerViewmodel vm, MEpisode? ep,
-      MPodcast? podcast) {
+  Widget _pageContent(BuildContext context, PlayerViewmodel vm, Episode? ep,
+      Podcast? podcast) {
     return Padding(
       padding: const EdgeInsets.all(32),
       child: Column(
@@ -178,7 +177,7 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
     );
   }
 
-  Widget _bottomSection(BuildContext context, MEpisode? ep, MPodcast? podcast,
+  Widget _bottomSection(BuildContext context, Episode? ep, Podcast? podcast,
       PlayerViewmodel vm) {
     return Column(
       children: [
@@ -254,7 +253,7 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
     );
   }
 
-  IconButton _showDescriptionButton(PlayerViewmodel vm, BuildContext context, MEpisode? ep) {
+  IconButton _showDescriptionButton(PlayerViewmodel vm, BuildContext context, Episode? ep) {
     return IconButton(
       onPressed: () {
         HapticFeedback.lightImpact();
@@ -291,7 +290,7 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
     );
   }
 
-  Widget _title(BuildContext context, MEpisode? ep, MPodcast? podcast) {
+  Widget _title(BuildContext context, Episode? ep, Podcast? podcast) {
     return Column(
       children: [
         GestureDetector(

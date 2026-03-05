@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
+import 'package:podcast_search/podcast_search.dart';
 
 class HomePodcastItem extends StatelessWidget {
-  final MPodcast? podcast;
+  final Podcast? podcast;
   final IconData? icon;
   final Function() onTap;
   final Function()? onLongTap;

@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
@@ -7,27 +5,18 @@ import 'package:collection/collection.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/repository/history_repo.dart';
 import 'package:podcasks/repository/queue_repo.dart';
-import 'package:podcasks/data/entities/episode/podcast_episode.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/manager/audio_handler.dart';
-// import 'package:podcasks/ui/vms/theme_vm.dart';
-// import 'package:podcasks/ui/vms/theme_vm.dart';
-// import 'package:podcasks/repository/search_repo.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 
 final playerViewmodel = ChangeNotifierProvider((ref) => PlayerViewmodel(ref));
 
 class PlayerViewmodel extends Vm {
-  // final SearchRepo _searchRepo = locator.get<SearchRepo>();
-  // ScrollController scrollController = ScrollController();
-
-  // final int _scrollOffset = 300;
-
-  MEpisode? get playing => _playing;
-  MEpisode? _playing;
+  Episode? get playing => _playing;
+  Episode? _playing;
 
   Duration get position => audioHandler?.position ?? Duration.zero;
 
@@ -67,7 +56,7 @@ class PlayerViewmodel extends Vm {
     super.dispose();
   }
 
-  Future<void> play({MEpisode? track, MPodcast? pod, bool seekPos = false}) async {
+  Future<void> play({Episode? track, Podcast? pod, bool seekPos = false}) async {
     loading();
     if (pod != null) {
       if (track!.contentUrl != _playing?.contentUrl) {
@@ -76,9 +65,11 @@ class PlayerViewmodel extends Vm {
     }
 
     if (track != null && seekPos) {
-      final (pos, _) = _historyRepo.getPosition(track) ?? (null, null);
-      if (pos != null && pos > duration - const Duration(seconds: 2)) {
-        await seekPosition(duration - pos);
+      final (remaining, finished) = _historyRepo.getPosition(track) ?? (null, null);
+      if (remaining != null && finished == false) {
+        if (remaining > const Duration(seconds: 2)) {
+          await seekPosition(duration - remaining);
+        }
       }
     }
 
@@ -88,9 +79,7 @@ class PlayerViewmodel extends Vm {
     success();
   }
 
-  Future<void> setupPlayer(MEpisode track, MPodcast pod) async {
-    // ref.read(themeViewmodel).setPrimaryColor(track.imageUrl ?? pod.image);
-    // loading();
+  Future<void> setupPlayer(Episode track, Podcast pod) async {
     _playingPodcast = pod;
     _playing = track;
     await audioHandler?.setMediaUrl(
@@ -107,10 +96,8 @@ class PlayerViewmodel extends Vm {
         } else {
           _stopSaveTimers();
         }
-        // success();
       },
     );
-    // success();
   }
 
   Future<void> _startSaveTimers() async {
@@ -121,7 +108,6 @@ class PlayerViewmodel extends Vm {
         (timer) => updatePosition());
     _saveTimer =
         Timer.periodic(const Duration(seconds: 1), (timer) => saveTrack());
-    // await saveTrack();
   }
 
   void _stopSaveTimers() {
@@ -144,8 +130,8 @@ class PlayerViewmodel extends Vm {
     return (audioHandler?.playing == true);
   }
 
-  MPodcast? get playingPodcast => _playingPodcast;
-  MPodcast? _playingPodcast;
+  Podcast? get playingPodcast => _playingPodcast;
+  Podcast? _playingPodcast;
 
   String? get image => _playing?.imageUrl ?? _playingPodcast?.image;
 
@@ -158,22 +144,22 @@ class PlayerViewmodel extends Vm {
       // finished episode
       if (position.inSeconds == duration.inSeconds &&
           duration != Duration.zero) {
-        await saveTrack(true);
+        await saveTrack();
         // if there is something in queue
         final next = (await queue).firstOrNull;
         if (next != null) {
-          final (ep, pod) = await MEpisode.fromUrl(
-                podcastUrl: next.extras?["podcast_url"],
-                episodeUrl: next.id,
-              ) ??
-              (null, null);
-          if (ep != null && pod != null) {
-            _queueRepo.removeItem(next);
-            await saveTrack(true);
-            await setupPlayer(ep, pod);
-            await play();
-            notifyListeners();
-            return;
+          final podcastUrl = next.extras?["podcast_url"];
+          if (podcastUrl != null) {
+            final pod = await Feed.loadFeed(url: podcastUrl);
+            final ep = pod.episodes.firstWhereOrNull((e) => e.contentUrl == next.id);
+            if (ep != null) {
+              _queueRepo.removeItem(next);
+              await saveTrack();
+              await setupPlayer(ep, pod);
+              await play();
+              notifyListeners();
+              return;
+            }
           }
         }
 
@@ -183,12 +169,12 @@ class PlayerViewmodel extends Vm {
         );
 
         if (i != null && playingPodcast != null) {
-          MEpisode? ep = (i != 0)
+          Episode? ep = (i != 0)
               ? playingPodcast?.episodes[i - 1] // if not last -> goto next
               : playing; // if last -> replay
 
           if (ep != null) {
-            await saveTrack(true);
+            await saveTrack();
             await setupPlayer(ep, playingPodcast!);
             await play();
             notifyListeners();
@@ -198,7 +184,7 @@ class PlayerViewmodel extends Vm {
 
         // empty queue
         await seekPosition(Duration.zero);
-        await saveTrack(true);
+        await saveTrack();
         await pause();
         notifyListeners();
       }
@@ -239,27 +225,14 @@ class PlayerViewmodel extends Vm {
     }
   }
 
-  Future<void> saveTrack([bool finished = false]) async {
+  Future<void> saveTrack() async {
     if (audioHandler != null && playing != null && playingPodcast != null) {
       print("SAVETRACK");
+      final remaining = duration - position;
       await _historyRepo.setPosition(
-          playing!, playingPodcast!, duration - position, finished);
+          playing!, playingPodcast!, remaining, duration);
     }
   }
-
-  // bool isScrollToInitialPosition() =>
-  //     scrollController.offset <=
-  //     scrollController.initialScrollOffset + _scrollOffset;
-  //
-  // scrollDown() async {
-  //   if (isScrollToInitialPosition()) {
-  //     await scrollController.animateTo(
-  //       scrollController.initialScrollOffset + _scrollOffset,
-  //       duration: const Duration(milliseconds: 200),
-  //       curve: Curves.decelerate,
-  //     );
-  //   }
-  // }
 
   Future<void> setSpeed(double speed) async {
     await audioHandler?.setSpeed(speed);
@@ -268,16 +241,15 @@ class PlayerViewmodel extends Vm {
     notifyListeners();
   }
 
-  void share(MEpisode? episode) {
+  void share(Episode? episode) {
     if (episode?.link != null) {
       Clipboard.setData(ClipboardData(text: episode!.link!));
     }
   }
 
-  Duration? getEnlapsed(MEpisode? episode) {
+  Duration? getEnlapsed(Episode? episode) {
     if (episode == null) return null;
     final (pos, _) =  _historyRepo.getPosition(episode) ?? (Duration.zero, false);
-    return episode.duration - pos;
+    return (episode.duration ?? Duration.zero) - pos;
   }
-
 }

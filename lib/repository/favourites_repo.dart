@@ -1,12 +1,14 @@
+// ignore_for_file: unused_import
+
 import 'package:isar/isar.dart';
 import 'package:podcasks/data/entities/favourites/fav_item.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcast_search/podcast_search.dart';
 
 abstract class FavouriteRepo {
-  Future<bool> addToFavourite(MPodcast podcast);
+  Future<bool> addToFavourite(Podcast podcast);
 
-  Future<List<MPodcast>> getAllFavourites();
+  Future<List<Podcast>> getAllFavourites();
 
   Future<void> removeFromFavourite(String feedUrl);
 
@@ -17,21 +19,20 @@ class FavouriteRepoIsar extends FavouriteRepo {
   Isar? get isar => Isar.getInstance();
 
   @override
-  Future<bool> addToFavourite(MPodcast podcast) async {
+  Future<bool> addToFavourite(Podcast podcast) async {
     // if ((await isar?.favourites.get(podcast.url.hashCode)) != null) return false;
     await isar?.writeTxn(
       () async => isar?.favourites.put(
         Favourite(
-          id: podcast.url.hashCode,
-          podcast: podcast,
-        ),
+          id: podcast.url?.hashCode ?? 0,
+        )..podcast = podcast,
       ),
     );
     return true;
   }
 
   @override
-  Future<List<MPodcast>> getAllFavourites() async {
+  Future<List<Podcast>> getAllFavourites() async {
     final all = await isar?.favourites.where().findAll();
     return all
             // ?.where((e) => e.podcast != null)
@@ -48,19 +49,18 @@ class FavouriteRepoIsar extends FavouriteRepo {
   }
 
   @override
-  Future<Set<MPodcast>> syncFavourites() async {
+  Future<Set<Podcast>> syncFavourites() async {
     final fav = await getAllFavourites();
 
-    Set<MPodcast> updated = {};
+    Set<Podcast> updated = {};
 
-    for (MPodcast p in fav) {
+    for (Podcast p in fav) {
       final url = p.url;
       if (url == null) continue;
       final newPod = await Feed.loadFeed(url: url);
       if (newPod.episodes.length != p.episodes.length) {
-        MPodcast pod = MPodcast.fromPodcast(newPod);
-        await addToFavourite(pod);
-        updated.add(pod);
+        await addToFavourite(newPod);
+        updated.add(newPod);
       }
     }
 

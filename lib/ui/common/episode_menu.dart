@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:podcasks/data/entities/episode/podcast_episode.dart';
-import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
@@ -13,8 +12,8 @@ Future<int?> showEpisodeMenu({
   required ListViewmodel vm,
   required PlayerViewmodel playerVm,
   required DownloadManager dm,
-  required MEpisode? ep,
-  required MPodcast? pd,
+  required Episode? ep,
+  required Podcast? pd,
   required Offset tapPos,
 }) {
   final screenSize = MediaQuery.of(context).size;

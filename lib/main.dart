@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'package:audio_service/audio_service.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:dynamic_color/dynamic_color.dart';
@@ -7,7 +9,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:podcasks/data/entities/episode/podcast_episode.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/data/entities/favourites/fav_item.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 import 'package:podcasks/data/entities/save/save_track.dart';
@@ -37,7 +39,7 @@ void callbackDispatcher() {
         directory: dir.path,
       );
 
-      Set<MPodcast> updated = await FavouriteRepoIsar().syncFavourites();
+      Set<Podcast> updated = await FavouriteRepoIsar().syncFavourites();
 
       if (updated.length == 1) {
         AwesomeNotifications().createNotification(
@@ -186,12 +188,12 @@ class _MyAppState extends ConsumerState<MyApp> {
           if (settings.name == PodcastPage.route) {
             return MaterialPageRoute(
               builder: (context) =>
-                  PodcastPage(settings.arguments as MPodcast?),
+                  PodcastPage(settings.arguments as Podcast?),
             );
           } else if (settings.name == EpisodePage.route) {
             return MaterialPageRoute(
               builder: (context) =>
-                  EpisodePage(settings.arguments as (MEpisode, MPodcast)?),
+                  EpisodePage(settings.arguments as (Episode, Podcast)?),
             );
           }
           return null;

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/repository/favourites_repo.dart';
 import 'package:podcasks/ui/common/confirm_dialog.dart';
@@ -155,7 +155,7 @@ _pickFile(BuildContext context, Function()? updateHome,
           startLoading?.call();
           for (var item in feeds) {
             bool added = await favRepo.addToFavourite(
-              await MPodcast.fromUrl(item),
+              await Feed.loadFeed(url: item),
             );
             if (added && context.mounted) {
               ScaffoldMessenger.of(context)

@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/bottom_player.dart';
@@ -18,7 +18,7 @@ import 'package:podcasks/utils.dart';
 
 class PodcastPage extends ConsumerStatefulWidget {
   static const route = '/podcast_page';
-  final MPodcast? podcast;
+  final Podcast? podcast;
 
   const PodcastPage(this.podcast, {super.key});
 
@@ -231,7 +231,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
     );
   }
 
-  Widget _image(MPodcast item) {
+  Widget _image(Podcast item) {
     return Container(
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(6)),

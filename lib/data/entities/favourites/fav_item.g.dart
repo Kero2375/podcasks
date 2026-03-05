@@ -17,11 +17,10 @@ const FavouriteSchema = CollectionSchema(
   name: r'Favourite',
   id: 2882997178178307874,
   properties: {
-    r'podcast': PropertySchema(
+    r'podcastJson': PropertySchema(
       id: 0,
-      name: r'podcast',
-      type: IsarType.object,
-      target: r'MPodcast',
+      name: r'podcastJson',
+      type: IsarType.string,
     )
   },
   estimateSize: _favouriteEstimateSize,
@@ -31,7 +30,7 @@ const FavouriteSchema = CollectionSchema(
   idName: r'id',
   indexes: {},
   links: {},
-  embeddedSchemas: {r'MPodcast': MPodcastSchema, r'MEpisode': MEpisodeSchema},
+  embeddedSchemas: {},
   getId: _favouriteGetId,
   getLinks: _favouriteGetLinks,
   attach: _favouriteAttach,
@@ -44,9 +43,7 @@ int _favouriteEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  bytesCount += 3 +
-      MPodcastSchema.estimateSize(
-          object.podcast, allOffsets[MPodcast]!, allOffsets);
+  bytesCount += 3 + object.podcastJson.length * 3;
   return bytesCount;
 }
 
@@ -56,12 +53,7 @@ void _favouriteSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeObject<MPodcast>(
-    offsets[0],
-    allOffsets,
-    MPodcastSchema.serialize,
-    object.podcast,
-  );
+  writer.writeString(offsets[0], object.podcastJson);
 }
 
 Favourite _favouriteDeserialize(
@@ -72,13 +64,8 @@ Favourite _favouriteDeserialize(
 ) {
   final object = Favourite(
     id: id,
-    podcast: reader.readObjectOrNull<MPodcast>(
-          offsets[0],
-          MPodcastSchema.deserialize,
-          allOffsets,
-        ) ??
-        MPodcast(),
   );
+  object.podcastJson = reader.readString(offsets[0]);
   return object;
 }
 
@@ -90,12 +77,7 @@ P _favouriteDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readObjectOrNull<MPodcast>(
-            offset,
-            MPodcastSchema.deserialize,
-            allOffsets,
-          ) ??
-          MPodcast()) as P;
+      return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -244,22 +226,161 @@ extension FavouriteQueryFilter
       ));
     });
   }
-}
 
-extension FavouriteQueryObject
-    on QueryBuilder<Favourite, Favourite, QFilterCondition> {
-  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> podcast(
-      FilterQuery<MPodcast> q) {
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> podcastJsonEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.object(q, r'podcast');
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'podcastJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition>
+      podcastJsonGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'podcastJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> podcastJsonLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'podcastJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> podcastJsonBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'podcastJson',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition>
+      podcastJsonStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'podcastJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> podcastJsonEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'podcastJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> podcastJsonContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'podcastJson',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> podcastJsonMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'podcastJson',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition>
+      podcastJsonIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'podcastJson',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition>
+      podcastJsonIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'podcastJson',
+        value: '',
+      ));
     });
   }
 }
 
+extension FavouriteQueryObject
+    on QueryBuilder<Favourite, Favourite, QFilterCondition> {}
+
 extension FavouriteQueryLinks
     on QueryBuilder<Favourite, Favourite, QFilterCondition> {}
 
-extension FavouriteQuerySortBy on QueryBuilder<Favourite, Favourite, QSortBy> {}
+extension FavouriteQuerySortBy on QueryBuilder<Favourite, Favourite, QSortBy> {
+  QueryBuilder<Favourite, Favourite, QAfterSortBy> sortByPodcastJson() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'podcastJson', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterSortBy> sortByPodcastJsonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'podcastJson', Sort.desc);
+    });
+  }
+}
 
 extension FavouriteQuerySortThenBy
     on QueryBuilder<Favourite, Favourite, QSortThenBy> {
@@ -274,10 +395,29 @@ extension FavouriteQuerySortThenBy
       return query.addSortBy(r'id', Sort.desc);
     });
   }
+
+  QueryBuilder<Favourite, Favourite, QAfterSortBy> thenByPodcastJson() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'podcastJson', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterSortBy> thenByPodcastJsonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'podcastJson', Sort.desc);
+    });
+  }
 }
 
 extension FavouriteQueryWhereDistinct
-    on QueryBuilder<Favourite, Favourite, QDistinct> {}
+    on QueryBuilder<Favourite, Favourite, QDistinct> {
+  QueryBuilder<Favourite, Favourite, QDistinct> distinctByPodcastJson(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'podcastJson', caseSensitive: caseSensitive);
+    });
+  }
+}
 
 extension FavouriteQueryProperty
     on QueryBuilder<Favourite, Favourite, QQueryProperty> {
@@ -287,9 +427,9 @@ extension FavouriteQueryProperty
     });
   }
 
-  QueryBuilder<Favourite, MPodcast, QQueryOperations> podcastProperty() {
+  QueryBuilder<Favourite, String, QQueryOperations> podcastJsonProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'podcast');
+      return query.addPropertyName(r'podcastJson');
     });
   }
 }

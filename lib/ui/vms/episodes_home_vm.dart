@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
-import 'package:podcasks/data/entities/episode/podcast_episode.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
 
@@ -13,9 +12,9 @@ class EpisodesHomeViewmodel extends ListViewmodel {
   // List<PodcastEntity> get podcastFilter => _podcastFilter;
   // List<PodcastEntity> _podcastFilter = [];
 
-  MPodcast? tempPodcast;
+  Podcast? tempPodcast;
 
-  initPodcast(MPodcast? podcast, {int? maxItems}) async {
+  initPodcast(Podcast? podcast, {int? maxItems}) async {
     if (podcast == null) return;
     loading();
     tempPodcast = podcast;
@@ -28,7 +27,7 @@ class EpisodesHomeViewmodel extends ListViewmodel {
   }
 
   @override
-  List<(MEpisode, MPodcast)>? get episodes => super
+  List<(Episode, Podcast)>? get episodes => super
       .episodes
       ?.where(
         (e) => tempPodcast == null || e.$2.url == tempPodcast?.url,

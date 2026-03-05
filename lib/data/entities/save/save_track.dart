@@ -1,5 +1,5 @@
 import 'package:isar/isar.dart';
-import 'package:podcasks/data/entities/episode/podcast_episode.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 part 'save_track.g.dart';
 
@@ -11,17 +11,26 @@ class SaveTrack {
   String? podcastUrl;
   DateTime dateTime;
   int? position;
-  bool? finished;
-  MPodcast? podcast;
+  int? duration;
+
+  String? podcastJson;
+
+  @ignore
+  Podcast? get podcast =>
+      podcastJson != null ? PodcastConverter.deserialize(podcastJson!) : null;
+  set podcast(Podcast? p) =>
+      podcastJson = p != null ? PodcastConverter.serialize(p) : null;
 
   SaveTrack({
-    required this.id,
-    required this.url,
-    required this.title,
-    required this.position,
-    required this.podcastUrl,
-    required this.finished,
+    this.id = Isar.autoIncrement,
+    this.url,
+    this.title,
+    this.position,
+    this.duration,
+    this.podcastUrl,
     required this.dateTime,
-    required this.podcast,
-  });
+    Podcast? podcast,
+  }) {
+    this.podcast = podcast;
+  }
 }

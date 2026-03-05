@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
-import 'package:podcasks/data/entities/episode/podcast_episode.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/ui/common/debouncer.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
 
@@ -17,10 +16,10 @@ class PodcastViewmodel extends ListViewmodel {
   String? _filter;
   final _debouncer = Debouncer(milliseconds: 500);
 
-  MPodcast? get podcast => _podcast;
-  MPodcast? _podcast;
+  Podcast? get podcast => _podcast;
+  Podcast? _podcast;
 
-  initPodcast(MPodcast? pod, {int? maxItems}) async {
+  initPodcast(Podcast? pod, {int? maxItems}) async {
     if (pod == null) return;
     _podcast = pod;
     final episodes = podcast?.episodes
@@ -31,7 +30,7 @@ class PodcastViewmodel extends ListViewmodel {
   }
 
   @override
-  List<(MEpisode, MPodcast)>? get episodes =>
+  List<(Episode, Podcast)>? get episodes =>
       ((_newerFirst) ? super.episodes : super.episodes?.reversed.toList())
           ?.where(
             (e) => (_filter != null && _filter != '')
@@ -87,16 +86,16 @@ class PodcastViewmodel extends ListViewmodel {
     });
   }
 
-  Future<void> markAllAsFinished(MPodcast? p) async {
+  Future<void> markAllAsFinished(Podcast? p) async {
     loading();
     if (p != null) {
-      await historyRepo.setAllPositions(p, Duration.zero, true);
+      await historyRepo.setAllPositions(p, Duration.zero);
       initEpisodesList();
     }
     success();
   }
 
-  deleteAll(MPodcast? p) async {
+  deleteAll(Podcast? p) async {
     loading();
     await historyRepo.removeAll(p);
     initEpisodesList();

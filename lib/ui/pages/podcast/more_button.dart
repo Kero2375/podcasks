@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/confirm_dialog.dart';
 import 'package:podcasks/ui/common/popup_menu_item.dart';
@@ -52,7 +52,7 @@ class MoreButton extends StatelessWidget {
 
   void handleMore(
     int action,
-    MPodcast? podcast,
+    Podcast? podcast,
     PodcastViewmodel vm,
     DownloadManager dm,
     BuildContext context,

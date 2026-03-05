@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:podcasks/data/entities/episode/podcast_episode.dart';
-import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
+import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcasks/ui/vms/vm.dart';
@@ -13,8 +12,8 @@ class EpisodePlayButton extends StatelessWidget {
     required this.vm,
   });
 
-  final MEpisode? episode;
-  final MPodcast? podcast;
+  final Episode? episode;
+  final Podcast? podcast;
   final PlayerViewmodel vm;
 
   @override
