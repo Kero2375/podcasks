@@ -32,13 +32,13 @@ class _HomeEpisodeCardState extends State<HomeEpisodeCard> {
     return Card(
       color: Theme.of(context).colorScheme.onPrimary,
       clipBehavior: Clip.antiAlias,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: InkWell(
-          onTap: () => widget.onCardTap(),
-          onTapDown: (details) =>
-              setState(() => _tapPos = details.globalPosition),
-          onLongPress: () => widget.onLongTap(_tapPos),
+      child: InkWell(
+        onTap: () => widget.onCardTap(),
+        onTapDown: (details) =>
+            setState(() => _tapPos = details.globalPosition),
+        onLongPress: () => widget.onLongTap(_tapPos),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
