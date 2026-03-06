@@ -36,6 +36,7 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
   void initState() {
     super.initState();
     final vm = ref.read(playerViewmodel);
+    setState(() => speedValue = vm.speed);
     if (vm.image != null) {
       PaletteGenerator.fromImageProvider(
         CachedNetworkImageProvider(vm.image!, maxWidth: 10, maxHeight: 10),
@@ -64,57 +65,65 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
 
   Widget _speedButton(BuildContext context, PlayerViewmodel vm) {
     return IconButton(
+      icon: Text(
+        '⚡ ${speedValue}x',
+        style: textStyleBody.copyWith(
+          color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+        ),
+      ),
       onPressed: () {
         showModalBottomSheet(
             context: context,
             showDragHandle: true,
             useSafeArea: true,
             builder: (BuildContext context) {
-              return StatefulBuilder(
-                builder: (context, stateSetter) => Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      Text(
-                        "${speedValue}x",
-                        style: textStyleBody,
-                      ),
-                      Slider(
-                        min: .5,
-                        max: 1.5,
-                        value: speedValue,
-                        onChanged: (value) {
-                          stateSetter(() {
-                            speedValue = double.parse(value.toStringAsFixed(2));
-                          });
-                        },
-                        onChangeEnd: (value) {
-                          vm.setSpeed(speedValue);
-                        },
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          // TODO: fix not updating slider when pressing buttons
-                          _speedMenuItem(0.5, vm),
-                          _speedMenuItem(0.75, vm),
-                          _speedMenuItem(1, vm),
-                          _speedMenuItem(1.25, vm),
-                          _speedMenuItem(1.5, vm),
-                          // _speedMenuItem(2),
-                        ],
-                      )
-                    ],
+              return IntrinsicHeight(
+                child: StatefulBuilder(
+                  builder: (context, stateSetter) => Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        Text(
+                          '⚡ ${speedValue}x',
+                          style: textStyleHeader,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                          child: Slider(
+                            min: .5,
+                            max: 2,
+                            value: speedValue,
+                            inactiveColor: Theme.of(context).colorScheme.onPrimary,
+                            onChanged: (value) {
+                              stateSetter(() {
+                                speedValue = double.parse(value.toStringAsFixed(2));
+                              });
+                            },
+                            onChangeEnd: (value) {
+                              vm.setSpeed(speedValue);
+                            },
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _speedItem(vm, stateSetter, 0.5),
+                            _speedItem(vm, stateSetter, 0.75),
+                            _speedItem(vm, stateSetter, 1),
+                            _speedItem(vm, stateSetter, 1.25),
+                            _speedItem(vm, stateSetter, 1.5),
+                            _speedItem(vm, stateSetter, 1.75),
+                            _speedItem(vm, stateSetter, 2),
+                          ],
+                        ),
+                        const SizedBox(height: 40),
+                      ],
+                    ),
                   ),
                 ),
               );
             });
       },
-      icon: Text(
-        '⚡ ${vm.speed}x',
-        style: textStyleBody.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withAlpha(150)),
-      ),
     );
 
     // return PopupMenuButton<double>(
@@ -136,28 +145,19 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
     // );
   }
 
-  Widget _speedMenuItem(double speed, PlayerViewmodel vm) {
-    return IconButton.filledTonal(
+  Widget _speedItem(PlayerViewmodel vm, void Function(void Function()) stateSetter, double speed) {
+    final color = Theme.of(context).colorScheme.onSurface.withAlpha(120);
+    return IconButton.outlined(
       style: IconButton.styleFrom(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadiusGeometry.circular(12),
-        ),
+          borderRadius: BorderRadiusGeometry.circular(12)
+        )
       ),
       onPressed: () {
-        setState(() {
-          speedValue = speed;
-          vm.setSpeed(speed);
-        });
+        stateSetter(() => speedValue = speed);
+        vm.setSpeed(speedValue);
       },
-      icon: Text(
-        speed.toString(),
-        style: textStyleBody,
-      ),
-      // textStyle: textStyleBody,
-      // child: Text(
-      //   '⚡️ ${speed}x',
-      //   style: textStyleBody,
-      // )
+      icon: Text(speed.toString(), style: textStyleSmall.copyWith(color: color)),
     );
   }
 
@@ -272,12 +272,13 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
           ],
         ),
         _buttons(vm),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Stack(
+          alignment:Alignment.center,
           children: [
             Align(
-                alignment: Alignment.centerLeft,
-                child: _speedButton(context, vm)),
+              alignment: Alignment.centerLeft,
+              child: _speedButton(context, vm),
+            ),
             _showDescriptionButton(vm, context, ep),
             Align(
               alignment: Alignment.centerRight,
