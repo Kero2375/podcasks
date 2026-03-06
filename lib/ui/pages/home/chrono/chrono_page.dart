@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/divider.dart';
 import 'package:podcasks/ui/common/episode_item.dart';
+import 'package:podcasks/ui/common/opml_utils.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/home/home_content.dart';
 import 'package:podcasks/ui/vms/episodes_home_vm.dart';
@@ -118,23 +119,49 @@ class _ChronoPageState extends ConsumerState<ChronoPage> {
   Widget _welcomeContent(BuildContext context, HomeViewmodel homeVm) {
     return Center(
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(context.l10n!.welcome, style: textStyleBody),
           Text(context.l10n!.notFavouritesMessage, style: textStyleBody),
           const SizedBox(height: 8),
           Text(context.l10n!.bohEmoji, style: textStyleBody),
-          const SizedBox(height: 8),
-          FilledButton(
-            onPressed: () {
-              homeVm.setPage(Pages.search);
-            },
-            style: buttonStyle,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
+          const SizedBox(height: 16),
+          IntrinsicWidth(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Icon(Icons.search),
-                const SizedBox(width: 8),
-                Text(context.l10n!.explorePodcasts),
+                FilledButton(
+                  onPressed: () {
+                    homeVm.setPage(Pages.search);
+                  },
+                  style: buttonStyle,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.search),
+                      const SizedBox(width: 8),
+                      Text(context.l10n!.explorePodcasts),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                FilledButton(
+                  onPressed: () {
+                    pickFile(context, () => sync(ref), () {
+                      homeVm.syncing = true;
+                      homeVm.update();
+                    });
+                  },
+                  style: buttonStyle,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.file_download_outlined),
+                      const SizedBox(width: 8),
+                      Text(context.l10n!.importOpml),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
