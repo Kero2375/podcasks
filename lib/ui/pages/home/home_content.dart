@@ -128,48 +128,44 @@ class _HomeContentPageState extends ConsumerState<HomeContentPage> {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(context.l10n!.welcome, style: textStyleBody),
           Text(context.l10n!.notFavouritesMessage, style: textStyleBody),
           const SizedBox(height: 8),
           Text(context.l10n!.bohEmoji, style: textStyleBody),
           const SizedBox(height: 16),
-          IntrinsicWidth(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+          FilledButton(
+            onPressed: () {
+              homeVm.setPage(Pages.search);
+            },
+            style: buttonStyle,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                FilledButton(
-                  onPressed: () {
-                    homeVm.setPage(Pages.search);
-                  },
-                  style: buttonStyle,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.search),
-                      const SizedBox(width: 8),
-                      Text(context.l10n!.explorePodcasts),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 12),
-                FilledButton(
-                  onPressed: () {
-                    pickFile(context, () => sync(ref), () {
-                      homeVm.syncing = true;
-                      homeVm.update();
-                    });
-                  },
-                  style: buttonStyle,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.file_download_outlined),
-                      const SizedBox(width: 8),
-                      Text(context.l10n!.importOpml),
-                    ],
-                  ),
-                ),
+                const Icon(Icons.search),
+                const SizedBox(width: 8),
+                Text(context.l10n!.explorePodcasts),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          FilledButton(
+            onPressed: () {
+              pickFile(context, () => sync(ref), () {
+                homeVm.syncing = true;
+                homeVm.update();
+              });
+            },
+            style: buttonStyle,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.file_download_outlined),
+                const SizedBox(width: 8),
+                Text(context.l10n!.importOpml),
               ],
             ),
           ),
