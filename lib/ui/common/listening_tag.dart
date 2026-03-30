@@ -66,9 +66,12 @@ class ListeningTag extends StatelessWidget {
             const SizedBox(width: 4),
             Icon(icon, size: 15, color: color),
             const SizedBox(width: 8),
-            Text(
-              text,
-              style: textStyleSmall.copyWith(color: color),
+            Flexible(
+              child: Text(
+                text,
+                style: textStyleSmall.copyWith(color: color),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             const SizedBox(width: 8),
           ],

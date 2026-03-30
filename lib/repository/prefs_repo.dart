@@ -14,11 +14,16 @@ abstract class PrefsRepo {
   Map<String,String> getAllGenres(BuildContext context);
 
   Future<String> getGenre();
+
+  Future<void> setDownloadsPath(String path);
+
+  Future<String?> getDownloadsPath();
 }
 
 class PrefsRepoSharedPref extends PrefsRepo {
   static const String countryKey = 'country_sp_key';
   static const String genreKey = 'genre_sp_key';
+  static const String downloadsPathKey = 'downloads_path_sp_key';
   String genre = 'All';
 
   Future<SharedPreferences> get _getSp async =>
@@ -49,5 +54,17 @@ class PrefsRepoSharedPref extends PrefsRepo {
   @override
   Future<void> setGenre(String g) async {
     genre = g;
+  }
+
+  @override
+  Future<String?> getDownloadsPath() async {
+    final sp = await _getSp;
+    return sp.getString(downloadsPathKey);
+  }
+
+  @override
+  Future<void> setDownloadsPath(String path) async {
+    final sp = await _getSp;
+    await sp.setString(downloadsPathKey, path);
   }
 }

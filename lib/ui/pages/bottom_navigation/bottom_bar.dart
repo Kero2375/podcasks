@@ -19,6 +19,7 @@ class BottomBar extends ConsumerWidget {
       unselectedLabelStyle: textStyleSmall,
       onTap: (value) => onTabTapped(context, value, ref),
       currentIndex: selectedPage.index,
+      type: BottomNavigationBarType.fixed,
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: TabIcon(
@@ -41,6 +42,13 @@ class BottomBar extends ConsumerWidget {
           ),
           label: context.l10n!.listening.toLowerCase(),
         ),
+        BottomNavigationBarItem(
+          icon: TabIcon(
+            icon: Icons.folder_outlined,
+            selected: selectedPage == Pages.downloads,
+          ),
+          label: context.l10n!.downloads.toLowerCase(),
+        ),
       ],
     );
   }
@@ -51,18 +59,15 @@ class BottomBar extends ConsumerWidget {
     switch (index) {
       case 0:
         vm.setPage(Pages.home);
-        // Navigator.of(context).popAndPushNamed(HomePage.route);
         break;
       case 1:
         vm.setPage(Pages.search);
-        // Navigator.of(context).popAndPushNamed(SearchPage.route);
         break;
       case 2:
-        // final lstVm = ref.read(listeningViewmodel);
         vm.setPage(Pages.listening);
-        // vm.fetchListening();
-        // lstVm.clear();
-        // Navigator.of(context).popAndPushNamed(SearchPage.route);
+        break;
+      case 3:
+        vm.setPage(Pages.downloads);
         break;
     }
   }

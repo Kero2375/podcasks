@@ -1,3 +1,6 @@
 {
-
+  "downloads": "Descargas locales",
+  "downloadsDir": "Carpeta de descargas",
+  "selectDownloadsDir": "Elija una carpeta para buscar archivos MP3.",
+  "changeDownloadsDir": "Cambiar carpeta de descargas"
 }

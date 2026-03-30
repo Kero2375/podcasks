@@ -72,13 +72,26 @@ class EpisodesHomeViewmodel extends ListViewmodel {
   }
 
   @override
-  List<(Episode, Podcast)>? get episodes => super
-      .episodes
-      ?.where(
-        (e) => tempPodcast == null || e.$2.url == tempPodcast?.url,
-      )
-      .toSet()
-      .toList();
+  List<(Episode, Podcast)>? get episodes {
+    final raw = super.episodes;
+    if (raw == null) return null;
+
+    final filtered = raw.where(
+      (e) => tempPodcast == null || e.$2.url == tempPodcast?.url,
+    );
+
+    final seenGuids = <String>{};
+    final unique = <(Episode, Podcast)>[];
+
+    for (final item in filtered) {
+      if (!seenGuids.contains(item.$1.guid)) {
+        seenGuids.add(item.$1.guid);
+        unique.add(item);
+      }
+    }
+
+    return unique;
+  }
 
   showListening(HomeViewmodel homeVm) async {
     tempPodcast = null;

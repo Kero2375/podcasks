@@ -205,7 +205,7 @@ abstract class AppLocalizations {
   /// No description provided for @explorePodcasts.
   ///
   /// In en, this message translates to:
-  /// **'explore podcasts'**
+  /// **'Explore podcasts'**
   String get explorePodcasts;
 
   /// No description provided for @markAllFinished.
@@ -243,6 +243,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete'**
   String get delete;
+
+  /// No description provided for @deleteEpisodeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete {title}?'**
+  String deleteEpisodeMessage(Object title);
 
   /// No description provided for @deleteAllEmoji.
   ///
@@ -609,6 +615,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Explore'**
   String get explore;
+
+  /// No description provided for @downloads.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloads'**
+  String get downloads;
+
+  /// No description provided for @downloadsDir.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloads directory'**
+  String get downloadsDir;
+
+  /// No description provided for @selectDownloadsDir.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a directory to look for MP3 files.'**
+  String get selectDownloadsDir;
+
+  /// No description provided for @changeDownloadsDir.
+  ///
+  /// In en, this message translates to:
+  /// **'Change downloads directory'**
+  String get changeDownloadsDir;
 }
 
 class _AppLocalizationsDelegate

@@ -23,6 +23,7 @@
   "deleteProgress": "Delete progress",
   "deleteProgressMessage": "Are you sure you want to delete all progress for {title}?",
   "delete": "Delete",
+  "deleteEpisodeMessage": "Are you sure you want to delete {title}?",
   "deleteAllEmoji": "\"ಠ_ಠ",
   "searchIn": "Search in {podcast}",
   "error": "Error",
@@ -83,6 +84,9 @@
   "nothingToImport": "Nothing new to import",
   "sync": "Sync",
   "home": "Home",
-  "explore": "Explore"
-
+  "explore": "Explore",
+  "downloads": "Downloads",
+  "downloadsDir": "Downloads directory",
+  "selectDownloadsDir": "Please select a directory to look for MP3 files.",
+  "changeDownloadsDir": "Change downloads directory"
 }

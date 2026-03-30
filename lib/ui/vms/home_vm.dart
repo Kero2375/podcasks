@@ -21,6 +21,7 @@ enum Pages {
   home,
   search,
   listening,
+  downloads,
   favourites,
 }
 
@@ -32,7 +33,15 @@ class HomeViewmodel extends Vm {
 
   bool syncing = false;
 
-  List<Podcast> get favourites => _favourites.sorted(_sortPodcastsByEpisode);
+  List<Podcast> get favourites {
+    final unique = <String, Podcast>{};
+    for (final p in _favourites) {
+      if (p.url != null) {
+        unique[p.url!] = p;
+      }
+    }
+    return unique.values.toList().sorted(_sortPodcastsByEpisode);
+  }
   List<Podcast> _favourites = [];
 
   List<(Episode, Podcast)>? get saved => _saved;

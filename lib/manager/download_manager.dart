@@ -1,12 +1,16 @@
 import 'dart:isolate';
 import 'dart:ui';
+import 'dart:io';
 import 'package:app_settings/app_settings.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:podcast_search/podcast_search.dart';
+import 'package:podcasks/locator.dart';
+import 'package:podcasks/repository/prefs_repo.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcasks/utils.dart';
@@ -27,6 +31,7 @@ class DownloadManager extends Vm {
       id = data[0];
       status = data[1];
       progress = data[2];
+      update();
     });
 
     FlutterDownloader.registerCallback(downloadCallback);
@@ -44,28 +49,60 @@ class DownloadManager extends Vm {
     send.send([id, status, progress]);
   }
 
-  Future<void> download(Episode? episode, BuildContext context) async {
+  Future<void> download(Episode? episode, Podcast? podcast, BuildContext context) async {
     final status = await Permission.notification.request();
+    bool storageGranted = true;
 
-    final dir = (await getExternalStorageDirectory())?.path;
-    if (status.isGranted && episode?.contentUrl != null && dir != null) {
+    if (Platform.isAndroid) {
+      final deviceInfo = await DeviceInfoPlugin().androidInfo;
+      if (deviceInfo.version.sdkInt < 33) {
+        if (deviceInfo.version.sdkInt >= 30) {
+          final manageStatus = await Permission.manageExternalStorage.request();
+          storageGranted = manageStatus.isGranted;
+        } else {
+          final storageStatus = await Permission.storage.request();
+          storageGranted = storageStatus.isGranted;
+        }
+      }
+    }
+
+    String? dir = await locator.get<PrefsRepo>().getDownloadsPath();
+    bool saveInPublicStorage = false;
+
+    if (dir == null || dir.isEmpty) {
+      dir = (await getExternalStorageDirectory())?.path;
+      saveInPublicStorage = true;
+    }
+
+    if (status.isGranted && storageGranted && episode?.contentUrl != null && dir != null) {
+      String finalDir = dir;
+      if (podcast != null && podcast.title != null) {
+        final sanitizedTitle = podcast.title!.replaceAll(RegExp(r'[<>:"/\\|?*]'), '_').trim();
+        final podcastDir = Directory('$dir/$sanitizedTitle');
+        if (!await podcastDir.exists()) {
+          await podcastDir.create(recursive: true);
+        }
+        finalDir = podcastDir.path;
+        saveInPublicStorage = false; // Always false for subfolders
+      }
+
       await FlutterDownloader.enqueue(
         url: episode!.contentUrl!,
-        fileName: '${episode.title}.mp3',
+        fileName: '${episode.title}.mp3'.replaceAll(RegExp(r'[<>:"/\\|?*]'), '_'),
         headers: {},
-        savedDir: dir,
+        savedDir: finalDir,
         showNotification: true,
         openFileFromNotification: true,
-        saveInPublicStorage: true,
+        saveInPublicStorage: saveInPublicStorage,
       );
     } else if (context.mounted) {
       _showSnack(context, context.l10n!.error);
     }
   }
 
-  Future<void> downloadAll(List<Episode> episodes, BuildContext context) async {
+  Future<void> downloadAll(List<Episode> episodes, Podcast? podcast, BuildContext context) async {
     for (Episode ep in episodes) {
-      download(ep, context);
+      await download(ep, podcast, context);
     }
   }
 

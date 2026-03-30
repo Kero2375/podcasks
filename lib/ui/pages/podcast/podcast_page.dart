@@ -30,14 +30,6 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
   String? get title => widget.podcast?.title;
   bool expanded = false;
 
-  // @override
-  _initEpisodeList(PodcastViewmodel vm) async {
-    if (vm.displayingEpisodes.isEmpty) {
-      vm.initPodcast(widget.podcast);
-    }
-    // super.initState();
-  }
-
   _firstInit() async {
     final vm = ref.read(podcastViewmodel);
     // vm.loading();
@@ -47,7 +39,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
 
   @override
   initState() {
-    _firstInit();
+    Future.microtask(() => _firstInit());
     super.initState();
   }
 
@@ -59,10 +51,6 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
   Widget build(BuildContext context) {
     final vm = ref.watch(podcastViewmodel);
     final dm = ref.watch(downloadManager);
-
-    vm.addListener(() => _initEpisodeList(vm));
-
-    _initEpisodeList(vm);
 
     return Scaffold(
       appBar: vm.searchController == null

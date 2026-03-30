@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/bottom_player.dart';
 import 'package:podcasks/ui/pages/bottom_navigation/bottom_bar.dart';
+import 'package:podcasks/ui/pages/downloads/downloads_page.dart';
 import 'package:podcasks/ui/pages/home/chrono/chrono_page.dart';
 import 'package:podcasks/ui/pages/home/home_content.dart';
 import 'package:podcasks/ui/pages/search/search_page.dart';
@@ -25,13 +26,15 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage> {
   @override
   void initState() {
-    final homeVm = ref.read(homeViewmodel);
-    final playerVm = ref.read(playerViewmodel);
-    final episodesVm = ref.read(episodesHomeViewmodel);
-    homeVm.init();
-    _checkSaved(homeVm, playerVm, episodesVm);
-    sync(ref);
     super.initState();
+    Future.microtask(() {
+      final homeVm = ref.read(homeViewmodel);
+      final playerVm = ref.read(playerViewmodel);
+      final episodesVm = ref.read(episodesHomeViewmodel);
+      homeVm.init();
+      _checkSaved(homeVm, playerVm, episodesVm);
+      sync(ref);
+    });
   }
 
   Future<void> _checkSaved(HomeViewmodel homeVm, PlayerViewmodel playerVm,
@@ -62,6 +65,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             Pages.home => const HomeContentPage(),
             Pages.search => const SearchPage(),
             Pages.listening => const ChronoPage(),
+            Pages.downloads => const DownloadsPage(),
             // Pages.listening => const ListeningPage(),
             Pages.favourites => const SizedBox.shrink(),
           },
@@ -77,12 +81,16 @@ class _HomePageState extends ConsumerState<HomePage> {
       // resizeToAvoidBottomInset: true,
       appBar: mainAppBar(
         context,
-        title: context.l10n!.appTitle,
+        title: homeVm.page == Pages.downloads
+            ? context.l10n!.downloads
+            : context.l10n!.appTitle,
         updateHome: () => sync(ref),
         startLoading: () {
           homeVm.syncing = true;
           homeVm.update();
         },
+        selectedPage: homeVm.page,
+        ref: ref,
       ),
       bottomNavigationBar: BottomBar(selectedPage: homeVm.page),
       body: homeVm.state == UiState.loading

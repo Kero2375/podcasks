@@ -83,5 +83,9 @@
   "nothingToImport": "Niente di nuovo da importare",
   "sync": "Aggiorna",
   "home": "Home",
-  "explore": "Esplora"
+  "explore": "Esplora",
+  "downloads": "Download locale",
+  "downloadsDir": "Cartella download",
+  "selectDownloadsDir": "Scegli una cartella in cui cercare file MP3.",
+  "changeDownloadsDir": "Cambia cartella download"
 }

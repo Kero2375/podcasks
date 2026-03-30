@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/ui/common/opml_utils.dart';
 import 'package:podcasks/ui/common/popup_menu_item.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/favourites/faourites_drawer.dart';
 import 'package:podcasks/ui/pages/search/search_page.dart';
 import 'package:podcasks/ui/pages/settings/settings_page.dart';
+import 'package:podcasks/ui/vms/downloads_vm.dart';
+import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/utils.dart';
 
 AppBar mainAppBar(
@@ -14,12 +17,14 @@ AppBar mainAppBar(
   Widget? leading,
   Function()? updateHome,
   Function()? startLoading,
+  Pages? selectedPage,
+  WidgetRef? ref,
 }) {
   return AppBar(
     leading: leading,
     title: Row(
       children: [
-        if (title == 'Podcasks') ...[
+        if (title == 'Podcasks' || title == context.l10n!.appTitle) ...[
           ColorFiltered(
             colorFilter: ColorFilter.mode(
                 Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
@@ -47,8 +52,14 @@ AppBar mainAppBar(
             icon: const Icon(Icons.more_vert),
             shape: popupMenuShape(context),
             onSelected: (item) =>
-                _checkValue(context, item, updateHome, startLoading),
+                _checkValue(context, item, updateHome, startLoading, ref),
             itemBuilder: (BuildContext context) => [
+              if (selectedPage == Pages.downloads)
+                popupMenuItem(
+                  value: 6,
+                  icon: const Icon(Icons.folder_open),
+                  text: context.l10n!.changeDownloadsDir,
+                ),
               popupMenuItem(
                 value: 2,
                 icon: const Icon(Icons.sync),
@@ -71,7 +82,7 @@ AppBar mainAppBar(
 }
 
 _checkValue(BuildContext context, int item, Function()? updateHome,
-    Function()? startLoading) {
+    Function()? startLoading, WidgetRef? ref) {
   switch (item) {
     case 0:
       Navigator.pushNamed(context, SearchPage.route);
@@ -90,6 +101,9 @@ _checkValue(BuildContext context, int item, Function()? updateHome,
       break;
     case 5:
       exportFile(context);
+      break;
+    case 6:
+      ref?.read(downloadsViewmodel).pickDirectory();
       break;
   }
 }

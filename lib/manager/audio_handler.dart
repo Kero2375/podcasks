@@ -51,7 +51,11 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
           playing: false,
         ),
       );
-      await _player.setUrl(item.id, preload: true);
+      if (item.id.startsWith('/') || item.id.startsWith('file://')) {
+        await _player.setFilePath(item.id.replaceFirst('file://', ''));
+      } else {
+        await _player.setUrl(item.id, preload: true);
+      }
       await _player.load();
       // playbackState.listen(playbackStateListener);
     }

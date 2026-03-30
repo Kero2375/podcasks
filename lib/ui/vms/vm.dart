@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 enum UiState { loading, error, success }
@@ -7,20 +9,36 @@ class Vm extends ChangeNotifier {
 
   success() {
     state = UiState.success;
-    notifyListeners();
+    try {
+      notifyListeners();
+    } catch(e) {
+      log("cannot notify listeners: $e");
+    }
   }
 
   error() {
     state = UiState.error;
-    notifyListeners();
+    try {
+      notifyListeners();
+    } catch(e) {
+      log("cannot notify listeners: $e");
+    }
   }
 
   loading() {
     state = UiState.loading;
-    notifyListeners();
+    try {
+      notifyListeners();
+    } catch(e) {
+      log("cannot notify listeners: $e");
+    }
   }
 
   update() {
-    notifyListeners();
+    try {
+      notifyListeners();
+    } catch(e) {
+      log("cannot notify listeners: $e");
+    }
   }
 }

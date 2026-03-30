@@ -26,12 +26,14 @@ class ListViewmodel extends Vm {
 
   ScrollController get controller => _controller;
   ScrollController _controller = ScrollController();
+  bool _loadingMore = false;
 
   init(List<(Episode, Podcast)>? eps, {int? maxItems}) {
     if (maxItems != null) _maxItems = maxItems;
     _episodes = eps;
     _page = 0;
-    if (episodes?.isNotEmpty != null) {
+    _displayingEpisodes = []; // Clear current list
+    if (episodes != null && episodes!.isNotEmpty) {
       initEpisodesList();
     }
   }
@@ -40,10 +42,13 @@ class ListViewmodel extends Vm {
     if (episodes == null) return;
     _page = 0;
     if (episodes!.length < _maxItems) {
-      _displayingEpisodes = episodes!;
+      _displayingEpisodes = List.from(episodes!);
     } else {
-      _displayingEpisodes = episodes!.sublist(0, _maxItems);
+      _displayingEpisodes = List.from(episodes!.sublist(0, _maxItems));
     }
+    
+    _controller.removeListener(loadMoreData);
+    _controller.dispose();
     _controller = ScrollController();
     _controller.addListener(loadMoreData);
   }
@@ -57,23 +62,27 @@ class ListViewmodel extends Vm {
   @override
   void dispose() {
     _controller.removeListener(loadMoreData);
+    _controller.dispose();
     super.dispose();
   }
 
   void loadMoreData() {
     try {
-      if (_controller.position.pixels == _controller.position.maxScrollExtent) {
-        if (episodes != null) {
-          _page += 1;
-          _displayingEpisodes.addAll(episodes!.sublist(
-            /*start*/
-            _page * _maxItems,
-            min(episodes!.length, (_page + 1) * _maxItems),
-          ));
-          notifyListeners();
+      if (_controller.position.pixels >= _controller.position.maxScrollExtent - 200) {
+        if (episodes != null && !_loadingMore) {
+          final int start = (_page + 1) * _maxItems;
+          if (start < episodes!.length) {
+            _loadingMore = true;
+            _page += 1;
+            final int end = min(episodes!.length, (_page + 1) * _maxItems);
+            _displayingEpisodes.addAll(episodes!.sublist(start, end));
+            _loadingMore = false;
+            notifyListeners();
+          }
         }
       }
     } catch (e) {
+      _loadingMore = false;
       dev.log(e.toString());
     }
   }

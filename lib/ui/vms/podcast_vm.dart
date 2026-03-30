@@ -20,13 +20,22 @@ class PodcastViewmodel extends ListViewmodel {
   Podcast? _podcast;
 
   initPodcast(Podcast? pod, {int? maxItems}) async {
-    if (pod == null) return;
+    loading();
+    _podcast = null;
+    super.init(null);
+    notifyListeners();
+    
+    if (pod == null) {
+      success();
+      return;
+    }
     _podcast = pod;
     final episodes = podcast?.episodes
         // .map((e) => MEpisode.fromEpisode(e, podcast: podcast))
         .toList();
     await super
         .init(episodes?.map((e) => (e, podcast!)).toList(), maxItems: maxItems);
+    success();
   }
 
   @override

@@ -47,7 +47,12 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
                   : value.lightVibrantColor?.color;
               colorReady = true;
             }),
+          }).onError((e, st) {
+            colorReady = true;
+            return Future.value({});
           });
+    } else {
+      colorReady = true;
     }
   }
 
@@ -324,8 +329,9 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
     );
   }
 
-  IconButton _showDescriptionButton(
+  Widget _showDescriptionButton(
       PlayerViewmodel vm, BuildContext context, Episode? ep) {
+    if (ep?.description.isEmpty ?? false) return const SizedBox.shrink();
     return IconButton(
       onPressed: () {
         HapticFeedback.lightImpact();
@@ -386,7 +392,6 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
   }
 
   Widget _image(String? image) {
-    if (image == null) return const SizedBox.shrink();
     final imageSize = MediaQuery.of(context).size.width;
     return FittedBox(
       fit: BoxFit.contain,
@@ -398,8 +403,14 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
               : [],
         ),
         clipBehavior: Clip.antiAlias,
-        child: CachedNetworkImage(
-            imageUrl: image, fit: BoxFit.fill, width: imageSize),
+        child: image != null 
+        ? CachedNetworkImage(imageUrl: image, fit: BoxFit.fill, width: imageSize)
+        : Container(
+            color: Theme.of(context).colorScheme.onSecondary,
+            width: imageSize, 
+            height: imageSize,
+            child: Center(child: Icon(Icons.music_note_rounded, size: imageSize/4, color: Theme.of(context).colorScheme.primary,)),
+          ),
       ),
     );
   }

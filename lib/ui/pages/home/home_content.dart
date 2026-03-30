@@ -24,10 +24,12 @@ class HomeContentPage extends ConsumerStatefulWidget {
 class _HomeContentPageState extends ConsumerState<HomeContentPage> {
   @override
   void initState() {
-    final homeVm = ref.read(homeViewmodel);
-    final episodesVm = ref.read(episodesHomeViewmodel);
-    episodesVm.refreshHomeList(homeVm);
     super.initState();
+    Future.microtask(() {
+      final homeVm = ref.read(homeViewmodel);
+      final episodesVm = ref.read(episodesHomeViewmodel);
+      episodesVm.refreshHomeList(homeVm);
+    });
   }
 
   @override
@@ -36,13 +38,9 @@ class _HomeContentPageState extends ConsumerState<HomeContentPage> {
     final episodesVm = ref.watch(episodesHomeViewmodel);
     final dm = ref.watch(downloadManager);
 
-    homeVm.addListener(() {
-      episodesVm.refreshHomeList(homeVm);
+    ref.listen(homeViewmodel, (previous, next) {
+      Future.microtask(() => episodesVm.refreshHomeList(next));
     });
-
-    if (episodesVm.displayingEpisodes.isEmpty) {
-      episodesVm.refreshHomeList(homeVm);
-    }
 
     return RefreshIndicator(
       onRefresh: () async {

@@ -27,20 +27,25 @@ class _HomeContentPageState extends ConsumerState<ListeningPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      final homeVm = ref.read(homeViewmodel);
+      final vm = ref.read(listeningViewmodel);
+      _initEpisodeList(vm, homeVm);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     // ref.watch(playerViewmodel);
     final homeVm = ref.watch(homeViewmodel);
     final vm = ref.watch(listeningViewmodel);
     final dm = ref.watch(downloadManager);
 
-    homeVm.addListener(() {
-      _initEpisodeList(vm, homeVm);
+    ref.listen(homeViewmodel, (previous, next) {
+      Future.microtask(() => _initEpisodeList(vm, next));
     });
-
-    if (vm.displayingEpisodes.isEmpty) {
-      // episodesVm.filterEpisodes([]);
-      _initEpisodeList(vm, homeVm);
-    }
 
     return RefreshIndicator(
       onRefresh: () async {

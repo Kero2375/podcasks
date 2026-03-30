@@ -99,7 +99,7 @@ class MoreButton extends StatelessWidget {
             // emoji: context.l10n!.deleteAllEmoji,
             onTap: () {
               dm.downloadAll(
-                  vm.episodes?.map((e) => e.$1).toList() ?? [], context);
+                  vm.episodes?.map((e) => e.$1).toList() ?? [], podcast, context);
             },
           ),
         );

@@ -22,7 +22,7 @@ class QueueRepoAudioHandler extends QueueRepo {
           id: episode.contentUrl ?? '',
           title: episode.title,
           artist: podcast.title,
-          artUri: Uri.parse(episode.imageUrl ?? podcast.image ?? ''),
+          artUri: episode.imageUrl==null && podcast.image == null ? null : Uri.tryParse(episode.imageUrl ?? podcast.image ?? ''),
           duration: episode.duration,
           extras: {"podcast_url": podcast.url}),
     );

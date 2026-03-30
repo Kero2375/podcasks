@@ -68,7 +68,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get bohEmoji => '¯\\_(ツ)_/¯';
 
   @override
-  String get explorePodcasts => 'esplora podcast';
+  String get explorePodcasts => 'Esplora podcast';
 
   @override
   String get markAllFinished => 'Segna tutti come ascoltati';
@@ -91,6 +91,11 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get delete => 'Elimina';
+
+  @override
+  String deleteEpisodeMessage(Object title) {
+    return 'Are you sure you want to delete $title?';
+  }
 
   @override
   String get deleteAllEmoji => '\"ಠ_ಠ';
@@ -293,4 +298,17 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get explore => 'Esplora';
+
+  @override
+  String get downloads => 'Download locale';
+
+  @override
+  String get downloadsDir => 'Cartella download';
+
+  @override
+  String get selectDownloadsDir =>
+      'Scegli una cartella in cui cercare file MP3.';
+
+  @override
+  String get changeDownloadsDir => 'Cambia cartella download';
 }
