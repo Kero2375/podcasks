@@ -3,6 +3,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/confirm_dialog.dart';
+import 'package:podcasks/ui/common/loading_dialog.dart';
 import 'package:podcasks/ui/common/popup_menu_item.dart';
 import 'package:podcasks/ui/vms/podcast_vm.dart';
 import 'package:podcasks/utils.dart';
@@ -67,8 +68,12 @@ class MoreButton extends StatelessWidget {
             actionIcon: const Icon(Icons.check),
             message: context.l10n!.markAllFinishedMessage(podcast?.title ?? ''),
             // emoji: 'ಠ_ಠ',
-            onTap: () {
-              vm.markAllAsFinished(podcast);
+            onTap: () async {
+              await showLoading(context);
+              await vm.markAllAsFinished(podcast);
+              if (context.mounted) {
+                hideLoading(context);
+              }
             },
           ),
         );
@@ -82,8 +87,12 @@ class MoreButton extends StatelessWidget {
             actionIcon: const Icon(Icons.warning),
             message: context.l10n!.deleteProgressMessage(podcast?.title ?? ''),
             emoji: context.l10n!.deleteAllEmoji,
-            onTap: () {
-              vm.deleteAll(podcast);
+            onTap: () async {
+              await showLoading(context);
+              await vm.deleteAll(podcast);
+              if (context.mounted) {
+                hideLoading(context);
+              }
             },
           ),
         );

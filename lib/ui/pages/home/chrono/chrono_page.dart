@@ -47,11 +47,9 @@ class _ChronoPageState extends ConsumerState<ChronoPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      final homeVm = ref.read(homeViewmodel);
-      final episodesVm = ref.read(episodesHomeViewmodel);
-      _initEpisodeList(episodesVm, homeVm);
-    });
+    final homeVm = ref.read(homeViewmodel);
+    final episodesVm = ref.read(episodesHomeViewmodel);
+    _initEpisodeList(episodesVm, homeVm);
   }
 
   @override
@@ -61,7 +59,7 @@ class _ChronoPageState extends ConsumerState<ChronoPage> {
     final dm = ref.watch(downloadManager);
 
     ref.listen(homeViewmodel, (previous, next) {
-      Future.microtask(() => _initEpisodeList(episodesVm, next));
+      _initEpisodeList(episodesVm, next);
     });
 
     return RefreshIndicator(

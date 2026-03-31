@@ -41,6 +41,7 @@ class EpisodesHomeViewmodel extends ListViewmodel {
     return sortedEpisodes.last;
   }
 
+  @override
   void refreshHomeList(HomeViewmodel homeVm) {
     final favourites = homeVm.favourites;
     final list = <(Episode, Podcast)>[];
@@ -51,7 +52,7 @@ class EpisodesHomeViewmodel extends ListViewmodel {
       }
     }
 
-    init(list.toList(), maxItems: 30);
+    super.init(list.toList(), maxItems: 30);
   }
 
   // List<PodcastEntity> get podcastFilter => _podcastFilter;
@@ -63,10 +64,9 @@ class EpisodesHomeViewmodel extends ListViewmodel {
     if (podcast == null) return;
     loading();
     tempPodcast = podcast;
-    // final episodes = tempPodcast?.episodes
-    //     .map((e) => (e, podcast))
-    //     // .map((e) => MEpisode.fromEpisode(e, podcast: tempPodcast))
-    //     .toList();
+    final episodes = tempPodcast?.episodes
+        .map((e) => (e, podcast))
+        .toList();
     await super.init(episodes, maxItems: maxItems);
     success();
   }

@@ -29,11 +29,9 @@ class _HomeContentPageState extends ConsumerState<ListeningPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      final homeVm = ref.read(homeViewmodel);
-      final vm = ref.read(listeningViewmodel);
-      _initEpisodeList(vm, homeVm);
-    });
+    final homeVm = ref.read(homeViewmodel);
+    final vm = ref.read(listeningViewmodel);
+    _initEpisodeList(vm, homeVm);
   }
 
   @override
@@ -44,7 +42,7 @@ class _HomeContentPageState extends ConsumerState<ListeningPage> {
     final dm = ref.watch(downloadManager);
 
     ref.listen(homeViewmodel, (previous, next) {
-      Future.microtask(() => _initEpisodeList(vm, next));
+      _initEpisodeList(vm, next);
     });
 
     return RefreshIndicator(

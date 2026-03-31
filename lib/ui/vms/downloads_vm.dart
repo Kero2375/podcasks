@@ -49,12 +49,12 @@ class DownloadsViewmodel extends ListViewmodel {
 
     if (Platform.isAndroid) {
       final deviceInfo = await DeviceInfoPlugin().androidInfo;
-      if (deviceInfo.version.sdkInt < 33) {
-        if (deviceInfo.version.sdkInt >= 30) {
-          await Permission.manageExternalStorage.request();
-        } else {
-          await Permission.storage.request();
-        }
+      if (deviceInfo.version.sdkInt >= 33) {
+        await Permission.audio.request();
+      } else if (deviceInfo.version.sdkInt >= 30) {
+        await Permission.manageExternalStorage.request();
+      } else {
+        await Permission.storage.request();
       }
     }
 
@@ -102,42 +102,75 @@ class DownloadsViewmodel extends ListViewmodel {
     try {
       if (await dir.exists()) {
         _podcasts.clear();
+        final Map<String, List<Episode>> podcastGroups = {};
         final List<(Episode, Podcast)> allEpisodePodcastList = [];
 
-        final List<FileSystemEntity> entities = await dir.list().toList();
-        
-        // 1. Process Root Files (Legacy)
-        final rootEpisodes = _processDirectory(dir, _dummyPodcast);
-        if (rootEpisodes.isNotEmpty) {
-          _dummyPodcast.episodes.clear();
-          _dummyPodcast.episodes.addAll(rootEpisodes);
-          _podcasts.add(_dummyPodcast);
-          allEpisodePodcastList.addAll(rootEpisodes.map((e) => (e, _dummyPodcast)));
-        }
+        // Ensure downloadsPath has trailing separator for correct relative path calculation
+        final String baseDir = _downloadsPath!.endsWith(Platform.pathSeparator)
+            ? _downloadsPath!
+            : _downloadsPath! + Platform.pathSeparator;
 
-        // 2. Process Sub-directories
-        for (var entity in entities) {
-          if (entity is Directory) {
-            final dirName = entity.path.split(Platform.pathSeparator).last;
-            if (dirName.startsWith('.')) continue; // Skip hidden dirs
+        // Use a more robust listing that handles errors per-file
+        await for (var entity in dir.list(recursive: true, followLinks: false).handleError((e) {
+          debugPrint('Error listing file: $e');
+        })) {
+          if (entity is File && entity.path.toLowerCase().endsWith('.mp3')) {
+            final file = entity as File;
+            final relativePath = file.path.replaceFirst(baseDir, '');
+            final pathParts = relativePath.split(Platform.pathSeparator).where((s) => s.isNotEmpty).toList();
+            
+            String groupName;
+            if (pathParts.length <= 1) {
+              groupName = 'Downloads';
+            } else {
+              groupName = pathParts.first;
+            }
 
-            final podcast = Podcast(
-              title: dirName,
-              episodes: [],
+            final fileName = file.path.split(Platform.pathSeparator).last;
+            final episode = Episode(
+              guid: file.path,
+              title: fileName.replaceAll('.mp3', '').replaceAll('.MP3', ''),
+              contentUrl: file.path,
+              publicationDate: file.lastModifiedSync(),
+              description: '',
+              link: '',
+              author: groupName,
+              length: file.lengthSync(),
             );
 
-            final episodes = _processDirectory(entity, podcast);
-
-            if (episodes.isNotEmpty) {
-              podcast.episodes.addAll(episodes);
-              _podcasts.add(podcast);
-              allEpisodePodcastList.addAll(episodes.map((e) => (e, podcast)));
+            if (!podcastGroups.containsKey(groupName)) {
+              podcastGroups[groupName] = [];
             }
+            podcastGroups[groupName]!.add(episode);
           }
         }
+
+        for (var entry in podcastGroups.entries) {
+          final podcast = Podcast(
+            title: entry.key,
+            episodes: entry.value,
+          );
+          // Sort episodes within podcast by date
+          podcast.episodes.sort((a, b) => (b.publicationDate ?? DateTime.fromMillisecondsSinceEpoch(0)).compareTo(a.publicationDate ?? DateTime.fromMillisecondsSinceEpoch(0)));
+          
+          if (entry.key == 'Downloads') {
+            _dummyPodcast.episodes.clear();
+            _dummyPodcast.episodes.addAll(entry.value);
+            _podcasts.insert(0, _dummyPodcast);
+          } else {
+            _podcasts.add(podcast);
+          }
+          
+          allEpisodePodcastList.addAll(entry.value.map((e) => (e, podcast)));
+        }
         
-        // Sort podcasts by title
-        _podcasts.sort((a, b) => (a.title ?? '').compareTo(b.title ?? ''));
+        // Sort sub-podcasts by title (excluding Downloads which is first)
+        if (_podcasts.length > 1) {
+          final subPodcasts = _podcasts.sublist(1);
+          subPodcasts.sort((a, b) => (a.title ?? '').compareTo(b.title ?? ''));
+          _podcasts.removeRange(1, _podcasts.length);
+          _podcasts.addAll(subPodcasts);
+        }
 
         // Sort all episodes by publication date (newest first)
         allEpisodePodcastList.sort((a, b) => (b.$1.publicationDate ?? DateTime.fromMillisecondsSinceEpoch(0)).compareTo(a.$1.publicationDate ?? DateTime.fromMillisecondsSinceEpoch(0)));
@@ -168,29 +201,7 @@ class DownloadsViewmodel extends ListViewmodel {
     notifyListeners();
   }
 
-  List<Episode> _processDirectory(Directory dir, Podcast podcast) {
-    final List<FileSystemEntity> entities = dir.listSync();
-    final episodes = entities
-        .where((entity) => entity is File && entity.path.toLowerCase().endsWith('.mp3'))
-        .map((entity) {
-          final file = entity as File;
-          final fileName = file.path.split(Platform.pathSeparator).last;
-          return Episode(
-            guid: file.path,
-            title: fileName.replaceAll('.mp3', ''),
-            contentUrl: file.path,
-            publicationDate: file.lastModifiedSync(),
-            description: '',
-            link: '',
-            author: podcast.title ?? 'Local File',
-            length: file.lengthSync(),
-          );
-        })
-        .toList();
-    
-    episodes.sort((a, b) => (b.publicationDate ?? DateTime.fromMillisecondsSinceEpoch(0)).compareTo(a.publicationDate ?? DateTime.fromMillisecondsSinceEpoch(0)));
-    return episodes;
-  }
+
 
   Future<void> deleteEpisode(Episode episode) async {
     final file = File(episode.guid);

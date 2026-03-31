@@ -52,17 +52,24 @@ class HomeViewmodel extends Vm {
   Pages get page => _page;
   Pages _page = Pages.home;
 
-  init() async {
+  Future<void> init() async {
     if (state == UiState.loading) return;
     loading();
-    await fetchFavourites();
-    await fetchListening();
+    // Parallelize both fetches for faster startup
+    await Future.wait([
+      _fetchFavourites(notify: false),
+      _fetchListening(limit: 10, notify: false),
+    ]);
     success();
   }
 
   Future<void> fetchFavourites() async {
+    await _fetchFavourites(notify: true);
+  }
+
+  Future<void> _fetchFavourites({required bool notify}) async {
     _favourites = await _favRepo.getAllFavourites();
-    notifyListeners();
+    if (notify) notifyListeners();
   }
 
   Future<void> setFavourite(Podcast podcast, bool setFavourite) async {
@@ -74,7 +81,7 @@ class HomeViewmodel extends Vm {
         await _favRepo.removeFromFavourite(podcast.url!);
       }
     }
-    await fetchFavourites();
+    await _fetchFavourites(notify: false);
     success();
   }
 
@@ -103,10 +110,14 @@ class HomeViewmodel extends Vm {
     return null;
   }
 
-  Future<void> fetchListening() async {
-    final List<(Episode, Podcast)> list = await _historyRepo.getAllSaved();
+  Future<void> fetchListening({int? limit}) async {
+    await _fetchListening(limit: limit, notify: true);
+  }
+
+  Future<void> _fetchListening({int? limit, required bool notify}) async {
+    final List<(Episode, Podcast)> list = await _historyRepo.getAllSaved(limit: limit);
     _saved = list;
-    notifyListeners();
+    if (notify) notifyListeners();
   }
 
   void setPage(Pages newPage) {

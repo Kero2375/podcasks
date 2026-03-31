@@ -229,13 +229,13 @@ class AppLocalizationsIt extends AppLocalizations {
   String get searchHint => 'Cerca o inserisci Feed RSS';
 
   @override
-  String get importOpml => 'Importa OPML';
+  String get importOpml => 'Importa Backup';
 
   @override
-  String get exportOpml => 'Esporta OPML';
+  String get exportOpml => 'Esporta Backup';
 
   @override
-  String get importTitle => 'Conferma importazione OMPL';
+  String get importTitle => 'Conferma Importazione';
 
   @override
   String get import => 'Importa';
@@ -250,6 +250,15 @@ class AppLocalizationsIt extends AppLocalizations {
     );
     return 'Vuoi veramente aggiungere $_temp0 ai preferiti?';
   }
+
+  @override
+  String get selectBackupLocation => 'Scegli dove salvare il backup:';
+
+  @override
+  String get backupSavedSuccessfully => 'Backup salvato con successo';
+
+  @override
+  String get pleaseWait => 'Attendere...';
 
   @override
   String get settings => 'Impostazioni';

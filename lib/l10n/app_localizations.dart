@@ -511,19 +511,19 @@ abstract class AppLocalizations {
   /// No description provided for @importOpml.
   ///
   /// In en, this message translates to:
-  /// **'Import OPML'**
+  /// **'Import Backup'**
   String get importOpml;
 
   /// No description provided for @exportOpml.
   ///
   /// In en, this message translates to:
-  /// **'Export OPML'**
+  /// **'Export Backup'**
   String get exportOpml;
 
   /// No description provided for @importTitle.
   ///
   /// In en, this message translates to:
-  /// **'Confirm import OMPL'**
+  /// **'Confirm Import'**
   String get importTitle;
 
   /// No description provided for @import.
@@ -535,8 +535,26 @@ abstract class AppLocalizations {
   /// No description provided for @importMessage.
   ///
   /// In en, this message translates to:
-  /// **'Do you really want to add {count, plural, =1{{count} item} other{{count} items}} to you favorites?'**
+  /// **'Do you really want to add {count, plural, =1{{count} item} other{{count} items}} to your favorites?'**
   String importMessage(num count);
+
+  /// No description provided for @selectBackupLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select where to save your backup:'**
+  String get selectBackupLocation;
+
+  /// No description provided for @backupSavedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup saved successfully'**
+  String get backupSavedSuccessfully;
+
+  /// No description provided for @pleaseWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait...'**
+  String get pleaseWait;
 
   /// No description provided for @settings.
   ///

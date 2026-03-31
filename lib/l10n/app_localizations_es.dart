@@ -229,13 +229,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get searchHint => 'Search or insert RSS feed';
 
   @override
-  String get importOpml => 'Import OPML';
+  String get importOpml => 'Import Backup';
 
   @override
-  String get exportOpml => 'Export OPML';
+  String get exportOpml => 'Export Backup';
 
   @override
-  String get importTitle => 'Confirm import OMPL';
+  String get importTitle => 'Confirm Import';
 
   @override
   String get import => 'Import';
@@ -248,8 +248,17 @@ class AppLocalizationsEs extends AppLocalizations {
       other: '$count items',
       one: '$count item',
     );
-    return 'Do you really want to add $_temp0 to you favorites?';
+    return 'Do you really want to add $_temp0 to your favorites?';
   }
+
+  @override
+  String get selectBackupLocation => 'Please select where to save your backup:';
+
+  @override
+  String get backupSavedSuccessfully => 'Backup saved successfully';
+
+  @override
+  String get pleaseWait => 'Please wait...';
 
   @override
   String get settings => 'Settings';

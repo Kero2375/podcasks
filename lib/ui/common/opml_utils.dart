@@ -6,13 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/repository/favourites_repo.dart';
+import 'package:podcasks/repository/history_repo.dart';
 import 'package:podcasks/ui/common/confirm_dialog.dart';
+import 'package:podcasks/ui/common/loading_dialog.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/utils.dart';
 import 'package:xml/xml.dart';
 
 exportFile(BuildContext context) async {
   final favRepo = locator.get<FavouriteRepo>();
+  final historyRepo = locator.get<HistoryRepo>();
   final fav = await favRepo.getAllFavourites();
 
   if (fav.isEmpty) {
@@ -26,20 +29,44 @@ exportFile(BuildContext context) async {
     return;
   }
 
+  await showLoading(context);
+
   final builder = XmlBuilder();
   builder.processing('xml', 'version="1.0" encoding="UTF-8"');
+
+  // Pre-fetch finished IDs for all favorites to avoid async calls inside builder
+  Map<String, List<int>> allFinishedIds = {};
+  for (var p in fav) {
+    if (p.url != null) {
+      allFinishedIds[p.url!] = await historyRepo.getFinishedIds(p.url!);
+    }
+  }
+
   builder.element('opml', attributes: {'version': '1.0'}, nest: () {
     builder.element('head', nest: () {
       builder.element('title', nest: 'Podcasks Subscriptions');
     });
     builder.element('body', nest: () {
       for (var p in fav) {
+        final finishedIds = allFinishedIds[p.url] ?? [];
         builder.element('outline', attributes: {
           'text': p.title ?? '',
           'title': p.title ?? '',
           'type': 'rss',
           'xmlUrl': p.url ?? '',
           'htmlUrl': p.link ?? '',
+        }, nest: () {
+          for (var e in p.episodes) {
+            final idString = e.guid.isNotEmpty
+                ? e.guid
+                : (e.contentUrl ?? e.title);
+            if (finishedIds.contains(idString.hashCode)) {
+              builder.element('outline', attributes: {
+                'type': 'listened',
+                'guid': idString,
+              });
+            }
+          }
         });
       }
     });
@@ -48,10 +75,14 @@ exportFile(BuildContext context) async {
   final xmlString = builder.buildDocument().toXmlString(pretty: true);
   final bytes = Uint8List.fromList(utf8.encode(xmlString));
 
+  if (context.mounted) {
+    hideLoading(context);
+  }
+
   try {
     String? outputFile = await FilePicker.platform.saveFile(
-      dialogTitle: 'Please select where to save your file:',
-      fileName: 'podcasks_subscriptions.opml',
+      dialogTitle: context.l10n!.selectBackupLocation,
+      fileName: 'podcasks_backup.opml',
       type: FileType.any,
       bytes: bytes,
     );
@@ -63,7 +94,7 @@ exportFile(BuildContext context) async {
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
-        "File saved successfully",
+        context.l10n!.backupSavedSuccessfully,
         style: textStyleBody,
       )));
     }
@@ -88,19 +119,24 @@ pickFile(BuildContext context, Function()? updateHome,
   if (result != null) {
     File file = File(result.files.single.path!);
     final favRepo = locator.get<FavouriteRepo>();
+    final historyRepo = locator.get<HistoryRepo>();
     final xmlString = await file.readAsString();
     final document = XmlDocument.parse(xmlString);
     final fav = await favRepo.getAllFavourites();
-    final feeds = document
+
+    final feedElements = document
         .findAllElements('outline')
-        .where((e) => e.getAttribute('text') != 'feeds')
-        .map((e) => '${e.getAttribute('xmlUrl')}')
-        .where((e) => !fav.map((e) => e.url).contains(e))
+        .where((e) => e.getAttribute('type') == 'rss' || e.getAttribute('xmlUrl') != null)
+        .toList();
+
+    final feedsToImport = feedElements
+        .map((e) => (e.getAttribute('xmlUrl') ?? ''))
+        .where((url) => url.isNotEmpty && !fav.map((f) => f.url).contains(url))
         .toList();
 
     if (!context.mounted) return;
 
-    if (feeds.isEmpty) {
+    if (feedsToImport.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
         context.l10n!.nothingToImport,
@@ -108,23 +144,61 @@ pickFile(BuildContext context, Function()? updateHome,
       )));
       return;
     }
+
     showDialog(
       context: context,
       builder: (context) => ConfirmDialog(
         title: context.l10n!.importTitle,
-        message: context.l10n!.importMessage(feeds.length),
+        message: context.l10n!.importMessage(feedsToImport.length),
         actionText: context.l10n!.import,
         actionIcon: const Icon(Icons.upload_file_outlined),
         onTap: () async {
           startLoading?.call();
-          for (var item in feeds) {
-            bool added = await favRepo.addToFavourite(
-              await Feed.loadFeed(url: item),
-            );
-            if (added && context.mounted) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text("${context.l10n!.added} $item")));
+          await showLoading(context);
+          if (!context.mounted) return;
+          for (var feedElement in feedElements) {
+            final url = feedElement.getAttribute('xmlUrl');
+            if (url == null || url.isEmpty) continue;
+            
+            // Only import if not already in favorites
+            if (!fav.map((f) => f.url).contains(url)) {
+              Podcast podcast = await Feed.loadFeed(url: url);
+              bool added = await favRepo.addToFavourite(podcast);
+              
+              if (added) {
+                // Restore finished episodes
+                final listenedGuids = feedElement
+                    .findElements('outline')
+                    .where((e) => e.getAttribute('type') == 'listened')
+                    .map((e) => e.getAttribute('guid'))
+                    .whereType<String>()
+                    .toSet();
+
+                if (listenedGuids.isNotEmpty) {
+                  for (var episode in podcast.episodes) {
+                    final idString = episode.guid.isNotEmpty
+                        ? episode.guid
+                        : (episode.contentUrl ?? episode.title);
+                    if (listenedGuids.contains(idString)) {
+                      await historyRepo.setPosition(
+                        episode,
+                        podcast,
+                        Duration.zero, // finished
+                        episode.duration,
+                      );
+                    }
+                  }
+                }
+
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text("${context.l10n!.added} $url")));
+                }
+              }
             }
+          }
+          if (context.mounted) {
+            hideLoading(context);
           }
           updateHome?.call();
         },

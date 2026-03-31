@@ -21,7 +21,10 @@ class EpisodePage extends ConsumerWidget {
   Podcast? get podcast => _episodePodcast?.$2;
   // final Podcast? _podcast;
 
-  final (Episode, Podcast)? _episodePodcast;
+  bool get isDownloaded => _episodePodcast?.$3 ?? false;
+
+
+  final (Episode, Podcast, bool)? _episodePodcast;
 
   const EpisodePage(this._episodePodcast, {super.key});
 
@@ -79,6 +82,7 @@ class EpisodePage extends ConsumerWidget {
           Wrap(
             direction: Axis.horizontal,
             children: [
+              if (isDownloaded) 
               OutlinedButton.icon(
                 onPressed: () => dm.download(episode, podcast, context),
 
@@ -89,7 +93,7 @@ class EpisodePage extends ConsumerWidget {
                   style: textStyleBody,
                 ),
               ),
-              const SizedBox(width: 8),
+              if (isDownloaded) const SizedBox(width: 8),
               OutlinedButton.icon(
                 onPressed: () {
                   vm.share(episode);

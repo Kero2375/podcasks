@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podcasks/ui/vms/downloads_vm.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/manager/download_manager.dart';
 import 'package:podcasks/ui/common/episode_menu.dart';
@@ -51,7 +52,7 @@ class _HomeEpisodeItemState extends ConsumerState<EpisodeItem> {
 
     return InkWell(
       onTap: () => Navigator.pushNamed(context, EpisodePage.route,
-          arguments: (episode, podcast)),
+          arguments: (episode, podcast, (episodesVm is! DownloadsViewmodel))),
       onTapDown: (details) => setState(() => _tapPos = details.globalPosition),
       onLongPress: () {
         showEpisodeMenu(

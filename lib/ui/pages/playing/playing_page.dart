@@ -364,7 +364,7 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
       children: [
         GestureDetector(
           onTap: () => Navigator.popAndPushNamed(context, EpisodePage.route,
-              arguments: (ep, podcast)),
+              arguments: (ep, podcast, false)),
           child: Text(
             ep?.title ?? '',
             maxLines: 3,

@@ -15,7 +15,7 @@ abstract class HistoryRepo {
   (Duration, Duration, bool)? getPosition(Episode episode);
 
   // @Deprecated('Avoid fetching all saved episodes')
-  Future<List<(Episode, Podcast)>> getAllSaved();
+  Future<List<(Episode, Podcast)>> getAllSaved({int? limit});
 
   Future<(Episode, Podcast)?> getLast();
 
@@ -23,12 +23,24 @@ abstract class HistoryRepo {
       Podcast podcast, Duration remaining);
 
   Future<void> removeAll(Podcast? podcast);
+
+  Future<List<int>> getFinishedIds(String podcastUrl);
 }
 
 class HistoryRepoIsar extends HistoryRepo {
   Isar? get isar => Isar.getInstance();
   Future<List<Podcast>> get savedPod async =>
       await locator.get<FavouriteRepo>().getAllFavourites();
+
+  @override
+  Future<List<int>> getFinishedIds(String podcastUrl) async {
+    final finished = await isar?.saveTracks
+        .filter()
+        .podcastUrlEqualTo(podcastUrl)
+        .positionEqualTo(0)
+        .findAll();
+    return finished?.map((e) => e.id).toList() ?? [];
+  }
 
   int _generateId(Episode episode) {
     return (episode.guid.isNotEmpty
@@ -83,28 +95,44 @@ class HistoryRepoIsar extends HistoryRepo {
   }
 
   @override
-  Future<List<(Episode, Podcast)>> getAllSaved() async {
-    final track = await isar?.saveTracks
+  Future<List<(Episode, Podcast)>> getAllSaved({int? limit}) async {
+    final trackQuery = isar?.saveTracks
         .where(sort: Sort.asc)
         .filter()
         .positionGreaterThan(0)
-        .sortByDateTimeDesc()
-        .findAll();
+        .sortByDateTimeDesc();
+    
+    final track = limit != null 
+        ? await trackQuery?.limit(limit).findAll()
+        : await trackQuery?.findAll();
+
     List<(Episode, Podcast)> episodes = [];
+    final allSavedPod = await savedPod;
+    final Map<String, Podcast> cachedFeeds = {};
 
     for (SaveTrack t in track ?? []) {
       if (t.podcastUrl != null && t.url != null) {
-        final Podcast pod =
-            (await savedPod).firstWhereOrNull((p) => p.url == t.podcastUrl) ??
+        Podcast? finalPod =
+            allSavedPod.firstWhereOrNull((p) => p.url == t.podcastUrl) ??
                 t.podcast ??
-                await Feed.loadFeed(url: t.podcastUrl!);
+                cachedFeeds[t.podcastUrl!];
+
+        // If not in favorites or stored in track or cache, we need to load it
+        if (finalPod == null) {
+          try {
+            finalPod = await Feed.loadFeed(url: t.podcastUrl!);
+            cachedFeeds[t.podcastUrl!] = finalPod;
+          } catch (e) {
+            continue;
+          }
+        }
 
         final ep =
-            pod.episodes.firstWhereOrNull((e) => e.contentUrl == t.url) ??
-                pod.episodes.firstWhereOrNull((e) => e.title == t.title);
+            finalPod.episodes.firstWhereOrNull((e) => e.contentUrl == t.url) ??
+                finalPod.episodes.firstWhereOrNull((e) => e.title == t.title);
 
         if (ep != null) {
-          episodes.add((ep, pod));
+          episodes.add((ep, finalPod));
         }
       }
     }
@@ -124,10 +152,15 @@ class HistoryRepoIsar extends HistoryRepo {
   Future<(Episode, Podcast)?> getLast() async {
     final tracks =
         await isar?.saveTracks.where(sort: Sort.asc).sortByDateTime().findAll();
-    final t = tracks?.last;
+    final t = tracks?.lastOrNull;
     if (t?.podcastUrl != null && t?.url != null) {
-      final pod = await Feed.loadFeed(url: t!.podcastUrl!);
-      final ep = pod.episodes.firstWhereOrNull((e) => e.contentUrl == t.url);
+      final allSavedPod = await savedPod;
+      final pod = allSavedPod.firstWhereOrNull((p) => p.url == t!.podcastUrl) ?? 
+                  t!.podcast ?? 
+                  await Feed.loadFeed(url: t!.podcastUrl!);
+                  
+      final ep = pod.episodes.firstWhereOrNull((e) => e.contentUrl == t!.url) ??
+                 pod.episodes.firstWhereOrNull((e) => e.title == t!.title);
       if (ep != null) {
         return (ep, pod);
       }
@@ -149,6 +182,9 @@ class HistoryRepoIsar extends HistoryRepo {
     List<SaveTrack> tracks = [];
     final now = DateTime.now();
     final int pos = isFinished(remaining) ? 0 : remaining.inSeconds;
+    final allSavedPod = await savedPod;
+    final bool isPodcastSaved = allSavedPod.any((p) => p.title == podcast.title);
+
     for (var ep in podcast.episodes) {
       final id = _generateId(ep);
       tracks.add(SaveTrack(
@@ -159,11 +195,7 @@ class HistoryRepoIsar extends HistoryRepo {
           duration: ep.duration?.inSeconds,
           podcastUrl: podcast.url,
           dateTime: now,
-          podcast: (await savedPod)
-                      .firstWhereOrNull((p) => p.title == podcast.title) !=
-                  null
-              ? null
-              : podcast));
+          podcast: isPodcastSaved ? null : podcast));
     }
 
     await isar?.writeTxn(() async => isar?.saveTracks.putAll(tracks));

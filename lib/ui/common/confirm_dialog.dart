@@ -46,9 +46,11 @@ class ConfirmDialog extends StatelessWidget {
         ),
         FilledButton.icon(
           icon: actionIcon,
-          onPressed: () {
-            onTap?.call();
-            Navigator.pop(context);
+          onPressed: () async {
+            await onTap?.call();
+            if (context.mounted) {
+              Navigator.pop(context);
+            }
           },
           style: buttonStyle,
           label: Text(actionText),

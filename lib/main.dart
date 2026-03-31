@@ -193,7 +193,7 @@ class _MyAppState extends ConsumerState<MyApp> {
           } else if (settings.name == EpisodePage.route) {
             return MaterialPageRoute(
               builder: (context) =>
-                  EpisodePage(settings.arguments as (Episode, Podcast)?),
+                  EpisodePage(settings.arguments as (Episode, Podcast, bool)?),
             );
           }
           return null;

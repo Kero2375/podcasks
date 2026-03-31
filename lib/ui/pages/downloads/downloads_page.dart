@@ -18,7 +18,7 @@ class _DownloadsPageState extends ConsumerState<DownloadsPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref.read(downloadsViewmodel).initDownloads());
+    ref.read(downloadsViewmodel).initDownloads();
   }
 
   @override
@@ -30,25 +30,36 @@ class _DownloadsPageState extends ConsumerState<DownloadsPage> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (vm.downloadsPath == null || vm.downloadsPath!.isEmpty) {
+    if (vm.downloadsPath == null || vm.downloadsPath!.isEmpty || vm.displayingEpisodes.isEmpty) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.folder_open, size: 64, color: Colors.grey),
-              const SizedBox(height: 16),
+              Text(
+                context.l10n!.noResults,
+                style: textStyleBody,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                context.l10n!.noResultsEmoji,
+                style: textStyleBody,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
               Text(
                 context.l10n!.selectDownloadsDir,
                 textAlign: TextAlign.center,
                 style: textStyleBody,
               ),
               const SizedBox(height: 24),
-              ElevatedButton.icon(
+              OutlinedButton.icon(
+                style: buttonStyle,
                 onPressed: () => vm.pickDirectory(),
                 icon: const Icon(Icons.folder_open),
-                label: Text(context.l10n!.downloadsDir),
+                label: Text(context.l10n!.downloadsDir, style: textStyleBody),
               ),
             ],
           ),
@@ -85,16 +96,6 @@ class _DownloadsPageState extends ConsumerState<DownloadsPage> {
               },
             ),
           ),
-        if (vm.displayingEpisodes.isEmpty)
-          Expanded(
-            child: Center(
-              child: Text(
-                context.l10n!.noResults,
-                style: textStyleBody,
-              ),
-            ),
-          )
-        else
           Expanded(
             child: ListView.builder(
               controller: vm.controller,
@@ -102,7 +103,7 @@ class _DownloadsPageState extends ConsumerState<DownloadsPage> {
               itemBuilder: (context, index) {
                 final (episode, podcast) = vm.displayingEpisodes[index];
                 return EpisodeItem(
-                  showImage: true,
+                  showImage: false,
                   showDesc: false,
                   episode: episode,
                   podcast: podcast,

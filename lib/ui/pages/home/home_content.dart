@@ -25,11 +25,9 @@ class _HomeContentPageState extends ConsumerState<HomeContentPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      final homeVm = ref.read(homeViewmodel);
-      final episodesVm = ref.read(episodesHomeViewmodel);
-      episodesVm.refreshHomeList(homeVm);
-    });
+    final homeVm = ref.read(homeViewmodel);
+    final episodesVm = ref.read(episodesHomeViewmodel);
+    episodesVm.refreshHomeList(homeVm);
   }
 
   @override
@@ -39,7 +37,7 @@ class _HomeContentPageState extends ConsumerState<HomeContentPage> {
     final dm = ref.watch(downloadManager);
 
     ref.listen(homeViewmodel, (previous, next) {
-      Future.microtask(() => episodesVm.refreshHomeList(next));
+      episodesVm.refreshHomeList(next);
     });
 
     return RefreshIndicator(
@@ -173,7 +171,7 @@ class _HomeContentPageState extends ConsumerState<HomeContentPage> {
   }
 }
 
-sync(WidgetRef ref) async {
+Future<void> sync(WidgetRef ref) async {
   final homeVm = ref.read(homeViewmodel);
   final epVm = ref.read(episodesHomeViewmodel);
   final lstVm = ref.read(listeningViewmodel);

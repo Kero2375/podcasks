@@ -39,7 +39,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
 
   @override
   initState() {
-    Future.microtask(() => _firstInit());
+    _firstInit();
     super.initState();
   }
 
