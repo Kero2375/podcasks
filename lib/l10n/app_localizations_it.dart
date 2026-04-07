@@ -320,4 +320,21 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get changeDownloadsDir => 'Cambia cartella download';
+
+  @override
+  String get newEpisodesTitle => 'Ci sono nuovi episodi!';
+
+  @override
+  String andOthers(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: ', e altri $count',
+      one: ', e un altro',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get todo => 'DA FARE';
 }

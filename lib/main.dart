@@ -41,6 +41,10 @@ void callbackDispatcher() {
 
       Set<Podcast> updated = await FavouriteRepoIsar().syncFavourites();
 
+      final l10n = await AppLocalizations.delegate.load(
+        WidgetsBinding.instance.platformDispatcher.locale,
+      );
+
       if (updated.length == 1) {
         AwesomeNotifications().createNotification(
             content: NotificationContent(
@@ -52,14 +56,12 @@ void callbackDispatcher() {
           largeIcon: updated.first.image,
         ));
       } else if (updated.length > 1) {
-        const title = "There are new episodes!";
+        final title = l10n.newEpisodesTitle;
         final body =
             "${updated.first.episodes[0].title}, ${updated.first.episodes[1].title}";
         final extra = (updated.length == 2)
             ? ""
-            : (updated.length == 3)
-                ? ", and one other"
-                : ", and ${updated.length - 2} others";
+            : l10n.andOthers(updated.length - 2);
         AwesomeNotifications().createNotification(
             content: NotificationContent(
           id: updated.first.title.hashCode,

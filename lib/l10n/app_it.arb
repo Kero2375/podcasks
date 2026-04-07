@@ -90,5 +90,8 @@
   "downloads": "Download",
   "downloadsDir": "Cartella download",
   "selectDownloadsDir": "Scegli una cartella in cui cercare file MP3.",
-  "changeDownloadsDir": "Cambia cartella download"
+  "changeDownloadsDir": "Cambia cartella download",
+  "newEpisodesTitle": "Ci sono nuovi episodi!",
+  "andOthers": "{count, plural, =1{, e un altro} other{, e altri {count}}}",
+  "todo": "DA FARE"
 }

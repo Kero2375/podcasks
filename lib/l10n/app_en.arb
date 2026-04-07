@@ -91,5 +91,8 @@
   "downloads": "Downloads",
   "downloadsDir": "Downloads directory",
   "selectDownloadsDir": "Please select a directory to look for MP3 files.",
-  "changeDownloadsDir": "Change downloads directory"
+  "changeDownloadsDir": "Change downloads directory",
+  "newEpisodesTitle": "There are new episodes!",
+  "andOthers": "{count, plural, =1{, and one other} other{, and {count} others}}",
+  "todo": "TODO"
 }

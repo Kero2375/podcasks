@@ -657,6 +657,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Change downloads directory'**
   String get changeDownloadsDir;
+
+  /// No description provided for @newEpisodesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'There are new episodes!'**
+  String get newEpisodesTitle;
+
+  /// No description provided for @andOthers.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{, and one other} other{, and {count} others}}'**
+  String andOthers(num count);
+
+  /// No description provided for @todo.
+  ///
+  /// In en, this message translates to:
+  /// **'TODO'**
+  String get todo;
 }
 
 class _AppLocalizationsDelegate

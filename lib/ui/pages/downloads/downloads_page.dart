@@ -89,7 +89,7 @@ class _DownloadsPageState extends ConsumerState<DownloadsPage> {
                 final podcast = vm.podcasts[index - 1];
                 return _podcastFilterItem(
                   context,
-                  title: podcast.title ?? '',
+                  title: podcast.title == 'Downloads' ? context.l10n!.downloads : podcast.title ?? '',
                   isSelected: vm.selectedPodcast?.title == podcast.title,
                   onTap: () => vm.selectPodcast(podcast),
                 );
