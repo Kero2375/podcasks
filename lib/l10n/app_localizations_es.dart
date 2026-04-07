@@ -309,7 +309,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get explore => 'Explore';
 
   @override
-  String get downloads => 'Descargas locales';
+  String get downloads => 'Descargas';
 
   @override
   String get downloadsDir => 'Carpeta de descargas';

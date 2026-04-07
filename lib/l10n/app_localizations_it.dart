@@ -309,7 +309,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get explore => 'Esplora';
 
   @override
-  String get downloads => 'Download locale';
+  String get downloads => 'Download';
 
   @override
   String get downloadsDir => 'Cartella download';

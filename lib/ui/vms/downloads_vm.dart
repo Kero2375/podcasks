@@ -115,7 +115,7 @@ class DownloadsViewmodel extends ListViewmodel {
           debugPrint('Error listing file: $e');
         })) {
           if (entity is File && entity.path.toLowerCase().endsWith('.mp3')) {
-            final file = entity as File;
+            final file = entity;
             final relativePath = file.path.replaceFirst(baseDir, '');
             final pathParts = relativePath.split(Platform.pathSeparator).where((s) => s.isNotEmpty).toList();
             
