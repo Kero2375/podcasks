@@ -12,6 +12,16 @@ import flutter_downloader
     FlutterDownloaderPlugin.setPluginRegistrantCallback(registerPlugins)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
+
+  override func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+    if connectingSceneSession.role == UISceneSession.Role.windowApplication {
+        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+    }
+    if connectingSceneSession.role == UISceneSession.Role(rawValue: "CPTemplateApplicationSceneSessionRoleApplication") {
+        return UISceneConfiguration(name: "CarPlay", sessionRole: connectingSceneSession.role)
+    }
+    return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+  }
 }
 
 private func registerPlugins(registry: FlutterPluginRegistry) {

@@ -94,5 +94,8 @@
   "changeDownloadsDir": "Change downloads directory",
   "newEpisodesTitle": "There are new episodes!",
   "andOthers": "{count, plural, =1{, and one other} other{, and {count} others}}",
+  "unknownPlayerError": "Unknown player error",
+  "playbackInterrupted": "Playback interrupted",
+  "anErrorOccurred": "An error occurred: {error}",
   "todo": "TODO"
 }

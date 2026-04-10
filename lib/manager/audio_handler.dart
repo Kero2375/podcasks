@@ -1,10 +1,21 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:collection/collection.dart';
+import 'package:flutter/widgets.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:podcasks/l10n/app_localizations.dart';
+import 'package:podcasks/repository/favourites_repo.dart';
+import 'package:podcast_search/podcast_search.dart';
+import 'dart:developer';
 
 MyAudioHandler? audioHandler;
 
 class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   late final AudioPlayer _player;
+  final _favRepo = FavouriteRepoIsar();
+
+  Future<AppLocalizations> get _l10n async => await AppLocalizations.delegate.load(
+        WidgetsBinding.instance.platformDispatcher.locale,
+      );
 
   dispose() {
     _player.dispose();
@@ -24,62 +35,133 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     );
     _player.setCanUseNetworkResourcesForLiveStreamingWhilePaused(true);
     _player.durationStream.listen((d) {
-      mediaItem.add(
-        mediaItem.value?.copyWith(duration: d),
-      );
+      if (mediaItem.value != null) {
+        mediaItem.add(
+          mediaItem.value!.copyWith(duration: d),
+        );
+      }
     });
+
+    _player.playbackEventStream.listen(_broadcastState, onError: (Object e, StackTrace st) {
+      _handleError(e);
+    });
+    _player.playerStateStream.listen((_) => _broadcastState(_player.playbackEvent));
   }
 
-  setMediaUrl(
-      MediaItem? item, Function(PlaybackState) playbackStateListener) async {
-    if (item?.id != null) {
-      mediaItem.add(item!);
-      playbackState.add(
-        PlaybackState(
-          controls: [
-            MediaControl.pause,
-            MediaControl.play,
-            MediaControl.rewind,
-            MediaControl.fastForward,
-          ],
-          systemActions: const {
-            MediaAction.seek,
-            MediaAction.seekForward,
-            MediaAction.seekBackward,
-          },
-          processingState: AudioProcessingState.ready,
-          playing: false,
-        ),
-      );
-      if (item.id.startsWith('/') || item.id.startsWith('file://')) {
-        await _player.setFilePath(item.id.replaceFirst('file://', ''));
-      } else {
-        await _player.setUrl(item.id, preload: true);
+  void _handleError(Object e) {
+    log('Audio player error: $e');
+    playbackState.add(playbackState.value.copyWith(
+      processingState: AudioProcessingState.error,
+      errorMessage: e.toString(),
+    ));
+  }
+
+  void _broadcastState(PlaybackEvent event) {
+    final playing = _player.playing;
+    playbackState.add(playbackState.value.copyWith(
+      controls: [
+        if (playing) MediaControl.pause else MediaControl.play,
+        MediaControl.rewind,
+        MediaControl.fastForward,
+      ],
+      systemActions: const {
+        MediaAction.seek,
+        MediaAction.seekForward,
+        MediaAction.seekBackward,
+      },
+      processingState: const {
+        ProcessingState.idle: AudioProcessingState.idle,
+        ProcessingState.loading: AudioProcessingState.loading,
+        ProcessingState.buffering: AudioProcessingState.buffering,
+        ProcessingState.ready: AudioProcessingState.ready,
+        ProcessingState.completed: AudioProcessingState.completed,
+      }[_player.processingState]!,
+      playing: playing,
+      updatePosition: _player.position,
+      bufferedPosition: _player.bufferedPosition,
+      speed: _player.speed,
+      queueIndex: event.currentIndex,
+    ));
+  }
+
+  @override
+  Future<List<MediaItem>> getChildren(String parentMediaId,
+      [Map<String, dynamic>? options]) async {
+    if (parentMediaId == AudioService.browsableRootId) {
+      final favourites = await _favRepo.getAllFavourites();
+      final list = <(Episode, Podcast)>[];
+
+      for (Podcast p in favourites) {
+        list.addAll(p.episodes.map((e) => (e, p)));
       }
-      await _player.load();
-      // playbackState.listen(playbackStateListener);
+      list.sort((a, b) => b.$1.publicationDate != null
+          ? b.$1.publicationDate?.compareTo(a.$1.publicationDate ?? DateTime.fromMillisecondsSinceEpoch(0)) ?? 0
+          : 0);
+
+      final recent = list.take(30).toList();
+      return recent.map((item) {
+        final (episode, podcast) = item;
+        return MediaItem(
+          id: episode.contentUrl ?? '',
+          album: podcast.title,
+          title: episode.title,
+          artist: podcast.title,
+          duration: episode.duration,
+          artUri: episode.imageUrl == null && podcast.image == null
+              ? null
+              : Uri.tryParse(episode.imageUrl ?? podcast.image ?? ''),
+          extras: {"podcast_url": podcast.url},
+        );
+      }).toList();
+    }
+    return [];
+  }
+
+  @override
+  Future<void> playFromMediaId(String mediaId, [Map<String, dynamic>? extras]) async {
+    final List<MediaItem> children = await getChildren(AudioService.browsableRootId);
+    final MediaItem? item = children.firstWhereOrNull((i) => i.id == mediaId);
+    if (item != null) {
+      return await playMediaItem(item);
+    } else {
+      return super.playFromMediaId(mediaId);
+    }
+  }
+
+  @override
+  Future<void> playMediaItem(MediaItem mediaItem) async {
+    await setMediaUrl(mediaItem);
+    return await play();
+  }
+
+  setMediaUrl(MediaItem? item) async {
+    final l10n = await _l10n;
+    try {
+      if (item?.id != null) {
+        mediaItem.add(item!);
+        if (item.id.startsWith('/') || item.id.startsWith('file://')) {
+          await _player.setFilePath(item.id.replaceFirst('file://', ''));
+        } else {
+          await _player.setUrl(item.id, preload: true);
+        }
+        await _player.load();
+      }
+    } on PlayerException catch (e) {
+      _handleError(e.message ?? l10n.unknownPlayerError);
+    } on PlayerInterruptedException catch (e) {
+      _handleError(e.message ?? l10n.playbackInterrupted);
+    } catch (e) {
+      _handleError(l10n.anErrorOccurred(e.toString()));
     }
   }
 
   @override
   Future<void> play() async {
-    playbackState.add(
-      playbackState.value.copyWith(
-        playing: true,
-        updatePosition: position,
-      ),
-    );
     await _player.play();
   }
 
   @override
   Future<void> pause() async {
-    playbackState.add(
-      playbackState.value.copyWith(
-        playing: false,
-        updatePosition: _player.position,
-      ),
-    );
     _player.pause();
   }
 
@@ -111,6 +193,4 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     playbackState.add(playbackState.value.copyWith(speed: speed));
     return _player.setSpeed(speed);
   }
-
-// Future<void> skipToQueueItem(int i) => _player.seek(Duration.zero, index: i);
 }

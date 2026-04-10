@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:collection/collection.dart';
@@ -46,7 +47,33 @@ class PlayerViewmodel extends Vm {
 
   Ref<Object?> ref;
 
-  PlayerViewmodel(this.ref);
+  PlayerViewmodel(this.ref) {
+    audioHandler?.mediaItem.listen((item) async {
+      if (item != null) {
+        if (item.id != _playing?.contentUrl) {
+          final podcastUrl = item.extras?["podcast_url"];
+          if (podcastUrl != null) {
+            final pod = await Feed.loadFeed(url: podcastUrl);
+            final ep =
+                pod.episodes.firstWhereOrNull((e) => e.contentUrl == item.id);
+            if (ep != null) {
+              _playing = ep;
+              _playingPodcast = pod;
+              notifyListeners();
+            }
+          }
+        }
+      }
+    });
+
+    audioHandler?.playbackState.listen((state) {
+      if (state.playing) {
+        _startSaveTimers();
+      } else {
+        _stopSaveTimers();
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -57,7 +84,6 @@ class PlayerViewmodel extends Vm {
   }
 
   Future<void> play({Episode? track, Podcast? pod, bool seekPos = false}) async {
-    _stopSaveTimers();
     loading();
     if (pod != null) {
       if (track!.contentUrl != _playing?.contentUrl) {
@@ -81,7 +107,6 @@ class PlayerViewmodel extends Vm {
     }
 
     audioHandler?.play();
-    _startSaveTimers();
     success();
   }
 
@@ -95,20 +120,14 @@ class PlayerViewmodel extends Vm {
         artist: pod.title,
         artUri: Uri.parse(image ?? ''),
         duration: track.duration,
+        extras: {"podcast_url": pod.url},
       ),
-      (playbackState) async {
-        if (playbackState.playing) {
-          await _startSaveTimers();
-        } else {
-          _stopSaveTimers();
-        }
-      },
     );
   }
 
   Future<void> _startSaveTimers() async {
     _stopSaveTimers();
-    print("STARTED");
+    log("STARTED");
     _positionTimer = Timer.periodic(
         Duration(milliseconds: ((1 / speed) * 1000).toInt()),
         (timer) => updatePosition());
@@ -117,7 +136,7 @@ class PlayerViewmodel extends Vm {
   }
 
   void _stopSaveTimers() {
-    print("STOPPED");
+    log("STOPPED");
     _positionTimer?.cancel();
     _saveTimer?.cancel();
   }
@@ -239,7 +258,7 @@ class PlayerViewmodel extends Vm {
       final d = duration;
       final p = position;
       if (d == Duration.zero) return;
-      print("SAVETRACK");
+      log("SAVETRACK");
       final remaining = d - p;
       await _historyRepo.setPosition(
           playing!, playingPodcast!, remaining, d);

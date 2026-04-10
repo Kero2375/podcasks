@@ -336,5 +336,16 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
+  String get unknownPlayerError => 'Errore sconosciuto del lettore';
+
+  @override
+  String get playbackInterrupted => 'Riproduzione interrotta';
+
+  @override
+  String anErrorOccurred(Object error) {
+    return 'Si è verificato un errore: $error';
+  }
+
+  @override
   String get todo => 'DA FARE';
 }

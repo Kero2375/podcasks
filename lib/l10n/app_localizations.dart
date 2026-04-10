@@ -670,6 +670,24 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{, and one other} other{, and {count} others}}'**
   String andOthers(num count);
 
+  /// No description provided for @unknownPlayerError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown player error'**
+  String get unknownPlayerError;
+
+  /// No description provided for @playbackInterrupted.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback interrupted'**
+  String get playbackInterrupted;
+
+  /// No description provided for @anErrorOccurred.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred: {error}'**
+  String anErrorOccurred(Object error);
+
   /// No description provided for @todo.
   ///
   /// In en, this message translates to:

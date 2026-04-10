@@ -336,5 +336,16 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get unknownPlayerError => 'Unknown player error';
+
+  @override
+  String get playbackInterrupted => 'Playback interrupted';
+
+  @override
+  String anErrorOccurred(Object error) {
+    return 'An error occurred: $error';
+  }
+
+  @override
   String get todo => 'TODO';
 }

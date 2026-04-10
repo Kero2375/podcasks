@@ -93,5 +93,8 @@
   "changeDownloadsDir": "Cambia cartella download",
   "newEpisodesTitle": "Ci sono nuovi episodi!",
   "andOthers": "{count, plural, =1{, e un altro} other{, e altri {count}}}",
+  "unknownPlayerError": "Errore sconosciuto del lettore",
+  "playbackInterrupted": "Riproduzione interrotta",
+  "anErrorOccurred": "Si è verificato un errore: {error}",
   "todo": "DA FARE"
 }

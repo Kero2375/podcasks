@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -47,7 +49,7 @@ Future<Color?> computeAverageColor(String imageUrl) async {
       final img.Image? decodedImage = img.decodeImage(imageBytes);
 
       if (decodedImage == null) {
-        print('Error: Could not decode image bytes.');
+        log('Error: Could not decode image bytes.');
         return null;
       }
 
@@ -85,12 +87,12 @@ Future<Color?> computeAverageColor(String imageUrl) async {
       return Color.fromARGB(255, avgRed, avgGreen, avgBlue);
 
     } else {
-      print('Error fetching image: ${response.statusCode}');
+      log('Error fetching image: ${response.statusCode}');
       return null;
     }
 
   } catch (e) {
-    print('Error computing average color in isolate: $e');
+    log('Error computing average color in isolate: $e');
     return null;
   }
 }

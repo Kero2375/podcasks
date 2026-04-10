@@ -29,6 +29,7 @@ exportFile(BuildContext context) async {
     return;
   }
 
+  // ignore: use_build_context_synchronously
   await showLoading(context);
 
   final builder = XmlBuilder();
@@ -81,6 +82,7 @@ exportFile(BuildContext context) async {
 
   try {
     String? outputFile = await FilePicker.platform.saveFile(
+      // ignore: use_build_context_synchronously
       dialogTitle: context.l10n!.selectBackupLocation,
       fileName: 'podcasks_backup.opml',
       type: FileType.any,

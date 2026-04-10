@@ -112,7 +112,7 @@ Future<void> main() async {
             channelName: 'Podkasks sync',
             channelDescription:
                 'Notification channel for podcast episodes sync',
-            defaultColor: Color(0xFF9D50DD),
+            defaultColor: const Color(0xFF9D50DD),
             ledColor: Colors.white)
       ],
       // Channel groups are only visual and are not required
