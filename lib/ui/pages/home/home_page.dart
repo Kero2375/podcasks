@@ -27,18 +27,20 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   void initState() {
     super.initState();
-    final homeVm = ref.read(homeViewmodel);
-    final playerVm = ref.read(playerViewmodel);
-    final episodesVm = ref.read(episodesHomeViewmodel);
-    
-    // Parallelize initialization tasks
-    Future.wait<void>([
-      homeVm.init(),
-      sync(ref),
-    ]).then((_) {
-      if (mounted) {
-        _checkSaved(homeVm, playerVm, episodesVm);
-      }
+    Future.microtask(() {
+      final homeVm = ref.read(homeViewmodel);
+      final playerVm = ref.read(playerViewmodel);
+      final episodesVm = ref.read(episodesHomeViewmodel);
+
+      // Parallelize initialization tasks
+      Future.wait<void>([
+        homeVm.init(),
+        sync(ref),
+      ]).then((_) {
+        if (mounted) {
+          _checkSaved(homeVm, playerVm, episodesVm);
+        }
+      });
     });
   }
 

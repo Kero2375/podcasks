@@ -68,7 +68,10 @@ class SearchPage extends StatelessWidget {
                               ],
                             ),
                           )
-                        : SearchList(items: vm.searched);
+                        : SearchList(
+                            items: vm.searched,
+                            controller: vm.scrollController,
+                          );
               },
             ),
           ),

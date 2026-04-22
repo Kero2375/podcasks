@@ -336,6 +336,16 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get notificationChannelName => 'Podcasks sync';
+
+  @override
+  String get notificationChannelDescription =>
+      'Notification channel for podcast episodes sync';
+
+  @override
+  String get notificationGroupName => 'Podcasks notifications';
+
+  @override
   String get unknownPlayerError => 'Unknown player error';
 
   @override
@@ -348,4 +358,46 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get todo => 'TODO';
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get dynamicColor => 'Dynamic Color';
+
+  @override
+  String get dynamicColorDescription => 'Use system colors (Android 12+)';
+
+  @override
+  String get backup => 'Backup';
+
+  @override
+  String get syncTitle => 'Sync';
+
+  @override
+  String get syncFrequency => 'Sync Frequency';
+
+  @override
+  String get hour => 'hour';
+
+  @override
+  String get hours => 'hours';
+
+  @override
+  String get day => 'day';
+
+  @override
+  String get country => 'Country';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get storage => 'Storage';
+
+  @override
+  String get downloadDirectory => 'Download Directory';
+
+  @override
+  String get defaultPath => 'Default (app internal)';
 }

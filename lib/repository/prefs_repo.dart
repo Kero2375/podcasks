@@ -9,21 +9,36 @@ abstract class PrefsRepo {
 
   Future<Country> getCountry();
 
+  Future<void> setLanguage(String language);
+
+  Future<String> getLanguage();
+
   Future<void> setGenre(String g);
 
-  Map<String,String> getAllGenres(BuildContext context);
+  Map<String, String> getAllGenres(BuildContext context);
 
   Future<String> getGenre();
 
   Future<void> setDownloadsPath(String path);
 
   Future<String?> getDownloadsPath();
+
+  Future<void> setSyncFrequency(int hours);
+
+  Future<int> getSyncFrequency();
+
+  Future<void> setDynamicColor(bool enabled);
+
+  Future<bool> getDynamicColor();
 }
 
 class PrefsRepoSharedPref extends PrefsRepo {
   static const String countryKey = 'country_sp_key';
+  static const String languageKey = 'language_sp_key';
   static const String genreKey = 'genre_sp_key';
   static const String downloadsPathKey = 'downloads_path_sp_key';
+  static const String syncFrequencyKey = 'sync_frequency_sp_key';
+  static const String dynamicColorKey = 'dynamic_color_sp_key';
   String genre = 'All';
 
   Future<SharedPreferences> get _getSp async =>
@@ -44,16 +59,30 @@ class PrefsRepoSharedPref extends PrefsRepo {
   }
 
   @override
-  Map<String,String> getAllGenres(BuildContext context) => itunesGenres(context);
+  Future<String> getLanguage() async {
+    final sp = await _getSp;
+    return sp.getString(languageKey) ?? 'none';
+  }
+
+  @override
+  Future<void> setLanguage(String language) async {
+    final sp = await _getSp;
+    await sp.setString(languageKey, language);
+  }
+
+  @override
+  Map<String, String> getAllGenres(BuildContext context) => itunesGenres(context);
 
   @override
   Future<String> getGenre() async {
-    return Future.value(genre);
+    final sp = await _getSp;
+    return sp.getString(genreKey) ?? 'All';
   }
 
   @override
   Future<void> setGenre(String g) async {
-    genre = g;
+    final sp = await _getSp;
+    await sp.setString(genreKey, g);
   }
 
   @override
@@ -66,5 +95,29 @@ class PrefsRepoSharedPref extends PrefsRepo {
   Future<void> setDownloadsPath(String path) async {
     final sp = await _getSp;
     await sp.setString(downloadsPathKey, path);
+  }
+
+  @override
+  Future<int> getSyncFrequency() async {
+    final sp = await _getSp;
+    return sp.getInt(syncFrequencyKey) ?? 2;
+  }
+
+  @override
+  Future<void> setSyncFrequency(int hours) async {
+    final sp = await _getSp;
+    await sp.setInt(syncFrequencyKey, hours);
+  }
+
+  @override
+  Future<bool> getDynamicColor() async {
+    final sp = await _getSp;
+    return sp.getBool(dynamicColorKey) ?? true;
+  }
+
+  @override
+  Future<void> setDynamicColor(bool enabled) async {
+    final sp = await _getSp;
+    await sp.setBool(dynamicColorKey, enabled);
   }
 }

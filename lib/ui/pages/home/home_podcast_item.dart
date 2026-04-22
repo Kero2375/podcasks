@@ -32,7 +32,7 @@ class HomePodcastItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
             color: Theme.of(context).colorScheme.onSurface.withAlpha(25),
           ),
-          clipBehavior: Clip.antiAlias,
+          clipBehavior: Clip.hardEdge,
           width: size,
           height: size,
           duration: animationDuration,

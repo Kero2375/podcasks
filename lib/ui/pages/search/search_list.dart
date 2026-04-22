@@ -3,15 +3,32 @@ import 'package:flutter/material.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/ui/pages/search/search_list_item.dart';
 
-class SearchList extends StatelessWidget {
-  final List<Item> items;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podcasks/ui/vms/search_vm.dart';
 
-  const SearchList({super.key, required this.items});
+class SearchList extends ConsumerWidget {
+  final List<Item> items;
+  final ScrollController? controller;
+
+  const SearchList({super.key, required this.items, this.controller});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final loadingMore = ref.watch(searchViewmodel).loadingMore;
     return ListView(
-      children: items.mapIndexed((i, e) => SearchListItem(item: e, index: i)).toList(),
+      controller: controller,
+      children: [
+        ...items.mapIndexed((i, e) => SearchListItem(item: e, index: i)),
+        if (loadingMore)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 32.0),
+            child: Center(
+              child: CircularProgressIndicator(
+                strokeCap: StrokeCap.round,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

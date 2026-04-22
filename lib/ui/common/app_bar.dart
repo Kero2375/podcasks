@@ -66,14 +66,9 @@ AppBar mainAppBar(
                 text: context.l10n!.sync,
               ),
               popupMenuItem(
-                value: 5,
-                icon: const Icon(Icons.file_upload_outlined),
-                text: context.l10n!.exportOpml,
-              ),
-              popupMenuItem(
-                value: 1,
-                icon: const Icon(Icons.file_download_outlined),
-                text: context.l10n!.importOpml,
+                value: 3,
+                icon: const Icon(Icons.settings_outlined),
+                text: context.l10n!.settings,
               ),
             ],
           ),

@@ -46,7 +46,7 @@ class SearchListItem extends ConsumerWidget {
               ),
               height: 45,
               width: 45,
-              clipBehavior: Clip.antiAlias,
+              clipBehavior: Clip.hardEdge,
               child: (item.bestArtworkUrl != null)
                   ? CachedNetworkImage(
                       imageUrl: item.bestArtworkUrl!,

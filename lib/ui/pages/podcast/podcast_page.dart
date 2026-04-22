@@ -223,7 +223,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
     return Container(
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(6)),
-      clipBehavior: Clip.antiAlias,
+      clipBehavior: Clip.hardEdge,
       width: 120,
       height: 120,
       child: CachedNetworkImage(imageUrl: item.image ?? ''),

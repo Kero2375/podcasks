@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:podcast_search/podcast_search.dart';
@@ -58,7 +59,7 @@ class HomeViewmodel extends Vm {
     // Parallelize both fetches for faster startup
     await Future.wait([
       _fetchFavourites(notify: false),
-      _fetchListening(limit: 10, notify: false),
+      _fetchListening(limit: 100, notify: false),
     ]);
     success();
   }
@@ -76,7 +77,24 @@ class HomeViewmodel extends Vm {
     loading();
     if (podcast.url != null) {
       if (setFavourite) {
-        await _favRepo.addToFavourite(podcast);
+        String? lastModified;
+        String? eTag;
+        int? contentLength;
+        try {
+          final response = await http.head(Uri.parse(podcast.url!));
+          if (response.statusCode == 200) {
+            lastModified = response.headers['last-modified'];
+            eTag = response.headers['etag'];
+            contentLength =
+                int.tryParse(response.headers['content-length'] ?? '');
+          }
+        } catch (e) {
+          print('Error fetching HEAD for ${podcast.url}: $e');
+        }
+        await _favRepo.addToFavourite(podcast,
+            lastModified: lastModified,
+            eTag: eTag,
+            contentLength: contentLength);
       } else {
         await _favRepo.removeFromFavourite(podcast.url!);
       }

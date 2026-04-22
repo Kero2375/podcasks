@@ -15,6 +15,8 @@ import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
 import 'package:podcasks/utils.dart';
 
+import 'package:podcasks/ui/vms/settings_vm.dart';
+
 class PlayingPage extends ConsumerStatefulWidget {
   static const route = '/playing_page';
 
@@ -36,8 +38,9 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
   void initState() {
     super.initState();
     final vm = ref.read(playerViewmodel);
+    final settings = ref.read(settingsViewmodel);
     setState(() => speedValue = vm.speed);
-    if (vm.image != null) {
+    if (vm.image != null && settings.dynamicColor) {
       PaletteGenerator.fromImageProvider(
         CachedNetworkImageProvider(vm.image!, maxWidth: 10, maxHeight: 10),
       ).then((value) => {
@@ -399,10 +402,10 @@ class _PlayingPageState extends ConsumerState<PlayingPage>
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(6),
           boxShadow: dominantColor != null
-              ? [BoxShadow(color: dominantColor!.withAlpha(64), blurRadius: 30)]
+              ? [BoxShadow(color: dominantColor!.withAlpha(64), blurRadius: 15)]
               : [],
         ),
-        clipBehavior: Clip.antiAlias,
+        clipBehavior: Clip.hardEdge,
         child: image != null 
         ? CachedNetworkImage(imageUrl: image, fit: BoxFit.fill, width: imageSize)
         : Container(

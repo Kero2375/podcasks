@@ -142,7 +142,7 @@ class _DownloadsPageState extends ConsumerState<DownloadsPage> {
                         color: Theme.of(context).colorScheme.onSurface.withAlpha(80), width: 1),
                 color: Theme.of(context).colorScheme.surfaceContainer,
               ),
-              clipBehavior: Clip.antiAlias,
+              clipBehavior: Clip.hardEdge,
               child: Center(
                 child: Icon(
                   Icons.podcasts,

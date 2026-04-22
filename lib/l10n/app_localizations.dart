@@ -670,6 +670,24 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{, and one other} other{, and {count} others}}'**
   String andOthers(num count);
 
+  /// No description provided for @notificationChannelName.
+  ///
+  /// In en, this message translates to:
+  /// **'Podcasks sync'**
+  String get notificationChannelName;
+
+  /// No description provided for @notificationChannelDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification channel for podcast episodes sync'**
+  String get notificationChannelDescription;
+
+  /// No description provided for @notificationGroupName.
+  ///
+  /// In en, this message translates to:
+  /// **'Podcasks notifications'**
+  String get notificationGroupName;
+
   /// No description provided for @unknownPlayerError.
   ///
   /// In en, this message translates to:
@@ -693,6 +711,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'TODO'**
   String get todo;
+
+  /// No description provided for @appearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearance;
+
+  /// No description provided for @dynamicColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Dynamic Color'**
+  String get dynamicColor;
+
+  /// No description provided for @dynamicColorDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Use system colors (Android 12+)'**
+  String get dynamicColorDescription;
+
+  /// No description provided for @backup.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup'**
+  String get backup;
+
+  /// No description provided for @syncTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync'**
+  String get syncTitle;
+
+  /// No description provided for @syncFrequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Frequency'**
+  String get syncFrequency;
+
+  /// No description provided for @hour.
+  ///
+  /// In en, this message translates to:
+  /// **'hour'**
+  String get hour;
+
+  /// No description provided for @hours.
+  ///
+  /// In en, this message translates to:
+  /// **'hours'**
+  String get hours;
+
+  /// No description provided for @day.
+  ///
+  /// In en, this message translates to:
+  /// **'day'**
+  String get day;
+
+  /// No description provided for @country.
+  ///
+  /// In en, this message translates to:
+  /// **'Country'**
+  String get country;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @storage.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage'**
+  String get storage;
+
+  /// No description provided for @downloadDirectory.
+  ///
+  /// In en, this message translates to:
+  /// **'Download Directory'**
+  String get downloadDirectory;
+
+  /// No description provided for @defaultPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Default (app internal)'**
+  String get defaultPath;
 }
 
 class _AppLocalizationsDelegate

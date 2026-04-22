@@ -24,6 +24,7 @@ import 'package:podcasks/ui/pages/playing/playing_page.dart';
 import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 import 'package:podcasks/ui/pages/search/search_page.dart';
 import 'package:podcasks/ui/pages/settings/settings_page.dart';
+import 'package:podcasks/ui/vms/settings_vm.dart';
 import 'package:podcasks/ui/vms/theme_vm.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -40,6 +41,8 @@ void callbackDispatcher() {
       );
 
       Set<Podcast> updated = await FavouriteRepoIsar().syncFavourites();
+
+      if (updated.isEmpty) return Future.value(true);
 
       final l10n = await AppLocalizations.delegate.load(
         WidgetsBinding.instance.platformDispatcher.locale,
@@ -100,8 +103,20 @@ Future<void> main() async {
   );
 
   Workmanager().initialize(callbackDispatcher);
-  Workmanager().registerPeriodicTask('podcasksUpdate', 'podcasksUpdate',
-      frequency: const Duration(minutes: 15), initialDelay: Duration.zero);
+  Workmanager().registerPeriodicTask(
+    'podcasksUpdate',
+    'podcasksUpdate',
+    frequency: const Duration(hours: 2),
+    initialDelay: const Duration(minutes: 15),
+    constraints: Constraints(
+      networkType: NetworkType.connected,
+      requiresBatteryNotLow: true,
+    ),
+  );
+
+  final l10n = await AppLocalizations.delegate.load(
+    WidgetsBinding.instance.platformDispatcher.locale,
+  );
 
   AwesomeNotifications().initialize(
       null,
@@ -109,9 +124,8 @@ Future<void> main() async {
         NotificationChannel(
             channelGroupKey: 'basic_channel_group',
             channelKey: 'podcasks_sync',
-            channelName: 'Podkasks sync',
-            channelDescription:
-                'Notification channel for podcast episodes sync',
+            channelName: l10n.notificationChannelName,
+            channelDescription: l10n.notificationChannelDescription,
             defaultColor: const Color(0xFF9D50DD),
             ledColor: Colors.white)
       ],
@@ -119,7 +133,7 @@ Future<void> main() async {
       channelGroups: [
         NotificationChannelGroup(
             channelGroupKey: 'basic_channel_group',
-            channelGroupName: 'Podkasks notifications')
+            channelGroupName: l10n.notificationGroupName)
       ],
       debug: true);
 
@@ -147,6 +161,7 @@ class MyApp extends ConsumerStatefulWidget {
 class _MyAppState extends ConsumerState<MyApp> {
   @override
   void initState() {
+    Future.microtask(() => ref.read(settingsViewmodel).init());
     AwesomeNotifications().setListeners(
         onActionReceivedMethod: NotificationController.onActionReceivedMethod,
         onNotificationCreatedMethod:

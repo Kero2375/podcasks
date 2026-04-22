@@ -9,6 +9,10 @@ class Favourite {
 
   late String podcastJson;
 
+  String? lastModified;
+  String? eTag;
+  int? contentLength;
+
   @ignore
   Podcast? _podcast;
 

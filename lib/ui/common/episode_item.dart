@@ -142,7 +142,7 @@ class _HomeEpisodeItemState extends ConsumerState<EpisodeItem> {
             Radius.circular(4),
           ),
         ),
-        clipBehavior: Clip.antiAlias,
+        clipBehavior: Clip.hardEdge,
         child: Row(
           children: [
             if (image != null)

@@ -31,7 +31,7 @@ class _HomeEpisodeCardState extends State<HomeEpisodeCard> {
   Widget build(BuildContext context) {
     return Card(
       color: Theme.of(context).colorScheme.onPrimary,
-      clipBehavior: Clip.antiAlias,
+      clipBehavior: Clip.hardEdge,
       child: InkWell(
         onTap: () => widget.onCardTap(),
         onTapDown: (details) =>

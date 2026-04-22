@@ -21,13 +21,24 @@ class SearchViewmodel extends Vm {
   Podcast? get selected => _selected;
   Podcast? _selected;
 
+  TextEditingController searchBarController = TextEditingController();
+  ScrollController scrollController = ScrollController();
+
+  int _limit = 20;
+  bool _loadingMore = false;
+  bool get loadingMore => _loadingMore;
+
   Future<Country> get country async => await _prefsRepo.getCountry();
 
   SearchViewmodel() {
     init();
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent - 200) {
+        loadMore();
+      }
+    });
   }
-
-  TextEditingController searchBarController = TextEditingController();
 
   Future<String> get genre async => await _prefsRepo.getGenre();
 
@@ -36,15 +47,30 @@ class SearchViewmodel extends Vm {
       _prefsRepo.getAllGenres(context);
 
   Future<void> init() async {
+    _limit = 20;
     loading();
-    _searched = await _searchRepo.charts(await country, await genre);
+    _searched = await _searchRepo.charts(await country, await genre, limit: _limit);
     success();
   }
 
-  Future<void> search(String term) async {
-    loading();
-    _debouncer.run(
-      () async {
+  Future<void> loadMore() async {
+    if (state == UiState.loading || _loadingMore || _limit >= 200) return;
+    _loadingMore = true;
+    notifyListeners();
+    _limit += 20;
+
+    final results = searchBarController.text.isEmpty
+        ? await _searchRepo.charts(await country, await genre, limit: _limit)
+        : await _searchRepo.search(searchBarController.text, await country, limit: _limit);
+
+    _searched = results;
+    _loadingMore = false;
+    notifyListeners();
+  }Future<void> search(String term) async {
+  _limit = 20;
+  loading();
+  _debouncer.run(
+    () async {
         if (term.startsWith("http")) {
           final pod = await _searchRepo.fetchPodcast(term);
           _searched = [

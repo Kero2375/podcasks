@@ -131,7 +131,7 @@ class _QueueButtonState extends ConsumerState<QueueButton> {
               Container(
                 decoration:
                     BoxDecoration(borderRadius: BorderRadius.circular(4)),
-                clipBehavior: Clip.antiAlias,
+                clipBehavior: Clip.hardEdge,
                 child: CachedNetworkImage(
                   imageUrl: e.artUri.toString(),
                   width: 40,

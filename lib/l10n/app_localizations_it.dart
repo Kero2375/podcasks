@@ -336,6 +336,16 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
+  String get notificationChannelName => 'Sincronizzazione Podcasks';
+
+  @override
+  String get notificationChannelDescription =>
+      'Canale di notifica per la sincronizzazione degli episodi';
+
+  @override
+  String get notificationGroupName => 'Notifiche Podcasks';
+
+  @override
   String get unknownPlayerError => 'Errore sconosciuto del lettore';
 
   @override
@@ -348,4 +358,46 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get todo => 'DA FARE';
+
+  @override
+  String get appearance => 'Aspetto';
+
+  @override
+  String get dynamicColor => 'Colore dinamico';
+
+  @override
+  String get dynamicColorDescription => 'Usa i colori di sistema (Android 12+)';
+
+  @override
+  String get backup => 'Backup';
+
+  @override
+  String get syncTitle => 'Sincronizzazione';
+
+  @override
+  String get syncFrequency => 'Frequenza sincronizzazione';
+
+  @override
+  String get hour => 'ora';
+
+  @override
+  String get hours => 'ore';
+
+  @override
+  String get day => 'giorno';
+
+  @override
+  String get country => 'Nazione';
+
+  @override
+  String get language => 'Lingua';
+
+  @override
+  String get storage => 'Archiviazione';
+
+  @override
+  String get downloadDirectory => 'Cartella Download';
+
+  @override
+  String get defaultPath => 'Predefinita (interna app)';
 }

@@ -68,55 +68,77 @@ class _HomeContentPageState extends ConsumerState<HomeContentPage> {
   Widget _episodesList(
       EpisodesHomeViewmodel episodesVm, DownloadManager dm, HomeViewmodel homeVm) {
     final playerVm = ref.watch(playerViewmodel);
-    return GridView.count(
-      crossAxisCount: 2,
-      scrollDirection: Axis.vertical,
+    final width = MediaQuery.of(context).size.width;
+    final crossAxisCount = width > 900 ? 5 : width > 600 ? 3 : 2;
+
+    return CustomScrollView(
       controller: episodesVm.controller,
-      shrinkWrap: true,
-      childAspectRatio: 0.7,
-      padding: const EdgeInsets.all(12),
-      mainAxisSpacing: 8,
-      crossAxisSpacing: 8,
-      children: episodesVm.displayingEpisodes
-          .map((x) {
-            final state = episodesVm.getEpisodeState(x.$1);
-            return HomeEpisodeCard(
-                episode: x.$1,
-                podcast: x.$2,
-                onCardTap: () => Navigator.pushNamed(context, PodcastPage.route,
-                    arguments: x.$2),
-                onPlayTap: () {
-                  if (playerVm.state != UiState.loading) {
-                    playerVm.isPlaying(url: x.$1.contentUrl)
-                        ? playerVm.pause()
-                        : playerVm.play(
-                            track: x.$1,
-                            pod: x.$2,
-                            seekPos: true,
-                          );
-                  } else {
-                    playerVm.pause();
-                  }
-                },
-                onLongTap: (Offset tapPosition) {
-                  final (episodeState, remaining) =
-                      episodesVm.getEpisodeState(x.$1);
-                  showEpisodeMenu(
-                    context: context,
-                    value: episodeState,
-                    vm: episodesVm,
-                    dm: ref.read(downloadManager),
-                    playerVm: ref.read(playerViewmodel),
-                    ep: x.$1,
-                    pd: x.$2,
-                    tapPos: tapPosition,
-                    homeVm: homeVm,
-                  );
-                },
-                timeLeftOnEpisode: state.$1 == EpisodeState.finished ? null : state.$2 == null ? x.$1.duration?.toEnlapsed() : state.$2?.toEnlapsed(),
-              );
-          })
-          .toList(),
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.all(12),
+          sliver: SliverGrid(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              childAspectRatio: 0.7,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+            ),
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                final x = episodesVm.displayingEpisodes[index];
+                final state = episodesVm.getEpisodeState(x.$1);
+                return HomeEpisodeCard(
+                  episode: x.$1,
+                  podcast: x.$2,
+                  onCardTap: () => Navigator.pushNamed(context, PodcastPage.route,
+                      arguments: x.$2),
+                  onPlayTap: () {
+                    if (playerVm.state != UiState.loading) {
+                      playerVm.isPlaying(url: x.$1.contentUrl)
+                          ? playerVm.pause()
+                          : playerVm.play(
+                              track: x.$1,
+                              pod: x.$2,
+                              seekPos: true,
+                            );
+                    } else {
+                      playerVm.pause();
+                    }
+                  },
+                  onLongTap: (Offset tapPosition) {
+                    final (episodeState, remaining) =
+                        episodesVm.getEpisodeState(x.$1);
+                    showEpisodeMenu(
+                      context: context,
+                      value: episodeState,
+                      vm: episodesVm,
+                      dm: ref.read(downloadManager),
+                      playerVm: ref.read(playerViewmodel),
+                      ep: x.$1,
+                      pd: x.$2,
+                      tapPos: tapPosition,
+                      homeVm: homeVm,
+                    );
+                  },
+                  timeLeftOnEpisode: state.$1 == EpisodeState.finished ? null : state.$2 == null ? x.$1.duration?.toEnlapsed() : state.$2?.toEnlapsed(),
+                );
+              },
+              childCount: episodesVm.displayingEpisodes.length,
+            ),
+          ),
+        ),
+        if (episodesVm.loadingMore)
+          const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 32.0),
+              child: Center(
+                child: CircularProgressIndicator(
+                  strokeCap: StrokeCap.round,
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 

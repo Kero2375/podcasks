@@ -23,7 +23,7 @@ class BottomPlayer extends ConsumerWidget {
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
             ),
-            clipBehavior: Clip.antiAlias,
+            clipBehavior: Clip.hardEdge,
             backgroundColor: Theme.of(context).colorScheme.primaryFixedDim.withAlpha(20),
             enableDrag: false,
             onClosing: () {},
@@ -71,7 +71,7 @@ class BottomPlayer extends ConsumerWidget {
                                               borderRadius:
                                                   BorderRadius.circular(4),
                                             ),
-                                            clipBehavior: Clip.antiAlias,
+                                            clipBehavior: Clip.hardEdge,
                                             child: CachedNetworkImage(imageUrl: vm.image!),
                                           ),
                                         const SizedBox(width: 8),

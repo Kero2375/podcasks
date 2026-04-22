@@ -15,7 +15,7 @@ class ListViewmodel extends Vm {
   final HistoryRepo historyRepo = locator.get<HistoryRepo>();
   final QueueRepo _queueRepo = locator.get<QueueRepo>();
 
-  int _maxItems = 10;
+  int _maxItems = 20;
   int _page = 0;
 
   List<(Episode, Podcast)>? get episodes => _episodes;
@@ -27,6 +27,7 @@ class ListViewmodel extends Vm {
   ScrollController get controller => _controller;
   ScrollController _controller = ScrollController();
   bool _loadingMore = false;
+  bool get loadingMore => _loadingMore;
 
   init(List<(Episode, Podcast)>? eps, {int? maxItems}) {
     if (maxItems != null) _maxItems = maxItems;

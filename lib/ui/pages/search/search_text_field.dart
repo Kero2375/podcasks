@@ -51,7 +51,7 @@ class SearchTextField extends StatelessWidget {
                       context: context,
                       builder: (context) => const FiltersDialog(),
                     ),
-                    icon: const Icon(Icons.manage_search_sharp),
+                    icon: const Icon(Icons.filter_alt_outlined),
                   ),
                 if (!isEmpty)
                   IconButton(

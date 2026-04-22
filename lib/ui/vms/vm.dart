@@ -10,7 +10,7 @@ class Vm extends ChangeNotifier {
   success() {
     state = UiState.success;
     try {
-      notifyListeners();
+      Future.microtask(() => notifyListeners());
     } catch(e) {
       log("cannot notify listeners: $e");
     }
@@ -19,7 +19,7 @@ class Vm extends ChangeNotifier {
   error() {
     state = UiState.error;
     try {
-      notifyListeners();
+      Future.microtask(() => notifyListeners());
     } catch(e) {
       log("cannot notify listeners: $e");
     }
@@ -28,7 +28,7 @@ class Vm extends ChangeNotifier {
   loading() {
     state = UiState.loading;
     try {
-      notifyListeners();
+      Future.microtask(() => notifyListeners());
     } catch(e) {
       log("cannot notify listeners: $e");
     }
@@ -36,7 +36,7 @@ class Vm extends ChangeNotifier {
 
   update() {
     try {
-      notifyListeners();
+      Future.microtask(() => notifyListeners());
     } catch(e) {
       log("cannot notify listeners: $e");
     }
