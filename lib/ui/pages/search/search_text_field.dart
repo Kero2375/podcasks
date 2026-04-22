@@ -9,6 +9,7 @@ class SearchTextField extends StatelessWidget {
   final bool showFilters;
   final String hint;
   final Function? clear;
+  final bool isSearching;
 
   const SearchTextField({
     super.key,
@@ -18,6 +19,7 @@ class SearchTextField extends StatelessWidget {
     this.init,
     this.showFilters = false,
     required this.clear,
+    this.isSearching = false,
   });
 
   @override
@@ -28,7 +30,7 @@ class SearchTextField extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         color: Theme.of(context).colorScheme.secondaryContainer,
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       child: TextField(
         textAlignVertical: TextAlignVertical.center,
         // autofocus: true,
@@ -36,10 +38,15 @@ class SearchTextField extends StatelessWidget {
           focusedBorder: InputBorder.none,
           border: InputBorder.none,
           hintText: hint,
-          icon: Icon(
-            Icons.search,
-            color: Theme.of(context).colorScheme.onSurface.withAlpha(127),
-          ),
+          prefixIcon: isSearching
+              ? IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => init?.call(),
+                )
+              : Icon(
+                  Icons.search,
+                  color: Theme.of(context).colorScheme.onSurface.withAlpha(127),
+                ),
           suffixIcon: SizedBox(
             width: 100,
             child: Row(

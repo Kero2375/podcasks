@@ -13,11 +13,7 @@ abstract class PrefsRepo {
 
   Future<String> getLanguage();
 
-  Future<void> setGenre(String g);
-
   Map<String, String> getAllGenres(BuildContext context);
-
-  Future<String> getGenre();
 
   Future<void> setDownloadsPath(String path);
 
@@ -35,11 +31,9 @@ abstract class PrefsRepo {
 class PrefsRepoSharedPref extends PrefsRepo {
   static const String countryKey = 'country_sp_key';
   static const String languageKey = 'language_sp_key';
-  static const String genreKey = 'genre_sp_key';
   static const String downloadsPathKey = 'downloads_path_sp_key';
   static const String syncFrequencyKey = 'sync_frequency_sp_key';
   static const String dynamicColorKey = 'dynamic_color_sp_key';
-  String genre = 'All';
 
   Future<SharedPreferences> get _getSp async =>
       await SharedPreferences.getInstance();
@@ -72,18 +66,6 @@ class PrefsRepoSharedPref extends PrefsRepo {
 
   @override
   Map<String, String> getAllGenres(BuildContext context) => itunesGenres(context);
-
-  @override
-  Future<String> getGenre() async {
-    final sp = await _getSp;
-    return sp.getString(genreKey) ?? 'All';
-  }
-
-  @override
-  Future<void> setGenre(String g) async {
-    final sp = await _getSp;
-    await sp.setString(genreKey, g);
-  }
 
   @override
   Future<String?> getDownloadsPath() async {

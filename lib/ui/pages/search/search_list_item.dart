@@ -5,7 +5,6 @@ import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/ui/common/themes.dart';
 import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 import 'package:podcasks/ui/vms/search_vm.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class SearchListItem extends ConsumerWidget {
   final Item item;
@@ -23,17 +22,11 @@ class SearchListItem extends ConsumerWidget {
 
     return InkWell(
       onTap: () async {
+        if (item.feedUrl == null) return;
         vm.loading();
         final nav = Navigator.of(context);
-        if (item.feedUrl == null) {
-          if (item.collectionViewUrl != null) {
-            launchUrl(Uri.parse(item.collectionViewUrl!));
-          }
-        } else {
-          await vm.fetchPodcast(item.feedUrl);
-          nav.pushNamed(PodcastPage.route,
-              arguments: vm.selected);
-        }
+        await vm.fetchPodcast(item.feedUrl);
+        nav.pushNamed(PodcastPage.route, arguments: vm.selected);
         vm.success();
       },
       child: Padding(
@@ -76,14 +69,6 @@ class SearchListItem extends ConsumerWidget {
                 ],
               ),
             ),
-            if (item.feedUrl == null) ...[
-              const SizedBox(width: 16),
-              Icon(
-                Icons.open_in_new,
-                size: 24,
-                color: Theme.of(context).colorScheme.primary.withAlpha(127),
-              )
-            ],
             // if (vm.searchBarController.text.trim() == '') ...[
             //   const SizedBox(width: 16),
             //   Text(

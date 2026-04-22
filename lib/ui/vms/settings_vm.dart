@@ -16,9 +16,6 @@ class SettingsViewmodel extends Vm {
   Country _country = Country.none;
   Country get country => _country;
 
-  String _genre = 'All';
-  String get genre => _genre;
-
   String _language = 'none';
   String get language => _language;
 
@@ -35,7 +32,6 @@ class SettingsViewmodel extends Vm {
     loading();
     _country = await _prefs.getCountry();
     _language = await _prefs.getLanguage();
-    _genre = await _prefs.getGenre();
     _syncFrequency = await _prefs.getSyncFrequency();
     _dynamicColor = await _prefs.getDynamicColor();
     _downloadPath = await _prefs.getDownloadsPath();
@@ -46,13 +42,6 @@ class SettingsViewmodel extends Vm {
     if (country == null) return;
     _country = country;
     await _prefs.setCountry(country);
-    notifyListeners();
-  }
-
-  Future<void> setGenre(String? genre) async {
-    if (genre == null) return;
-    _genre = genre;
-    await _prefs.setGenre(genre);
     notifyListeners();
   }
 

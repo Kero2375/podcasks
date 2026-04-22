@@ -40,7 +40,8 @@ class SearchViewmodel extends Vm {
     });
   }
 
-  Future<String> get genre async => await _prefsRepo.getGenre();
+  String _genre = 'All';
+  String get genre => _genre;
 
   // <value, localized string>
   Map<String, String> genres(BuildContext context) =>
@@ -48,22 +49,25 @@ class SearchViewmodel extends Vm {
 
   Future<void> init() async {
     _limit = 20;
-    loading();
-    _searched = await _searchRepo.charts(await country, await genre, limit: _limit);
+    _searched = [];
+    _genre = 'All';
+    searchBarController.text = '';
     success();
+    notifyListeners();
   }
 
   Future<void> loadMore() async {
     if (state == UiState.loading || _loadingMore || _limit >= 200) return;
+    if (_searched.isEmpty && searchBarController.text.isEmpty) return;
     _loadingMore = true;
     notifyListeners();
     _limit += 20;
 
     final results = searchBarController.text.isEmpty
-        ? await _searchRepo.charts(await country, await genre, limit: _limit)
+        ? await _searchRepo.charts(await country, genre, limit: _limit)
         : await _searchRepo.search(searchBarController.text, await country, limit: _limit);
 
-    _searched = results;
+    _searched = results.where((item) => item.feedUrl != null).toList();
     _loadingMore = false;
     notifyListeners();
   }Future<void> search(String term) async {
@@ -82,7 +86,8 @@ class SearchViewmodel extends Vm {
             )
           ];
         } else {
-          _searched = await _searchRepo.search(term, await country);
+          final results = await _searchRepo.search(term, await country);
+          _searched = results.where((item) => item.feedUrl != null).toList();
         }
         success();
       },
@@ -105,14 +110,17 @@ class SearchViewmodel extends Vm {
 
   Future<void> setGenre(String? g) async {
     if (g != null) {
-      _prefsRepo.setGenre(g);
+      _genre = g;
       _updateSearch();
     }
   }
 
   Future<void> _updateSearch() async {
     if (searchBarController.text == '') {
-      await init();
+      loading();
+      final results = await _searchRepo.charts(await country, _genre, limit: _limit);
+      _searched = results.where((item) => item.feedUrl != null).toList();
+      success();
     } else {
       await search(searchBarController.text);
     }

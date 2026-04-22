@@ -35,7 +35,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   Widget build(BuildContext context) {
     final vm = ref.watch(settingsViewmodel);
     final homeVm = ref.read(homeViewmodel);
-    final allGenres = locator.get<PrefsRepo>().getAllGenres(context);
+    locator.get<PrefsRepo>().getAllGenres(context);
 
     return Scaffold(
       appBar: mainAppBar(
@@ -90,17 +90,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               items: Country.values.map((c) => DropdownMenuItem(
                 value: c,
                 child: _text(c.name.isNotEmpty ? c.name.capitalize(context) : "None"),
-              )).toList(),
-            ),
-          ),
-          ListTile(
-            title: _text(context.l10n!.genre),
-            trailing: DropdownButton<String>(
-              value: vm.genre,
-              onChanged: (val) => vm.setGenre(val),
-              items: allGenres.entries.map((e) => DropdownMenuItem(
-                value: e.value,
-                child: _text(e.key),
               )).toList(),
             ),
           ),

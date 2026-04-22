@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/ui/common/app_bar.dart';
 import 'package:podcasks/ui/common/bottom_player.dart';
@@ -11,6 +12,7 @@ import 'package:podcasks/ui/vms/episodes_home_vm.dart';
 import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/ui/vms/list_vm.dart';
 import 'package:podcasks/ui/vms/player_vm.dart';
+import 'package:podcasks/ui/vms/search_vm.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 import 'package:podcasks/utils.dart';
 
@@ -84,32 +86,56 @@ class _HomePageState extends ConsumerState<HomePage> {
       ],
     );
 
-    return Scaffold(
-      // resizeToAvoidBottomInset: true,
-      appBar: mainAppBar(
-        context,
-        title: homeVm.page == Pages.downloads
-            ? context.l10n!.downloads
-            : context.l10n!.appTitle,
-        updateHome: () => sync(ref),
-        startLoading: () {
-          homeVm.syncing = true;
-          homeVm.update();
-        },
-        selectedPage: homeVm.page,
-        ref: ref,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        
+        if (homeVm.page == Pages.search) {
+          final searchVm = ref.read(searchViewmodel);
+          if (searchVm.searched.isNotEmpty || searchVm.searchBarController.text.isNotEmpty) {
+            searchVm.init();
+            return;
+          }
+        }
+
+        if (homeVm.page != Pages.home) {
+          homeVm.setPage(Pages.home);
+        } else {
+          // If already on home, we can either exit or show a confirmation.
+          // For now, let's allow exiting if on home by setting canPop to true
+          // next time, or using SystemNavigator.pop().
+          // To keep it simple, if canPop is false, we can use:
+          SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+        }
+      },
+      child: Scaffold(
+        // resizeToAvoidBottomInset: true,
+        appBar: mainAppBar(
+          context,
+          title: homeVm.page == Pages.downloads
+              ? context.l10n!.downloads
+              : context.l10n!.appTitle,
+          updateHome: () => sync(ref),
+          startLoading: () {
+            homeVm.syncing = true;
+            homeVm.update();
+          },
+          selectedPage: homeVm.page,
+          ref: ref,
+        ),
+        bottomNavigationBar: BottomBar(selectedPage: homeVm.page),
+        body: homeVm.state == UiState.loading
+            ? const Center(
+                child: CircularProgressIndicator(
+                strokeCap: StrokeCap.round,
+              ))
+            : homeVm.page == Pages.search
+                ? content
+                : content,
+        bottomSheet: const BottomPlayer(),
+        // drawer: homeVm.favourites.isNotEmpty ? const FavouritesDrawer() : null,
       ),
-      bottomNavigationBar: BottomBar(selectedPage: homeVm.page),
-      body: homeVm.state == UiState.loading
-          ? const Center(
-              child: CircularProgressIndicator(
-              strokeCap: StrokeCap.round,
-            ))
-          : homeVm.page == Pages.search
-              ? content
-              : content,
-      bottomSheet: const BottomPlayer(),
-      // drawer: homeVm.favourites.isNotEmpty ? const FavouritesDrawer() : null,
     );
   }
 

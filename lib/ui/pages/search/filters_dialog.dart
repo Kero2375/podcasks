@@ -55,21 +55,14 @@ class FiltersDialog extends ConsumerWidget {
                 style: textStyleBody,
               ),
             ),
-            FutureBuilder(
-              future: vm.genre,
-              builder: (context, snapshot) {
-                return (snapshot.hasData)
-                    ? Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: FilterDropdown<String>(
-                          onChanged: vm.setGenre,
-                          value: snapshot.data,
-                          items: vm.genres(context),
-                          getString: (c) => c,
-                        ))
-                    : const SizedBox.shrink();
-              },
-            ),
+            Padding(
+                padding: const EdgeInsets.all(16),
+                child: FilterDropdown<String>(
+                  onChanged: vm.setGenre,
+                  value: vm.genre,
+                  items: vm.genres(context),
+                  getString: (c) => c,
+                )),
             Padding(
               padding: const EdgeInsets.all(16),
               child: FilledButton(
