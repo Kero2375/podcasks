@@ -145,11 +145,14 @@ class _GenreGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final genres = vm.genres(context);
+    final width = MediaQuery.of(context).size.width;
+    final crossAxisCount = width > 900 ? 5 : width > 600 ? 3 : 2;
+
     return GridView.builder(
       key: ValueKey(Theme.of(context).brightness),
       padding: const EdgeInsets.all(16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
         childAspectRatio: 1.5,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
