@@ -7,20 +7,45 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcasks/ui/vms/vm.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
+import 'package:podcasks/ui/vms/settings_vm.dart';
 
-final themeViewmodel = ChangeNotifierProvider((ref) => ThemeViewmodel());
+final themeViewmodel = ChangeNotifierProvider((ref) => ThemeViewmodel(ref));
 
 class ThemeViewmodel extends Vm {
+  final Ref ref;
+  ThemeViewmodel(this.ref);
+
   Color? _primaryColor;
 
-  ThemeData getAppTheme(ColorScheme? color) => ThemeData(
+  ThemeData getAppTheme(ColorScheme? color) {
+    final settings = ref.watch(settingsViewmodel);
+    final brightness = color?.brightness ?? Brightness.light;
+
+    if (_primaryColor != null) {
+      return ThemeData(
         useMaterial3: true,
-        colorScheme: _primaryColor != null
-            ? ColorScheme.fromSeed(
-                seedColor: _primaryColor!,
-                brightness: color?.brightness ?? Brightness.light)
-            : color,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: _primaryColor!,
+          brightness: brightness,
+        ),
       );
+    }
+
+    if (settings.dynamicColor && color != null) {
+      return ThemeData(
+        useMaterial3: true,
+        colorScheme: color,
+      );
+    }
+
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: settings.themeColor,
+        brightness: brightness,
+      ),
+    );
+  }
 
   Future<void> setPrimaryColor(String? imageUrl) async {
     // if (imageUrl != null) {

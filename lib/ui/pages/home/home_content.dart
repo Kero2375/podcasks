@@ -51,7 +51,7 @@ class _HomeContentPageState extends ConsumerState<HomeContentPage> {
                   SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight + 1),
                   child: _welcomeContent(context, homeVm),
                 ),
               ),
@@ -153,37 +153,54 @@ class _HomeContentPageState extends ConsumerState<HomeContentPage> {
           const SizedBox(height: 8),
           Text(context.l10n!.bohEmoji, style: textStyleBody),
           const SizedBox(height: 16),
-          FilledButton(
-            onPressed: () {
-              homeVm.setPage(Pages.search);
-            },
-            style: buttonStyle,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
+          IntrinsicWidth(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Icon(Icons.search),
-                const SizedBox(width: 8),
-                Text(context.l10n!.explorePodcasts),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          FilledButton(
-            onPressed: () {
-              pickFile(context, () => sync(ref), () {
-                homeVm.syncing = true;
-                homeVm.update();
-              });
-            },
-            style: buttonStyle,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.file_download_outlined),
-                const SizedBox(width: 8),
-                Text(context.l10n!.importOpml),
+                FilledButton(
+                  onPressed: () {
+                    homeVm.setPage(Pages.search);
+                  },
+                  style: buttonStyle,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.search),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          context.l10n!.explorePodcasts,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                FilledButton(
+                  onPressed: () {
+                    pickFile(context, () => sync(ref), () {
+                      homeVm.syncing = true;
+                      homeVm.update();
+                    });
+                  },
+                  style: buttonStyle,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.file_download_outlined),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          context.l10n!.importOpml,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

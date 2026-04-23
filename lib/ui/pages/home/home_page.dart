@@ -125,67 +125,15 @@ class _HomePageState extends ConsumerState<HomePage> {
           ref: ref,
         ),
         bottomNavigationBar: BottomBar(selectedPage: homeVm.page),
-        body: homeVm.state == UiState.loading
+        body: homeVm.state == UiState.loading && homeVm.page == Pages.home
             ? const Center(
                 child: CircularProgressIndicator(
                 strokeCap: StrokeCap.round,
               ))
-            : homeVm.page == Pages.search
-                ? content
-                : content,
+            : content,
         bottomSheet: const BottomPlayer(),
         // drawer: homeVm.favourites.isNotEmpty ? const FavouritesDrawer() : null,
       ),
     );
   }
-
-  // Widget _favRow(EpisodesHomeViewmodel episodesVm, HomeViewmodel homeVm) {
-  //   return SingleChildScrollView(
-  //     scrollDirection: Axis.horizontal,
-  //     child: FavouritesRow(
-  //       episodesVm: episodesVm,
-  //       homeVm: homeVm,
-  //     ),
-  //   );
-  // }
-
-  // Builder _favouritesButton() {
-  //   return Builder(
-  //     builder: (context) {
-  //       return IconButton(
-  //         onPressed: () {
-  //           Scaffold.of(context).openDrawer();
-  //         },
-  //         icon: SvgPicture.asset(
-  //           'assets/icon/favorites_list.svg',
-  //           width: 32,
-  //           // ignore: deprecated_member_use
-  //           color: Theme.of(context).colorScheme.secondary,
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
-  // Column _episodesList(EpisodesHomeViewmodel episodesVm, DownloadManager dm) =>
-  //     Column(
-  //       children: [
-  //         ListView.builder(
-  //           physics: const ScrollPhysics(),
-  //           scrollDirection: Axis.vertical,
-  //           shrinkWrap: true,
-  //           itemCount: episodesVm.displayingEpisodes.length,
-  //           itemBuilder: (context, i) {
-  //             return EpisodeItem(
-  //               vm: episodesVm,
-  //               dm: dm,
-  //               episode: episodesVm.displayingEpisodes[i],
-  //               showImage: true,
-  //               showDesc: false,
-  //             );
-  //           },
-  //         ),
-  //         const SizedBox(height: BottomPlayer.playerHeight),
-  //       ],
-  //     );
 }

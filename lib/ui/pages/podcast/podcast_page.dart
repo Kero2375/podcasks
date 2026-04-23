@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/manager/download_manager.dart';
@@ -35,6 +36,7 @@ class _PodcastPageState extends ConsumerState<PodcastPage> {
     // vm.loading();
     await vm.initPodcast(widget.podcast);
     // vm.success();
+    FlutterNativeSplash.remove();
   }
 
   @override

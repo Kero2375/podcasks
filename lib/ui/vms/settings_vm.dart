@@ -1,4 +1,5 @@
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/locator.dart';
@@ -25,6 +26,9 @@ class SettingsViewmodel extends Vm {
   bool _dynamicColor = true;
   bool get dynamicColor => _dynamicColor;
 
+  Color _themeColor = Colors.deepPurple;
+  Color get themeColor => _themeColor;
+
   String? _downloadPath;
   String? get downloadPath => _downloadPath;
 
@@ -34,6 +38,7 @@ class SettingsViewmodel extends Vm {
     _language = await _prefs.getLanguage();
     _syncFrequency = await _prefs.getSyncFrequency();
     _dynamicColor = await _prefs.getDynamicColor();
+    _themeColor = Color(await _prefs.getThemeColor());
     _downloadPath = await _prefs.getDownloadsPath();
     success();
   }
@@ -63,6 +68,12 @@ class SettingsViewmodel extends Vm {
   Future<void> setDynamicColor(bool enabled) async {
     _dynamicColor = enabled;
     await _prefs.setDynamicColor(enabled);
+    notifyListeners();
+  }
+
+  Future<void> setThemeColor(Color color) async {
+    _themeColor = color;
+    await _prefs.setThemeColor(color.toARGB32());
     notifyListeners();
   }
 

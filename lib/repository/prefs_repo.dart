@@ -26,6 +26,10 @@ abstract class PrefsRepo {
   Future<void> setDynamicColor(bool enabled);
 
   Future<bool> getDynamicColor();
+
+  Future<void> setThemeColor(int color);
+
+  Future<int> getThemeColor();
 }
 
 class PrefsRepoSharedPref extends PrefsRepo {
@@ -34,6 +38,7 @@ class PrefsRepoSharedPref extends PrefsRepo {
   static const String downloadsPathKey = 'downloads_path_sp_key';
   static const String syncFrequencyKey = 'sync_frequency_sp_key';
   static const String dynamicColorKey = 'dynamic_color_sp_key';
+  static const String themeColorKey = 'theme_color_sp_key';
 
   Future<SharedPreferences> get _getSp async =>
       await SharedPreferences.getInstance();
@@ -101,5 +106,17 @@ class PrefsRepoSharedPref extends PrefsRepo {
   Future<void> setDynamicColor(bool enabled) async {
     final sp = await _getSp;
     await sp.setBool(dynamicColorKey, enabled);
+  }
+
+  @override
+  Future<int> getThemeColor() async {
+    final sp = await _getSp;
+    return sp.getInt(themeColorKey) ?? 0xFF673AB7; // DeepPurple default
+  }
+
+  @override
+  Future<void> setThemeColor(int color) async {
+    final sp = await _getSp;
+    await sp.setInt(themeColorKey, color);
   }
 }

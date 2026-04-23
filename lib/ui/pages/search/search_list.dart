@@ -9,14 +9,16 @@ import 'package:podcasks/ui/vms/search_vm.dart';
 class SearchList extends ConsumerWidget {
   final List<Item> items;
   final ScrollController? controller;
+  final EdgeInsetsGeometry? padding;
 
-  const SearchList({super.key, required this.items, this.controller});
+  const SearchList({super.key, required this.items, this.controller, this.padding});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final loadingMore = ref.watch(searchViewmodel).loadingMore;
     return ListView(
       controller: controller,
+      padding: padding,
       children: [
         ...items.mapIndexed((i, e) => SearchListItem(item: e, index: i)),
         if (loadingMore)

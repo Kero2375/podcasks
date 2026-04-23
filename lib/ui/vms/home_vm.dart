@@ -61,6 +61,9 @@ class HomeViewmodel extends Vm {
       _fetchFavourites(notify: false),
       _fetchListening(limit: 100, notify: false),
     ]);
+    if (_favourites.isEmpty) {
+      _page = Pages.search;
+    }
     success();
   }
 
@@ -89,7 +92,7 @@ class HomeViewmodel extends Vm {
                 int.tryParse(response.headers['content-length'] ?? '');
           }
         } catch (e) {
-          print('Error fetching HEAD for ${podcast.url}: $e');
+          log('Error fetching HEAD for ${podcast.url}: $e');
         }
         await _favRepo.addToFavourite(podcast,
             lastModified: lastModified,

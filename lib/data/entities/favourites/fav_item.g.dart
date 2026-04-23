@@ -17,8 +17,23 @@ const FavouriteSchema = CollectionSchema(
   name: r'Favourite',
   id: 2882997178178307874,
   properties: {
-    r'podcastJson': PropertySchema(
+    r'contentLength': PropertySchema(
       id: 0,
+      name: r'contentLength',
+      type: IsarType.long,
+    ),
+    r'eTag': PropertySchema(
+      id: 1,
+      name: r'eTag',
+      type: IsarType.string,
+    ),
+    r'lastModified': PropertySchema(
+      id: 2,
+      name: r'lastModified',
+      type: IsarType.string,
+    ),
+    r'podcastJson': PropertySchema(
+      id: 3,
       name: r'podcastJson',
       type: IsarType.string,
     )
@@ -43,6 +58,18 @@ int _favouriteEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  {
+    final value = object.eTag;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.lastModified;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.podcastJson.length * 3;
   return bytesCount;
 }
@@ -53,7 +80,10 @@ void _favouriteSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.podcastJson);
+  writer.writeLong(offsets[0], object.contentLength);
+  writer.writeString(offsets[1], object.eTag);
+  writer.writeString(offsets[2], object.lastModified);
+  writer.writeString(offsets[3], object.podcastJson);
 }
 
 Favourite _favouriteDeserialize(
@@ -65,7 +95,10 @@ Favourite _favouriteDeserialize(
   final object = Favourite(
     id: id,
   );
-  object.podcastJson = reader.readString(offsets[0]);
+  object.contentLength = reader.readLongOrNull(offsets[0]);
+  object.eTag = reader.readStringOrNull(offsets[1]);
+  object.lastModified = reader.readStringOrNull(offsets[2]);
+  object.podcastJson = reader.readString(offsets[3]);
   return object;
 }
 
@@ -77,6 +110,12 @@ P _favouriteDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
+      return (reader.readLongOrNull(offset)) as P;
+    case 1:
+      return (reader.readStringOrNull(offset)) as P;
+    case 2:
+      return (reader.readStringOrNull(offset)) as P;
+    case 3:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -174,6 +213,226 @@ extension FavouriteQueryWhere
 
 extension FavouriteQueryFilter
     on QueryBuilder<Favourite, Favourite, QFilterCondition> {
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition>
+      contentLengthIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'contentLength',
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition>
+      contentLengthIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'contentLength',
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition>
+      contentLengthEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'contentLength',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition>
+      contentLengthGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'contentLength',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition>
+      contentLengthLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'contentLength',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition>
+      contentLengthBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'contentLength',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> eTagIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'eTag',
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> eTagIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'eTag',
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> eTagEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'eTag',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> eTagGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'eTag',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> eTagLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'eTag',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> eTagBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'eTag',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> eTagStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'eTag',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> eTagEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'eTag',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> eTagContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'eTag',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> eTagMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'eTag',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> eTagIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'eTag',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> eTagIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'eTag',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Favourite, Favourite, QAfterFilterCondition> idEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
@@ -223,6 +482,159 @@ extension FavouriteQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition>
+      lastModifiedIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'lastModified',
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition>
+      lastModifiedIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'lastModified',
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> lastModifiedEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'lastModified',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition>
+      lastModifiedGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'lastModified',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition>
+      lastModifiedLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'lastModified',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> lastModifiedBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'lastModified',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition>
+      lastModifiedStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'lastModified',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition>
+      lastModifiedEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'lastModified',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition>
+      lastModifiedContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'lastModified',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition> lastModifiedMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'lastModified',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition>
+      lastModifiedIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'lastModified',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterFilterCondition>
+      lastModifiedIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'lastModified',
+        value: '',
       ));
     });
   }
@@ -369,6 +781,42 @@ extension FavouriteQueryLinks
     on QueryBuilder<Favourite, Favourite, QFilterCondition> {}
 
 extension FavouriteQuerySortBy on QueryBuilder<Favourite, Favourite, QSortBy> {
+  QueryBuilder<Favourite, Favourite, QAfterSortBy> sortByContentLength() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'contentLength', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterSortBy> sortByContentLengthDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'contentLength', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterSortBy> sortByETag() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'eTag', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterSortBy> sortByETagDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'eTag', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterSortBy> sortByLastModified() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastModified', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterSortBy> sortByLastModifiedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastModified', Sort.desc);
+    });
+  }
+
   QueryBuilder<Favourite, Favourite, QAfterSortBy> sortByPodcastJson() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'podcastJson', Sort.asc);
@@ -384,6 +832,30 @@ extension FavouriteQuerySortBy on QueryBuilder<Favourite, Favourite, QSortBy> {
 
 extension FavouriteQuerySortThenBy
     on QueryBuilder<Favourite, Favourite, QSortThenBy> {
+  QueryBuilder<Favourite, Favourite, QAfterSortBy> thenByContentLength() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'contentLength', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterSortBy> thenByContentLengthDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'contentLength', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterSortBy> thenByETag() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'eTag', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterSortBy> thenByETagDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'eTag', Sort.desc);
+    });
+  }
+
   QueryBuilder<Favourite, Favourite, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -393,6 +865,18 @@ extension FavouriteQuerySortThenBy
   QueryBuilder<Favourite, Favourite, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterSortBy> thenByLastModified() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastModified', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QAfterSortBy> thenByLastModifiedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastModified', Sort.desc);
     });
   }
 
@@ -411,6 +895,26 @@ extension FavouriteQuerySortThenBy
 
 extension FavouriteQueryWhereDistinct
     on QueryBuilder<Favourite, Favourite, QDistinct> {
+  QueryBuilder<Favourite, Favourite, QDistinct> distinctByContentLength() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'contentLength');
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QDistinct> distinctByETag(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'eTag', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Favourite, Favourite, QDistinct> distinctByLastModified(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'lastModified', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Favourite, Favourite, QDistinct> distinctByPodcastJson(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -424,6 +928,24 @@ extension FavouriteQueryProperty
   QueryBuilder<Favourite, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<Favourite, int?, QQueryOperations> contentLengthProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'contentLength');
+    });
+  }
+
+  QueryBuilder<Favourite, String?, QQueryOperations> eTagProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'eTag');
+    });
+  }
+
+  QueryBuilder<Favourite, String?, QQueryOperations> lastModifiedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'lastModified');
     });
   }
 

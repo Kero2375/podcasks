@@ -71,5 +71,4 @@ class BottomBar extends ConsumerWidget {
         break;
     }
   }
-
 }

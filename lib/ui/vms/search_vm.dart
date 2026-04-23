@@ -28,6 +28,8 @@ class SearchViewmodel extends Vm {
   bool _loadingMore = false;
   bool get loadingMore => _loadingMore;
 
+  int _searchSession = 0;
+
   Future<Country> get country async => await _prefsRepo.getCountry();
 
   SearchViewmodel() {
@@ -52,6 +54,11 @@ class SearchViewmodel extends Vm {
     _searched = [];
     _genre = 'All';
     searchBarController.text = '';
+    _searchSession++; // Cancel any pending search
+    _loadingMore = false;
+    if (scrollController.hasClients) {
+      scrollController.jumpTo(0);
+    }
     success();
     notifyListeners();
   }
@@ -63,21 +70,34 @@ class SearchViewmodel extends Vm {
     notifyListeners();
     _limit += 20;
 
+    final currentSession = _searchSession;
     final results = searchBarController.text.isEmpty
         ? await _searchRepo.charts(await country, genre, limit: _limit)
         : await _searchRepo.search(searchBarController.text, await country, limit: _limit);
 
-    _searched = results.where((item) => item.feedUrl != null).toList();
+    if (currentSession == _searchSession) {
+      _searched = results.where((item) => item.feedUrl != null).toList();
+      _loadingMore = false;
+      notifyListeners();
+    } else {
+      _loadingMore = false;
+    }
+  }
+
+  Future<void> search(String term) async {
+    _limit = 20;
+    loading();
+    _searchSession++;
     _loadingMore = false;
-    notifyListeners();
-  }Future<void> search(String term) async {
-  _limit = 20;
-  loading();
-  _debouncer.run(
-    () async {
+    final currentSession = _searchSession;
+
+    _debouncer.run(
+      () async {
+        List<Item> resultsList = [];
         if (term.startsWith("http")) {
           final pod = await _searchRepo.fetchPodcast(term);
-          _searched = [
+          if (currentSession != _searchSession) return;
+          resultsList = [
             Item(
               feedUrl: term,
               artworkUrl: pod?.image,
@@ -87,9 +107,14 @@ class SearchViewmodel extends Vm {
           ];
         } else {
           final results = await _searchRepo.search(term, await country);
-          _searched = results.where((item) => item.feedUrl != null).toList();
+          if (currentSession != _searchSession) return;
+          resultsList = results.where((item) => item.feedUrl != null).toList();
         }
-        success();
+
+        if (currentSession == _searchSession) {
+          _searched = resultsList;
+          success();
+        }
       },
     );
   }
@@ -116,11 +141,24 @@ class SearchViewmodel extends Vm {
   }
 
   Future<void> _updateSearch() async {
+    if (scrollController.hasClients) {
+      scrollController.jumpTo(0);
+    }
+    _searchSession++;
+    final currentSession = _searchSession;
+    
     if (searchBarController.text == '') {
+      // if (_genre == 'All') {
+      //   _searched = [];
+      //   success();
+      //   return;
+      // }
       loading();
       final results = await _searchRepo.charts(await country, _genre, limit: _limit);
-      _searched = results.where((item) => item.feedUrl != null).toList();
-      success();
+      if (currentSession == _searchSession) {
+        _searched = results.where((item) => item.feedUrl != null).toList();
+        success();
+      }
     } else {
       await search(searchBarController.text);
     }

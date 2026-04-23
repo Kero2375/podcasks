@@ -20,77 +20,72 @@ class SearchPage extends ConsumerWidget {
     final bool isSearching =
         vm.searched.isNotEmpty || vm.searchBarController.text.isNotEmpty;
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 8,
-            ),
-            child: FutureBuilder<Country>(
-              future: vm.country,
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const SizedBox.shrink();
-                }
-                return SearchTextField(
-                  controller: vm.searchBarController,
-                  search: vm.search,
-                  init: () => vm.init(),
-                  hint: context.l10n!.searchHint,
-                  showFilters: true,
-                  clear: vm.clearText,
-                  isSearching: isSearching,
-                );
-              },
-            ),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          child: FutureBuilder<Country>(
+            future: vm.country,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const SizedBox.shrink();
+              }
+              return SearchTextField(
+                controller: vm.searchBarController,
+                search: vm.search,
+                init: () => vm.init(),
+                hint: context.l10n!.searchHint,
+                showFilters: true,
+                clear: vm.clearText,
+                isSearching: isSearching,
+              );
+            },
           ),
-          Expanded(
-            child: Consumer(
-              builder: (BuildContext context, WidgetRef ref, Widget? child) {
-                final vm = ref.watch(searchViewmodel);
-                if (vm.state == UiState.loading) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      strokeCap: StrokeCap.round,
-                    ),
-                  );
-                }
-
-                if (vm.searched.isEmpty &&
-                    vm.searchBarController.text.isEmpty) {
-                  return _GenreGrid(vm: vm);
-                }
-
-                if (vm.searched.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          context.l10n!.noResults,
-                          style: textStyleBody,
-                        ),
-                        Text(
-                          context.l10n!.noResultsEmoji,
-                          style: textStyleBody,
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                return SearchList(
-                  items: vm.searched,
-                  controller: vm.scrollController,
+        ),
+        Expanded(
+          child: Consumer(
+            builder: (BuildContext context, WidgetRef ref, Widget? child) {
+              final vm = ref.watch(searchViewmodel);
+              if (vm.state == UiState.loading) {
+                return const Center(
+                  child: CircularProgressIndicator(
+                    strokeCap: StrokeCap.round,
+                  ),
                 );
-              },
-            ),
+              }
+          
+              if (vm.searched.isEmpty &&
+                  vm.searchBarController.text.isEmpty) {
+                return _GenreGrid(vm: vm);
+              }
+          
+              if (vm.searched.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        context.l10n!.noResults,
+                        style: textStyleBody,
+                      ),
+                      Text(
+                        context.l10n!.noResultsEmoji,
+                        style: textStyleBody,
+                      ),
+                    ],
+                  ),
+                );
+              }
+          
+              return SearchList(
+                items: vm.searched,
+                controller: vm.scrollController,
+              );
+            },
           ),
-        ],
-      ),
+        ),
+        
+      ],
     );
   }
 }
@@ -151,6 +146,7 @@ class _GenreGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final genres = vm.genres(context);
     return GridView.builder(
+      key: ValueKey(Theme.of(context).brightness),
       padding: const EdgeInsets.all(16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -175,10 +171,13 @@ class _GenreGrid extends StatelessWidget {
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  entry.value,
-                  style: textStyleBody,
-                  textAlign: TextAlign.center,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    entry.value,
+                    style: textStyleBody,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ],
             ),

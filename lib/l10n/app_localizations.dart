@@ -313,7 +313,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchOrRssHint.
   ///
   /// In en, this message translates to:
-  /// **'Search or add RSS feed...'**
+  /// **'Search / RSS'**
   String get searchOrRssHint;
 
   /// No description provided for @noResults.
@@ -505,7 +505,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchHint.
   ///
   /// In en, this message translates to:
-  /// **'Search or insert RSS feed'**
+  /// **'Search / RSS'**
   String get searchHint;
 
   /// No description provided for @importOpml.
@@ -747,6 +747,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sync Frequency'**
   String get syncFrequency;
+
+  /// No description provided for @syncFrequencyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'How often the app checks for new episodes in the background'**
+  String get syncFrequencyDescription;
 
   /// No description provided for @hour.
   ///

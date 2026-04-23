@@ -52,6 +52,40 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             value: vm.dynamicColor,
             onChanged: (val) => vm.setDynamicColor(val),
           ),
+          if (!vm.dynamicColor)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: SizedBox(
+                height: 50,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    Colors.deepPurple,
+                    Colors.blue,
+                    Colors.teal,
+                    Colors.green,
+                    Colors.orange,
+                    Colors.red,
+                    Colors.pink,
+                    Colors.brown,
+                  ].map((color) => GestureDetector(
+                    onTap: () => vm.setThemeColor(color),
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      margin: const EdgeInsets.only(right: 12),
+                      decoration: BoxDecoration(
+                        color: color,
+                        shape: BoxShape.circle,
+                        border: vm.themeColor.toARGB32() == color.toARGB32()
+                            ? Border.all(color: Theme.of(context).colorScheme.onSurface, width: 3)
+                            : null,
+                      ),
+                    ),
+                  )).toList(),
+                ),
+              ),
+            ),
           const Divider(),
           _sectionTitle(context.l10n!.backup),
           ListTile(
@@ -68,6 +102,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           _sectionTitle(context.l10n!.syncTitle),
           ListTile(
             title: _text(context.l10n!.syncFrequency),
+            subtitle: _textSmall(context.l10n!.syncFrequencyDescription),
             trailing: DropdownButton<int>(
               value: vm.syncFrequency,
               onChanged: (val) => vm.setSyncFrequency(val),

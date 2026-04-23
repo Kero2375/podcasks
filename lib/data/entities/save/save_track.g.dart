@@ -22,28 +22,33 @@ const SaveTrackSchema = CollectionSchema(
       name: r'dateTime',
       type: IsarType.dateTime,
     ),
-    r'podcastJson': PropertySchema(
+    r'duration': PropertySchema(
       id: 1,
+      name: r'duration',
+      type: IsarType.long,
+    ),
+    r'podcastJson': PropertySchema(
+      id: 2,
       name: r'podcastJson',
       type: IsarType.string,
     ),
     r'podcastUrl': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'podcastUrl',
       type: IsarType.string,
     ),
     r'position': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'position',
       type: IsarType.long,
     ),
     r'title': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'title',
       type: IsarType.string,
     ),
     r'url': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'url',
       type: IsarType.string,
     )
@@ -102,11 +107,12 @@ void _saveTrackSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeDateTime(offsets[0], object.dateTime);
-  writer.writeString(offsets[1], object.podcastJson);
-  writer.writeString(offsets[2], object.podcastUrl);
-  writer.writeLong(offsets[3], object.position);
-  writer.writeString(offsets[4], object.title);
-  writer.writeString(offsets[5], object.url);
+  writer.writeLong(offsets[1], object.duration);
+  writer.writeString(offsets[2], object.podcastJson);
+  writer.writeString(offsets[3], object.podcastUrl);
+  writer.writeLong(offsets[4], object.position);
+  writer.writeString(offsets[5], object.title);
+  writer.writeString(offsets[6], object.url);
 }
 
 SaveTrack _saveTrackDeserialize(
@@ -117,13 +123,14 @@ SaveTrack _saveTrackDeserialize(
 ) {
   final object = SaveTrack(
     dateTime: reader.readDateTime(offsets[0]),
+    duration: reader.readLongOrNull(offsets[1]),
     id: id,
-    podcastUrl: reader.readStringOrNull(offsets[2]),
-    position: reader.readLongOrNull(offsets[3]),
-    title: reader.readStringOrNull(offsets[4]),
-    url: reader.readStringOrNull(offsets[5]),
+    podcastUrl: reader.readStringOrNull(offsets[3]),
+    position: reader.readLongOrNull(offsets[4]),
+    title: reader.readStringOrNull(offsets[5]),
+    url: reader.readStringOrNull(offsets[6]),
   );
-  object.podcastJson = reader.readStringOrNull(offsets[1]);
+  object.podcastJson = reader.readStringOrNull(offsets[2]);
   return object;
 }
 
@@ -137,14 +144,16 @@ P _saveTrackDeserializeProp<P>(
     case 0:
       return (reader.readDateTime(offset)) as P;
     case 1:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 2:
       return (reader.readStringOrNull(offset)) as P;
     case 3:
-      return (reader.readLongOrNull(offset)) as P;
-    case 4:
       return (reader.readStringOrNull(offset)) as P;
+    case 4:
+      return (reader.readLongOrNull(offset)) as P;
     case 5:
+      return (reader.readStringOrNull(offset)) as P;
+    case 6:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -287,6 +296,76 @@ extension SaveTrackQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'dateTime',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> durationIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'duration',
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition>
+      durationIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'duration',
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> durationEqualTo(
+      int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'duration',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> durationGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'duration',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> durationLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'duration',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterFilterCondition> durationBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'duration',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -1033,6 +1112,18 @@ extension SaveTrackQuerySortBy on QueryBuilder<SaveTrack, SaveTrack, QSortBy> {
     });
   }
 
+  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> sortByDuration() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'duration', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> sortByDurationDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'duration', Sort.desc);
+    });
+  }
+
   QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> sortByPodcastJson() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'podcastJson', Sort.asc);
@@ -1105,6 +1196,18 @@ extension SaveTrackQuerySortThenBy
   QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> thenByDateTimeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dateTime', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> thenByDuration() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'duration', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SaveTrack, SaveTrack, QAfterSortBy> thenByDurationDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'duration', Sort.desc);
     });
   }
 
@@ -1189,6 +1292,12 @@ extension SaveTrackQueryWhereDistinct
     });
   }
 
+  QueryBuilder<SaveTrack, SaveTrack, QDistinct> distinctByDuration() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'duration');
+    });
+  }
+
   QueryBuilder<SaveTrack, SaveTrack, QDistinct> distinctByPodcastJson(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1235,6 +1344,12 @@ extension SaveTrackQueryProperty
   QueryBuilder<SaveTrack, DateTime, QQueryOperations> dateTimeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dateTime');
+    });
+  }
+
+  QueryBuilder<SaveTrack, int?, QQueryOperations> durationProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'duration');
     });
   }
 

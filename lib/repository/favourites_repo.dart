@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:isar/isar.dart';
 import 'package:podcasks/data/entities/favourites/fav_item.dart';
@@ -108,8 +109,7 @@ class FavouriteRepoIsar extends FavouriteRepo {
           );
         }
       } catch (e) {
-
-        print('Error syncing $url: $e');
+        log('Error syncing $url: $e');
       }
       return null;
     });

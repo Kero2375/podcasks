@@ -132,10 +132,16 @@ class _ChronoPageState extends ConsumerState<ChronoPage> {
                   style: buttonStyle,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       const Icon(Icons.search),
                       const SizedBox(width: 8),
-                      Text(context.l10n!.explorePodcasts),
+                      Flexible(
+                        child: Text(
+                          context.l10n!.explorePodcasts,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -150,10 +156,16 @@ class _ChronoPageState extends ConsumerState<ChronoPage> {
                   style: buttonStyle,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       const Icon(Icons.file_download_outlined),
                       const SizedBox(width: 8),
-                      Text(context.l10n!.importOpml),
+                      Flexible(
+                        child: Text(
+                          context.l10n!.importOpml,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                     ],
                   ),
                 ),

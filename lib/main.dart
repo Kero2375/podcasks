@@ -3,6 +3,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -16,7 +17,8 @@ import 'package:podcasks/data/entities/save/save_track.dart';
 import 'package:podcasks/locator.dart';
 import 'package:podcasks/manager/audio_handler.dart';
 import 'package:podcasks/repository/favourites_repo.dart';
-import 'package:podcasks/ui/notifications/notification_controller.dart';
+import 'package:podcasks/repository/search_repo.dart';
+import 'package:podcasks/manager/notification_controller.dart';
 import 'package:podcasks/ui/pages/episode_page.dart';
 import 'package:podcasks/ui/pages/favourites/faourites_drawer.dart';
 import 'package:podcasks/ui/pages/home/home_page.dart';
@@ -25,131 +27,61 @@ import 'package:podcasks/ui/pages/podcast/podcast_page.dart';
 import 'package:podcasks/ui/pages/search/search_page.dart';
 import 'package:podcasks/ui/pages/settings/settings_page.dart';
 import 'package:podcasks/ui/vms/settings_vm.dart';
+import 'package:podcasks/ui/vms/home_vm.dart';
 import 'package:podcasks/ui/vms/theme_vm.dart';
-import 'package:workmanager/workmanager.dart';
+import 'package:podcasks/manager/background_task_controller.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import 'l10n/app_localizations.dart';
 
-@pragma("vm:entry-point")
-void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) async {
-    if (task == 'podcasksUpdate') {
-      final dir = await getApplicationSupportDirectory();
-      await Isar.open(
-        [SaveTrackSchema, FavouriteSchema],
-        directory: dir.path,
-      );
-
-      Set<Podcast> updated = await FavouriteRepoIsar().syncFavourites();
-
-      if (updated.isEmpty) return Future.value(true);
-
-      final l10n = await AppLocalizations.delegate.load(
-        WidgetsBinding.instance.platformDispatcher.locale,
-      );
-
-      if (updated.length == 1) {
-        AwesomeNotifications().createNotification(
-            content: NotificationContent(
-          id: updated.first.title.hashCode,
-          channelKey: 'podcasks_sync',
-          actionType: ActionType.Default,
-          title: updated.first.title,
-          body: updated.first.episodes.first.title,
-          largeIcon: updated.first.image,
-        ));
-      } else if (updated.length > 1) {
-        final title = l10n.newEpisodesTitle;
-        final body =
-            "${updated.first.episodes[0].title}, ${updated.first.episodes[1].title}";
-        final extra = (updated.length == 2)
-            ? ""
-            : l10n.andOthers(updated.length - 2);
-        AwesomeNotifications().createNotification(
-            content: NotificationContent(
-          id: updated.first.title.hashCode,
-          channelKey: 'podcasks_sync',
-          actionType: ActionType.Default,
-          title: title,
-          body: body + extra,
-          largeIcon: updated.first.image,
-        ));
-      }
-    }
-
-    return Future.value(true);
-  });
-}
-
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   setup();
 
   final dir = await getApplicationSupportDirectory();
-  await Isar.open(
-    [SaveTrackSchema, FavouriteSchema],
-    directory: dir.path,
-  );
-  audioHandler = await AudioService.init(
-    builder: () => MyAudioHandler(),
-    config: const AudioServiceConfig(
-      androidNotificationChannelId: 'com.kero.podcasks.channel.audio',
-      androidNotificationChannelName: 'Podcast playback',
+  
+  // Parallelize critical initializations
+  await Future.wait([
+    Isar.open(
+      [SaveTrackSchema, FavouriteSchema],
+      directory: dir.path,
     ),
-  );
-  await FlutterDownloader.initialize(
-    ignoreSsl: true,
-    debug: true,
-  );
-
-  Workmanager().initialize(callbackDispatcher);
-  Workmanager().registerPeriodicTask(
-    'podcasksUpdate',
-    'podcasksUpdate',
-    frequency: const Duration(hours: 2),
-    initialDelay: const Duration(minutes: 15),
-    constraints: Constraints(
-      networkType: NetworkType.connected,
-      requiresBatteryNotLow: true,
+    AudioService.init(
+      builder: () => MyAudioHandler(),
+      config: const AudioServiceConfig(
+        androidNotificationChannelId: 'com.kero.podcasks.channel.audio',
+        androidNotificationChannelName: 'Podcast playback',
+      ),
+    ).then((handler) => audioHandler = handler),
+    FlutterDownloader.initialize(
+      ignoreSsl: true,
+      debug: true,
     ),
+  ]);
+
+  // Start background and notification controllers
+  BackgroundTaskController.init();
+  NotificationController.init();
+
+  // Check if app was opened via notification
+  ReceivedAction? initialAction = await AwesomeNotifications().getInitialNotificationAction(
+    removeFromActionEvents: false
   );
 
-  final l10n = await AppLocalizations.delegate.load(
-    WidgetsBinding.instance.platformDispatcher.locale,
-  );
-
-  AwesomeNotifications().initialize(
-      null,
-      [
-        NotificationChannel(
-            channelGroupKey: 'basic_channel_group',
-            channelKey: 'podcasks_sync',
-            channelName: l10n.notificationChannelName,
-            channelDescription: l10n.notificationChannelDescription,
-            defaultColor: const Color(0xFF9D50DD),
-            ledColor: Colors.white)
-      ],
-      // Channel groups are only visual and are not required
-      channelGroups: [
-        NotificationChannelGroup(
-            channelGroupKey: 'basic_channel_group',
-            channelGroupName: l10n.notificationGroupName)
-      ],
-      debug: true);
-
-  AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-    if (!isAllowed) {
-      AwesomeNotifications().requestPermissionToSendNotifications();
-    }
-  });
+  Podcast? initialPodcast;
+  if (initialAction?.payload?['feedUrl'] != null) {
+    initialPodcast = await locator.get<SearchRepo>().fetchPodcast(initialAction!.payload!['feedUrl']);
+  }
 
   runApp(
-    const ProviderScope(child: MyApp()),
+    ProviderScope(child: MyApp(initialPodcast: initialPodcast)),
   );
 }
 
 class MyApp extends ConsumerStatefulWidget {
-  const MyApp({super.key});
+  final Podcast? initialPodcast;
+  const MyApp({super.key, this.initialPodcast});
 
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
@@ -159,18 +91,35 @@ class MyApp extends ConsumerStatefulWidget {
 }
 
 class _MyAppState extends ConsumerState<MyApp> {
-  @override
-  void initState() {
-    Future.microtask(() => ref.read(settingsViewmodel).init());
-    AwesomeNotifications().setListeners(
-        onActionReceivedMethod: NotificationController.onActionReceivedMethod,
-        onNotificationCreatedMethod:
-            NotificationController.onNotificationCreatedMethod,
-        onNotificationDisplayedMethod:
-            NotificationController.onNotificationDisplayedMethod,
-        onDismissActionReceivedMethod:
-            NotificationController.onDismissActionReceivedMethod);
-    super.initState();
+@override
+void initState() {
+  super.initState();
+  Future.microtask(() async {
+    // Initialize core settings first (theme/lang)
+    await ref.read(settingsViewmodel).init();
+
+    // Native splash can go as soon as we have settings (theme info)
+    FlutterNativeSplash.remove();
+
+    // Start fetching home data immediately
+    ref.read(homeViewmodel).init();
+
+    if (kDebugMode && widget.initialPodcast == null) {
+      final favs = await locator.get<FavouriteRepo>().getAllFavourites();
+      if (favs.isNotEmpty && favs.first.episodes.isNotEmpty) {
+        AwesomeNotifications().createNotification(
+          content: NotificationContent(
+            id: 999,
+            channelKey: 'podcasks_sync',
+            title: favs.first.title,
+            body: favs.first.episodes.first.title,
+            largeIcon: favs.first.image,
+            payload: {'feedUrl': favs.first.url ?? ''},
+          ),
+        );
+      }
+    }
+    });
   }
 
   @override
@@ -180,6 +129,7 @@ class _MyAppState extends ConsumerState<MyApp> {
 
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) =>
           MaterialApp(
+        navigatorKey: MyApp.navigatorKey,
         debugShowCheckedModeBanner: false,
         localizationsDelegates: const [
           AppLocalizations.delegate,
@@ -190,22 +140,20 @@ class _MyAppState extends ConsumerState<MyApp> {
         supportedLocales: const [
           Locale('en'),
           Locale('it'),
-          // Locale('es'),
         ],
-        initialRoute: HomePage.route,
+        initialRoute: widget.initialPodcast != null ? PodcastPage.route : HomePage.route,
         routes: {
           HomePage.route: (context) => const HomePage(),
           SearchPage.route: (context) => const SearchPage(),
           PlayingPage.route: (context) => const PlayingPage(),
           SettingsPage.route: (context) => const SettingsPage(),
           FavouritesPage.route: (context) => const FavouritesPage(),
-          // PodcastPage.route: (context) => const PodcastPage(),
         },
         onGenerateRoute: (settings) {
           if (settings.name == PodcastPage.route) {
             return MaterialPageRoute(
               builder: (context) =>
-                  PodcastPage(settings.arguments as Podcast?),
+                  PodcastPage(settings.arguments as Podcast? ?? widget.initialPodcast),
             );
           } else if (settings.name == EpisodePage.route) {
             return MaterialPageRoute(

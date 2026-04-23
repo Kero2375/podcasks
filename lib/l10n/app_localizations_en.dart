@@ -130,7 +130,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ok => 'Ok';
 
   @override
-  String get searchOrRssHint => 'Search or add RSS feed...';
+  String get searchOrRssHint => 'Search / RSS';
 
   @override
   String get noResults => 'sorry, I didn\'t find anything';
@@ -226,7 +226,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emptyQueue => 'empty queue';
 
   @override
-  String get searchHint => 'Search or insert RSS feed';
+  String get searchHint => 'Search / RSS';
 
   @override
   String get importOpml => 'Import Backup';
@@ -376,6 +376,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get syncFrequency => 'Sync Frequency';
+
+  @override
+  String get syncFrequencyDescription =>
+      'How often the app checks for new episodes in the background';
 
   @override
   String get hour => 'hour';
