@@ -1,5 +1,5 @@
 import 'package:collection/collection.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/data/entities/save/save_track.dart';
 import 'package:podcasks/locator.dart';

@@ -1,4 +1,4 @@
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:podcast_search/podcast_search.dart';
 import 'package:podcasks/data/entities/podcast/podcast_entity.dart';
 part 'save_track.g.dart';

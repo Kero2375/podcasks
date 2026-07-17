@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'package:http/http.dart' as http;
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:podcasks/data/entities/favourites/fav_item.dart';
 import 'package:podcast_search/podcast_search.dart';
 

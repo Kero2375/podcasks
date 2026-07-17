@@ -1,5 +1,5 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:podcasks/data/entities/favourites/fav_item.dart';
 import 'package:podcasks/data/entities/save/save_track.dart';
